@@ -121,7 +121,10 @@ function CalendarView({
                           <span className="ledger-badge" style={{ backgroundColor: item.ledger_color }}>{item.ledger_name}</span>
                           <span className="item-category">{item.category}</span>
                         </div>
-                        <span className="item-memo">{item.memo}</span>
+                        <div className="item-body">
+                          <span className="item-store">{item.store_name}</span>
+                          <span className="item-memo">{item.memo}</span>
+                        </div>
                       </div>
                       <span className="item-amount">
                         {item.type === 'INCOME' ? '+' : '-'}{item.amount.toLocaleString()}원
