@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; 
 import './CalendarView.css'; 
+//calendarView 주석 추가~
 
 function CalendarView({
   transactions = [], 
