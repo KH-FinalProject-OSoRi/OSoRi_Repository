@@ -3,13 +3,19 @@
   background: #fff;
 }
 
-
 .title{
-  text-align: center;
+  display: block;          /* ✅ [추가] inline이면 가운데 정렬 안 먹음 */
+  width: 100%;             /* ✅ [추가] 정렬 기준 폭 확보 */
+  text-align: center !important; /* ✅ [수정] 다른 스타일이 덮으면 강제로 */
+  margin: 6px auto 22px;   /* ✅ [수정] 좌우 auto로 안전빵 */
+
   font-size: 22px;
   font-weight: 800;
-  margin: 6px 0 22px;
+  cursor: pointer;
+  user-select: none;
 }
+
+
 
 .form{
   display: grid;

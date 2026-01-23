@@ -118,6 +118,13 @@
   background-color: #0052cc;
 }
 
+/*마이페이지 버튼용: 같은 크기/라운드지만 구분되는 스타일 */
+.cta-button.secondary {
+  background-color: transparent;
+  color: #0066ff;
+  border: 1px solid #0066ff;
+}
+
 .footer{
   padding-top:100px;
 }
@@ -253,9 +260,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -295,4 +304,21 @@ button:focus-visible {
 #root{
   width: 100%;
   min-height: 100vh;
+}
+
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px; /* ✅ 마이페이지-로그아웃 간격. 18~24 추천 */
+}
+
+/* 마이페이지 버튼을 로그인/로그아웃이랑 같은 형태인데 살짝 구분만 */
+.mypage-btn {
+  background: transparent;
+  color: #0066ff;
+  border: 1px solid #0066ff;
+}
+.mypage-btn:hover {
+  background: rgba(0, 102, 255, 0.08);
 }

@@ -179,6 +179,14 @@
   font-weight: 500;
 }
 
+/* 추가 */
+.welecome-text {
+  margin : 8px 0 0;
+  font-size : 1rem;
+  color : #666;
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .account-book-grid {
     grid-template-columns: 1fr;
