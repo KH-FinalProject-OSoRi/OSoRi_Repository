@@ -1,0 +1,109 @@
+/* src/Pages/MainPage.css */
+:root {
+  --primary-color: #00008B; /* 오소리 테마 색상 */
+  --income-color: #2ecc71;
+  --expense-color: #e74c3c;
+}
+
+.card {
+  background: var(--card-bg, #ffffff);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.balance-title {
+  font-size: 0.9rem;
+  color: var(--text-sub);
+  margin-bottom: 10px;
+}
+
+.balance-amount {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.income { color: var(--income-color); font-weight: bold; }
+.expense { color: var(--expense-color); font-weight: bold; }
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: var(--card-bg);
+  margin-bottom: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  border-right: 4px solid #eee;
+}
+
+.list-item.plus { border-right-color: var(--income-color); }
+.list-item.minus { border-right-color: var(--expense-color); }
+
+.add-btn {
+  width: 100%;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+
+
+/* src/Pages/MainPage.css (또는 App.css 하단) */
+
+/* 1. 최근 내역 리스트 컨테이너 폭 제한 */
+.list-container {
+  width: 100%;
+  max-width: 650px; /* 요소를 한눈에 보기 편한 너비로 제한 */
+  margin: 0 auto;   /* 중앙 정렬 */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 2. 각 내역 아이템 스타일 보완 */
+.list-item {
+  padding: 15px 20px;
+  background-color: #ffffff;
+  border: 1px solid #f1f2f6;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+.list-item:hover {
+  background-color: #fafafa;
+}
+
+/* 3. 새 내역 추가하기 버튼 크기 축소 */
+.add-btn {
+  display: block;   /* margin auto 적용을 위해 block 설정 */
+  width: 100%;
+  max-width: 300px; /* 버튼이 너무 길지 않게 제한 */
+  margin: 30px auto 10px auto; /* 위아래 여백 및 중앙 정렬 */
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 30px; /* 둥근 버튼으로 변경 */
+}
+
+/* (추가 팁) '최근 내역' 타이틀도 정렬 */
+.card h3 {
+  max-width: 650px;
+  margin: 20px auto 15px auto !important;
+  text-align: left;
+}

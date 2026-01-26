@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';import MainPage from './components/common/MainPage'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainPage from './components/common/MainPage'
 import MyPageLayout from './features/auth/pages/MyPageLayout';
 import MyPage from './features/auth/pages/MyPage';
 import CalendarView from './features/menu/CalendarView';
@@ -10,6 +11,8 @@ import AuthLayout from './layouts/AuthLayout';
 import PrivateRoute from './routes/PrivateRoute';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import LoginPage from './features/auth/pages/LoginPage';
+import ExpenseForm from './features/auth/pages/ExpenseForm';
+import MyAccountBook from "./features/auth/pages/MyAccountBook";
 
 
 function App() {
@@ -42,6 +45,8 @@ function App() {
                                               />} />
           <Route path="myBadges" element={<MyBadges />} />
           <Route path="profileSettings" element={<ProfileSettings />} />
+          <Route path='expenseForm' element={<ExpenseForm/>}/>
+          <Route path='myAccountBook' element={<MyAccountBook/>}/>
         </Route>
       </Routes>
     </Router>

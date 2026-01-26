@@ -27,6 +27,13 @@
   margin: 0;
 }
 
+.account-detail{
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
+  
+}
+
 .menu-item, .alarm {
   padding: 15px 20px;
   margin-bottom: 8px;
@@ -50,8 +57,18 @@
   color: white;
 }
 
+.alarm{
+  display:block;
+  background-color: white;
+  border: 3px solid lightgray;
+  align-items: center;
+  text-align: center;
+}
+
 .alarm:hover{
   background-color: #f8f9fa;
+  border: 3px solid lightgray;
+  color: #333;
 }
 
 .mypage-content {
