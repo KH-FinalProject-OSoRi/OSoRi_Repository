@@ -36,3 +36,4 @@ export async function apiFetch(path, { method = "GET", body, headers = {}, auth 
 
   return data;
 }
+

@@ -55,6 +55,8 @@ export default function RegisterPage() {
   });
 
   const [idCheck, setIdCheck] = useState(null);
+  const [nickCheck, setNickCheck] = useState(null);
+  const [emailCheck, setEmailCheck] = useState(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -73,6 +75,36 @@ export default function RegisterPage() {
     return rule.re.test(value) ? "" : rule.msg;
   };
 
+  // [ADDED] 중복 체크 결과를 count로 받는 헬퍼 (count === 0이면 사용 가능)
+  const runDupCheck = async (field, rawValue) => {
+    const value = (rawValue ?? "").trim();
+    if (!value) return;
+
+    try {
+      if (field === "nickName") {
+        const res = await authApi.checkNickName(value);
+        const count = Number(res?.count ?? 0);
+        setNickCheck({
+          count,
+          msg: count === 0 ? "사용 가능한 닉네임입니다." : "이미 사용중인 닉네임입니다.",
+        });
+        return;
+      }
+
+      if (field === "email") {
+        const res = await authApi.checkEmail(value);
+        const count = Number(res?.count ?? 0);
+        setEmailCheck({
+          count,
+          msg: count === 0 ? "사용 가능한 이메일입니다." : "이미 사용중인 이메일입니다.",
+        });
+        return;
+      }
+    } catch (e) {
+      // 실패 시에는 조용히 넘기고 submit 때 최종 방어
+    }
+  };
+
   const onChange = (e) => {
     const { name, value } = e.target;
 
@@ -80,6 +112,8 @@ export default function RegisterPage() {
     setError("");
 
     if (name === "loginId") setIdCheck(null);
+    if (name === "nickName") setNickCheck(null);
+    if (name === "email") setEmailCheck(null);
 
     // blur 된 필드는 입력 중에도 메시지 갱신
     if (touched[name]) {
@@ -94,6 +128,27 @@ export default function RegisterPage() {
     setFieldError((p) => ({ ...p, [name]: validateField(name, value) }));
 
     if (name === "loginId") setIdCheck(null);
+    if (name === "nickName") setNickCheck(null);
+    if (name === "email") setEmailCheck(null);
+
+    // [ADDED] 닉네임/이메일은 blur 시 서버 중복 체크 (형식 통과한 경우만)
+    if (name === "nickName") {
+      const msg = validateField("nickName", value);
+      if (!msg) {
+        void runDupCheck("nickName", value);
+      } else {
+        setNickCheck(null);
+      }
+    }
+
+    if (name === "email") {
+      const msg = validateField("email", value);
+      if (!msg) {
+        void runDupCheck("email", value);
+      } else {
+        setEmailCheck(null);
+      }
+    }
   };
 
   const canSubmit = useMemo(() => {
@@ -124,9 +179,18 @@ export default function RegisterPage() {
 
     try {
       const res = await authApi.checkId(loginId);
+
+      // [BEFORE] available 기반 (서버가 available을 안 주면 항상 undefined로 꼬임)
+      // setIdCheck({
+      //   available: !!res.available,
+      //   msg: res.available ? "사용 가능한 아이디입니다." : "이미 사용중인 아이디입니다.",
+      // });
+
+      // [CHANGED] count 기반으로 판단 (count === 0이면 사용 가능)
+      const count = Number(res?.count ?? 0);
       setIdCheck({
-        available: !!res.available,
-        msg: res.available ? "사용 가능한 아이디입니다." : "이미 사용중인 아이디입니다.",
+        count,
+        msg: count === 0 ? "사용 가능한 아이디입니다." : "이미 사용중인 아이디입니다.",
       });
     } catch (e) {
       setError("아이디 중복체크 실패했습니다.");
@@ -168,8 +232,34 @@ export default function RegisterPage() {
       return;
     }
 
-    if (idCheck && idCheck.available === false) {
+
+
+    // count 기반 체크
+    if (idCheck && Number(idCheck.count ?? 0) > 0) {
       setError("이미 사용중인 아이디입니다.");
+      return;
+    }
+
+    // submit 시점에 닉네임/이메일 중복도 최종 방어 (버튼 없이도 안전하게)
+    try {
+      const nickRes = await authApi.checkNickName(form.nickName.trim());
+      const nickCount = Number(nickRes?.count ?? 0);
+      if (nickCount > 0) {
+        setNickCheck({ count: nickCount, msg: "이미 사용중인 닉네임입니다." });
+        setError("이미 사용중인 닉네임입니다.");
+        return;
+      }
+
+      const emailRes = await authApi.checkEmail(form.email.trim());
+      const emailCount = Number(emailRes?.count ?? 0);
+      if (emailCount > 0) {
+        setEmailCheck({ count: emailCount, msg: "이미 사용중인 이메일입니다." });
+        setError("이미 사용중인 이메일입니다.");
+        return;
+      }
+    } catch (e) {
+      // 중복 체크 API 자체 실패면 가입 시도 전에 막아버리는 게 안전
+      setError("중복 체크 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
       return;
     }
 
@@ -220,7 +310,7 @@ export default function RegisterPage() {
             <div className={`${styles.hint} ${styles.bad}`}>{fieldError.loginId}</div>
           ) : (
             idCheck && (
-              <div className={`${styles.hint} ${idCheck.available ? styles.ok : styles.bad}`}>
+              <div className={`${styles.hint} ${Number(idCheck.count ?? 0) === 0 ? styles.ok : styles.bad}`}>
                 {idCheck.msg}
               </div>
             )
@@ -269,8 +359,14 @@ export default function RegisterPage() {
             onBlur={onBlur}
             placeholder="한글 3~5자로 입력해 주세요."
           />
-          {touched.nickName && fieldError.nickName && (
+          {touched.nickName && fieldError.nickName ? (
             <div className={`${styles.hint} ${styles.bad}`}>{fieldError.nickName}</div>
+          ) : (
+            nickCheck && (
+              <div className={`${styles.hint} ${Number(nickCheck.count ?? 0) === 0 ? styles.ok : styles.bad}`}>
+                {nickCheck.msg}
+              </div>
+            )
           )}
         </div>
 
@@ -286,8 +382,14 @@ export default function RegisterPage() {
             placeholder="이메일 형식(@ 포함)으로 10~20자로 입력해 주세요."
             autoComplete="email"
           />
-          {touched.email && fieldError.email && (
+          {touched.email && fieldError.email ? (
             <div className={`${styles.hint} ${styles.bad}`}>{fieldError.email}</div>
+          ) : (
+            emailCheck && (
+              <div className={`${styles.hint} ${Number(emailCheck.count ?? 0) === 0 ? styles.ok : styles.bad}`}>
+                {emailCheck.msg}
+              </div>
+            )
           )}
         </div>
 
@@ -306,175 +408,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-
-
-// import { useMemo, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import styles from "./RegisterPage.module.css";
-// import { authApi } from "../../../api/authApi";
-
-// export default function RegisterPage() {
-//   const navigate = useNavigate();
-
-//   const [form, setForm] = useState({
-//     loginId: "",
-//     password: "",
-//     userName: "",
-//     nickName: "",
-//     email: "",
-//   });
-
-//   const [idCheck, setIdCheck] = useState(null);
-//   const [error, setError] = useState("");
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   const onChange = (e) => {
-//     const { name, value } = e.target;
-//     setForm((p) => ({ ...p, [name]: value }));
-//     setError("");
-//     if (name === "loginId") setIdCheck(null);
-//   };
-
-//   const canSubmit = useMemo(() => {
-//     return (
-//       form.loginId.trim() &&
-//       form.password.trim() &&
-//       form.userName.trim() &&
-//       form.nickName.trim() &&
-//       form.email.trim()
-//     );
-//   }, [form]);
-
-//   const handleCheckId = async () => {
-//     setError("");
-//     setIdCheck(null);
-
-//     const loginId = form.loginId.trim();
-//     if (!loginId) {
-//       setError("아이디를 입력하세요.");
-//       return;
-//     }
-
-//     try {
-//       const res = await authApi.checkId(loginId);
-//       setIdCheck({
-//         available: !!res.available,
-//         msg: res.available ? "사용 가능한 아이디입니다." : "이미 사용중인 아이디입니다.",
-//       });
-//     } catch (e) {
-//       setError("아이디 중복체크 실패했습니다.");
-//     }
-//   };
-
-//   const onSubmit = async (e) => {
-//     e.preventDefault();
-//     setError("");
-
-//     if (!canSubmit) {
-//       setError("모든 항목에 입력값을 넣어야 합니다.");
-//       return;
-//     }
-
-//     if (idCheck && idCheck.available === false) {
-//       setError("이미 사용중인 아이디입니다.");
-//       return;
-//     }
-
-//     setIsLoading(true);
-//     try {
-//       await authApi.register({
-//         loginId: form.loginId.trim(),
-//         password: form.password,
-//         userName: form.userName.trim(),
-//         nickName: form.nickName.trim(),
-//         email: form.email.trim(),
-//       });
-
-//       alert("회원가입에 성공했습니다.");
-//       navigate("/login", { replace: true, state: { loginId: form.loginId.trim() } });
-//     } catch (e) {
-//       const msg = e?.data?.message || "회원가입에 실패 했습니다.";
-//       setError(msg);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className={styles.wrap}>
-//       <h1 className={styles.title}>회원가입</h1>
-
-//       <form className={styles.form} onSubmit={onSubmit}>
-//         <div className={styles.field}>
-//           <div className={styles.labelRow}>
-//             <div className={styles.label}>아이디</div>
-//             <button className={styles.checkBtn} type="button" onClick={handleCheckId}>
-//               중복체크
-//             </button>
-//           </div>
-//           <input
-//             className={styles.input}
-//             name="loginId"
-//             value={form.loginId}
-//             onChange={onChange}
-//             placeholder="ID"
-//             autoComplete="username"
-//           />
-//           {idCheck && (
-//             <div className={`${styles.hint} ${idCheck.available ? styles.ok : styles.bad}`}>
-//               {idCheck.msg}
-//             </div>
-//           )}
-//         </div>
-
-//         <div className={styles.field}>
-//           <div className={styles.label}>비밀번호</div>
-//           <input
-//             className={styles.input}
-//             type="password"
-//             name="password"
-//             value={form.password}
-//             onChange={onChange}
-//             placeholder="비밀번호"
-//             autoComplete="new-password"
-//           />
-//         </div>
-
-//         <div className={styles.field}>
-//           <div className={styles.label}>이름</div>
-//           <input className={styles.input} name="userName" value={form.userName} onChange={onChange} placeholder="이름" />
-//         </div>
-
-//         <div className={styles.field}>
-//           <div className={styles.label}>닉네임</div>
-//           <input className={styles.input} name="nickName" value={form.nickName} onChange={onChange} placeholder="닉네임" />
-//         </div>
-
-//         <div className={styles.field}>
-//           <div className={styles.label}>이메일</div>
-//           <input
-//             className={styles.input}
-//             type="email"
-//             name="email"
-//             value={form.email}
-//             onChange={onChange}
-//             placeholder="email@example.com"
-//             autoComplete="email"
-//           />
-//         </div>
-
-//         {error && <div className={styles.error}>{error}</div>}
-
-//         <button className={styles.submitBtn} type="submit" disabled={isLoading}>
-//           {isLoading ? "가입 중..." : "회원가입"}
-//         </button>
-//       </form>
-
-//       <div className={styles.bottomRow}>
-//         <button className={styles.subBtn} type="button" onClick={() => navigate("/login")}>
-//           로그인으로
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }

@@ -58,3 +58,8 @@ button:focus,button:focus-visible {
   }
 }
 
+/* 네이버, 카카오 그림 가운데 정렬하기 위한 도구*/
+#root{
+  width: 100%;
+  min-height: 100vh;
+}
