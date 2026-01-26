@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
 import './ExpenseForm.css';
 import transApi from '../../../api/transApi';
+import { useAuth } from '../../../context/AuthContext';
 
 const EXPENSE_CATEGORIES = [
   "식비", "생활/마트", "쇼핑", "의료/건강", 
@@ -15,6 +15,8 @@ const INCOME_CATEGORIES = [
 
 const ExpenseForm = ({ mode = 'personal', groupId }) => {
 
+  const {user} = useAuth();
+
    // 현재 모드에 따라 보여줄 카테고리 리스트 결정
   const [currentCategories, setCurrentCategories] = useState(EXPENSE_CATEGORIES);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -25,8 +27,8 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
   const [formData, setFormData] = useState({
     type: '지출',
     transDate: '',      
-    storeName: '',
-    amount: '',
+    title: '',
+    originalAmount: '',
     category: EXPENSE_CATEGORIES[0], 
     memo: ''
   });
@@ -38,11 +40,11 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
     
     setFormData({ 
       ...formData, 
-      type: type,
+      type: type, 
       transDate: '', 
       category: newCategories[0],
-      storeName: '',
-      amount: '',
+      title: '',
+      originalAmount: '',
       memo: ''
     });
     
@@ -108,19 +110,19 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
     setIsLoading(true);
 
     try {
-      const response = await receiptApi.receiptAnalyze(serverFormData);
+      const data = await transApi.receiptAnalyze(serverFormData);
 
-      if (response.data) {
-        const { storeName, transDate, amount, category } = response.data;
+      if (data) {
+        const { title, transDate, originalAmount, category } = data;
         const formattedDate = formatDateString(transDate);
 
         let matchedCategory = EXPENSE_CATEGORIES.includes(category) ? category : '기타';
 
         setFormData(prev => ({
           ...prev,
-          storeName: storeName || '',
+          title: title || '',
           transDate: formattedDate,
-          amount: amount || '',
+          originalAmount: originalAmount || '',
           category: matchedCategory,
           type: '지출'
         }));
@@ -136,35 +138,37 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.transDate || !formData.amount || !formData.storeName) {
+    if (!formData.transDate || !formData.originalAmount || !formData.title) {
       alert("날짜, 금액, 가게명은 필수 입력 항목입니다.");
       return;
     }
 
     try {
+
       // 그룹 모드
       if (mode === 'group') {
         if (!groupId) {
-          alert("그룹 정보가 없습니다! (groupId missing)");
+          alert("그룹 정보가 없습니다!");
           return;
         }
         
         // groupId 데이터에 추가
         const groupData = { ...formData, groupId: groupId };
         
+        // 그룹 API 호출
+
+        console.log("Group Data:", groupData);
         
       } else {
-        // 개인 모드
 
-        await transApi.myTransSave(formData);
+        // 개인 모드
+        await transApi.myTransSave({ ...formData, userId: user?.userId ,type: formData.type === '수입' ? 'IN' : 'OUT'})
 
       }
 
-      alert("저장되었습니다! 💾");
+      alert("저장되었습니다!");
       
-      // 저장 후 초기화 (선택 사항)
-      // setFormData({ ...formData, title: '', originalAmount: '', memo: '' });
-      // setPreviewUrl(null);
+      // 저장 후 폼 초기화 로직 추가
 
     } catch (error) {
       console.error("Save Error:", error);
@@ -242,10 +246,10 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
             <label className="input-label">{formData.type === '수입' ? '입금처 / 내용' : '거래처 / 가게명'}</label>
             <input 
               type="text" 
-              name="storeName"
+              name="title"
               className="input-field"
               placeholder={formData.type === '수입' ? "예: 회사, 부모님" : "예: 스타벅스, 식당"}
-              value={formData.storeName}
+              value={formData.title}
               onChange={handleChange}
               required
             />
@@ -256,10 +260,10 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
             <div className="amount-wrapper">
               <input 
                 type="number" 
-                name="amount"
+                name="originalAmount"
                 className="input-field"
                 placeholder="0"
-                value={formData.amount}
+                value={formData.originalAmount}
                 onChange={handleChange}
                 required
               />
@@ -283,6 +287,7 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
             </select>
           </div>
 
+          {/* 메모 */}
           <div className="input-group">
             <label className="input-label">메모</label>
             <textarea 

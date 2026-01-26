@@ -11,7 +11,7 @@ export const transApi = {
     },
 
     myTransSave : async(formData) =>{
-        const response = await api.post('/trans/mytrans',formData);
+        const response = await api.post('/trans/myTransSave',formData);
 
         return response.data;
     }
