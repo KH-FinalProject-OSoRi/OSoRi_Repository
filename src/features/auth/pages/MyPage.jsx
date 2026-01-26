@@ -1,11 +1,11 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./MyPage.css";
 import { useAuth } from "../../../context/AuthContext";
 
 const MyPage = () => {
   const { user } = useAuth();
-
+  const navigate = useNavigate();
   const displayName = user?.nickName || user?.nickname || user?.userName || "회원";
   const email = user?.email || "";
 
@@ -30,7 +30,10 @@ const MyPage = () => {
       </section>
 
       <div className="account-book-grid">
-        <div className="info-card">
+        <div className="info-card"
+             onClick={() =>navigate("/mypage/expenseForm")} 
+             style={{ cursor: "pointer" }}
+        >
           <div className="card-title-area">
             <h3>🏠 내 가계부</h3>
           </div>
