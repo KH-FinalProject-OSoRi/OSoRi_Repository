@@ -12,10 +12,6 @@ import RegisterPage from "./features/auth/pages/RegisterPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import { transactions } from './Data/mockData'; //목업 수입지출데이터
 import ExpenseForm from './features/auth/pages/ExpenseForm';
-import AuthLayout from './layouts/AuthLayout';
-import PrivateRoute from './routes/PrivateRoute';
-import RegisterPage from './features/auth/pages/RegisterPage';
-import LoginPage from './features/auth/pages/LoginPage';
 
 
 function App() {
