@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';import MainPage from './components/common/MainPage'
-import MyPageLayout from './features/auth/pages/MyPageLayout';
-import MyPage from './features/auth/pages/MyPage';
-import CalendarView from './features/menu/CalendarView';
-import MyBadges from './features/auth/pages/MyBadges';
-import ProfileSettings from './features/auth/pages/ProfileSettings';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainPage from "./components/common/MainPage";
+import MyPageLayout from "./features/auth/pages/MyPageLayout";
+import MyPage from "./features/auth/pages/MyPage";
+import CalendarView from "./features/menu/CalendarView";
+import MyBadges from "./features/auth/pages/MyBadges";
+import ProfileSettings from "./features/auth/pages/ProfileSettings";
+import AuthLayout from "./layouts/AuthLayout";
+import LoginPage from "./features/auth/pages/LoginPage";
+import RegisterPage from "./features/auth/pages/RegisterPage";
+import PrivateRoute from "./routes/PrivateRoute";
 import { transactions } from './Data/mockData'; //목업 수입지출데이터
-import AuthLayout from './layouts/AuthLayout';
-import PrivateRoute from './routes/PrivateRoute';
-import RegisterPage from './features/auth/pages/RegisterPage';
-import LoginPage from './features/auth/pages/LoginPage';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<MainPage />} />
+
         {/* 로그인/회원가입 화면 (헤더/푸터 없이) */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
@@ -33,10 +35,10 @@ function App() {
             </PrivateRoute>
           }
         >
-          <Route index element={<MyPage />} /> 
+          <Route index element={<MyPage />} />
           <Route path="assets" element={<MyPage />} />
-          <Route path="calendarView" element={<CalendarView 
-                                                transactions={transactions} 
+          <Route path="calendarView" element={<CalendarView
+                                                transactions={transactions}
                                                 currentDate={currentDate}
                                                 setCurrentDate={setCurrentDate}
                                               />} />
@@ -45,7 +47,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
-  )
+  );
 }
 
 export default App;
