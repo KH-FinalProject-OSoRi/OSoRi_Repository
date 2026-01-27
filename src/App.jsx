@@ -7,7 +7,6 @@ import CalendarView from "./features/menu/CalendarView";
 import MyBadges from "./features/auth/pages/MyBadges";
 import ProfileSettings from "./features/auth/pages/ProfileSettings";
 import AuthLayout from "./layouts/AuthLayout";
-import LoginPage from "./features/auth/pages/LoginPage";
 import FindIdPage from "./features/auth/pages/FindIdPage";
 import FindPasswordPage from "./features/auth/pages/FindPasswordPage";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -60,8 +59,8 @@ function App() {
             element={
               <CalendarView
                 transactions={transactions}
-                currentDate={currentDate}
-                setCurrentDate={setCurrentDate}
+                currentDate={calendarDate}
+                setCurrentDate={setCalendarDate}
               />
             }
           />
