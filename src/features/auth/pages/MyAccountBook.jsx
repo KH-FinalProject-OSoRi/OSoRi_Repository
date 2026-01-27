@@ -307,19 +307,20 @@ function MyAccountBook() {
 
     // 필터링
     const filteredTransactions = [...transactions]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .filter((t) => {
-            const matchesSearch = t.text.toLowerCase().includes(searchTerm.toLowerCase());
-            let matchesType = true;
-            if (showIncome || showExpense) {
-                if (showIncome && t.type?.toUpperCase() !== 'IN') matchesType = false;
-                if (showExpense && t.type?.toUpperCase() !== 'OUT') matchesType = false;
-            }
-            let matchesDate = true;
-            if (startDate && t.date < startDate) matchesDate = false;
-            if (endDate && t.date > endDate) matchesDate = false;
-            return matchesSearch && matchesType && matchesDate;
-        });
+       .filter((t) => {
+        const matchesSearch = t.text.toLowerCase().includes(searchTerm.toLowerCase());
+        let matchesType = true;
+        if (showIncome || showExpense) {
+            if (showIncome && t.type?.toUpperCase() !== 'IN') matchesType = false;
+            if (showExpense && t.type?.toUpperCase() !== 'OUT') matchesType = false;
+        }
+        
+        let matchesDate = true;
+        if (startDate && t.date < startDate) matchesDate = false;
+        if (endDate && t.date > endDate) matchesDate = false;
+        
+        return matchesSearch && matchesType && matchesDate;
+    });
 
     const handleIncomeToggle = () => {
         if (showIncome) { setShowIncome(false); } 
