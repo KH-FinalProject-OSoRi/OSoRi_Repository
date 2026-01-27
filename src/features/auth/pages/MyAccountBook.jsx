@@ -3,6 +3,9 @@ import './MyAccountBook.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import transApi from '../../../api/transApi';
+import ExpenseChart from './ExpenseChart';
+import MonthlyTrendChart from  './MonthlyTrendChart';
+
 // ★ [추가] ExpenseForm과 동일한 카테고리 상수 정의
 const EXPENSE_CATEGORIES = [
   "식비", "생활/마트", "쇼핑", "의료/건강", 
@@ -12,6 +15,8 @@ const EXPENSE_CATEGORIES = [
 const INCOME_CATEGORIES = [
   "월급", "용돈", "금융소득", "상여금", "기타"
 ];
+
+
 
 // 모달 컴포넌트
 const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete }) => {
@@ -185,12 +190,27 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
 
 // 메인 페이지
 function MyAccountBook() {
+    const [currentDate, setCurrentDate] = useState(new Date());
     const [transactions, setTransactions] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showIncome, setShowIncome] = useState(false);
     const [showExpense, setShowExpense] = useState(false);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+
+    const [analysisDate, setAnalysisDate] = useState(new Date());
+     // 이전 달로 이동
+    const handlePrevMonth = () => {
+        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    };
+
+    // 다음 달로 이동
+    const handleNextMonth = () => {
+        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    };
+
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
 
     // 모달 관련 상태
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -342,67 +362,97 @@ function MyAccountBook() {
                 onSave={handleSave}
                 onDelete={handleDelete}
             />
+            <div className='left-side'>
+                <div className='list-card'>
+                    <header><h2 className="header-title">💰 나의 가계부</h2></header>
 
-            <header><h2 className="header-title">💰 나의 가계부</h2></header>
-
-            <div className="search-wrapper">
-                <div className="filter-group">
-                    <label className="checkbox-label">
-                        <input type="checkbox" checked={showIncome} onChange={handleIncomeToggle} />
-                        <span className="label-text income">수입</span>
-                    </label>
-                    <label className="checkbox-label">
-                        <input type="checkbox" checked={showExpense} onChange={handleExpenseToggle} />
-                        <span className="label-text expense">지출</span>
-                    </label>
-                </div>
-                <input type="text" className="search-input" placeholder="내역 검색" 
-                       value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-            </div>
-
-            <div className="list-header">
-                <h3 className="section-title">거래 내역</h3>
-                <div className="date-filter-wrapper">
-                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="date-input" />
-                    <span className="date-separator">~</span>
-                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="date-input" />
-                </div>
-            </div>
-            
-            <div className="list-container">
-                {filteredTransactions.length > 0 ? (
-                    filteredTransactions.map((t, index) => (
-                        <div 
-                            key={t.id || index} 
-                            className="list-item" 
-                            onClick={() => openViewModal(t)} 
-                            style={{cursor: 'pointer'}} 
-                        >
-                            <div className="item-info">
-                                <span className="item-text">{t.text}</span>
-                                <span className="item-date">{t.date}</span>
-                            </div>
-                            
-                            <div className="item-right">
-                                <span className={`item-amount ${t.type?.toUpperCase() === 'IN' ? 'income' : 'expense'}`}>
-                                    {t.type?.toUpperCase() === 'IN' ? '+' : '-'}
-                                    {Math.abs(t.amount).toLocaleString()}원
-                                </span>
-
-                                <div className="item-actions">
-                                    <button className="action-btn" onClick={(e) => openEditModal(e, t)}>수정</button>
-                                    <button className="action-btn del-btn" onClick={(e) => openDeleteModal(e, t)}>삭제</button>
-                                </div>
-                            </div>
+                    <div className="search-wrapper">
+                        <div className="filter-group">
+                            <label className="checkbox-label">
+                                <input type="checkbox" checked={showIncome} onChange={handleIncomeToggle} />
+                                <span className="label-text income">수입</span>
+                            </label>
+                            <label className="checkbox-label">
+                                <input type="checkbox" checked={showExpense} onChange={handleExpenseToggle} />
+                                <span className="label-text expense">지출</span>
+                            </label>
                         </div>
-                    ))
-                ) : (
-                    <p className="no-data">표시할 내역이 없습니다.</p>
-                )}
+                        <input type="text" className="search-input" placeholder="내역 검색" 
+                            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    </div>
+
+                    <div className="list-header">
+                        <h3 className="section-title">거래 내역</h3>
+                        <div className="date-filter-wrapper">
+                            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="date-input" />
+                            <span className="date-separator">~</span>
+                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="date-input" />
+                        </div>
+                    </div>
+                    
+                    <div className="list-container">
+                        {filteredTransactions.length > 0 ? (
+                            filteredTransactions.map((t, index) => (
+                                <div 
+                                    key={t.id || index} 
+                                    className="list-item" 
+                                    onClick={() => openViewModal(t)} 
+                                    style={{cursor: 'pointer'}} 
+                                >
+                                    <div className="item-info">
+                                        <span className="item-text">{t.text}</span>
+                                        <span className="item-date">{t.date}</span>
+                                    </div>
+                                    
+                                    <div className="item-right">
+                                        <span className={`item-amount ${t.type?.toUpperCase() === 'IN' ? 'income' : 'expense'}`}>
+                                            {t.type?.toUpperCase() === 'IN' ? '+' : '-'}
+                                            {Math.abs(t.amount).toLocaleString()}원
+                                        </span>
+
+                                        <div className="item-actions">
+                                            <button className="action-btn" onClick={(e) => openEditModal(e, t)}>수정</button>
+                                            <button className="action-btn del-btn" onClick={(e) => openDeleteModal(e, t)}>삭제</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="no-data">표시할 내역이 없습니다.</p>
+                        )}
+                    </div>
+                </div>
+                <button className="add-btn" onClick={() => navigate('/mypage/expenseForm')}>새 내역 추가하기</button>
             </div>
 
-            <button className="add-btn" onClick={() => navigate('/mypage/expenseForm')}>새 내역 추가하기</button>
+            <div className='right-side'>
+                <div className="analysis-dashboard">
+                    
+                    <div className="dashboard-control-panel">
+                        <button onClick={handlePrevMonth} className="nav-btn">◀</button>
+                        <h3 className="dashboard-title">
+                            📊 {currentYear}년 {currentMonth}월 분석
+                        </h3>
+                        <button onClick={handleNextMonth} className="nav-btn">▶</button>
+                    </div>
+
+                    {/* 차트 영역 */}
+                    <div className="dashboard-chart-group">
+                        <div className="chart-wrapper">
+                            <ExpenseChart transactions={transactions} currentDate={currentDate} />
+                        </div>
+                        <br/>
+                        <div className="chart-wrapper">
+                            <MonthlyTrendChart transactions={transactions} currentDate={currentDate} />
+                        </div>
+                        <br/>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
+
     );
 }
 

@@ -31,44 +31,19 @@ export const userApi = {
 
   // 비밀번호 변경
   changePassword: ({ currentPassword, newPassword }) =>
-    apiFetch("/user/password", {
+    apiFetch("/user/updatePassword", {
       method: "PATCH",
       body: { currentPassword, newPassword },
     }),
 
   // 회원탈퇴
-  // 예시: POST /osori/user/withdraw
+  // 예시: POST /osori/user/delete 
   // (DELETE + body는 서버에서 막는 경우가 많아서 POST로 잡아둠)
   withdraw: ({ password }) =>
-    apiFetch("/user/withdraw", {
-      method: "POST",
+    apiFetch("/user/delete", {
+      method: "DELETE",
       body: { password },
     }),
 };
 
-// import { apiFetch } from "./http";
 
-// // 프론트는 여기만 고치면 ProfileSettings 화면 로직은 그대로 유지됨.
-
-// export const userApi = {
-//   // 내 정보 수정 (닉네임/이름/이메일 등)
-//   // 예시: PATCH /osori/user/me
-//   updateMe: (payload) => apiFetch("/user/me", { method: "PATCH", body: payload }),
-
-//   // 비밀번호 변경
-//   // 예시: PATCH /osori/user/password
-//   changePassword: ({ currentPassword, newPassword }) =>
-//     apiFetch("/user/password", {
-//       method: "PATCH",
-//       body: { currentPassword, newPassword },
-//     }),
-
-//   // 회원탈퇴
-//   // 예시: POST /osori/user/withdraw
-//   // (DELETE + body는 서버에서 막는 경우가 많아서 POST로 잡아둠)
-//   withdraw: ({ password }) =>
-//     apiFetch("/user/withdraw", {
-//       method: "POST",
-//       body: { password },
-//     }),
-// };

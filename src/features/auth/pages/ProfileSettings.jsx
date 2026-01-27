@@ -100,7 +100,7 @@ function ProfileSettings() {
   const canSubmit = (canSave || isDormant) && !isSaving && !hasFieldErrors;
 
   const validate = () => {
-    if (!nickName.trim()) return "닉네임은 비울 수 없습니다/";
+    if (!nickName.trim()) return "닉네임은 비울 수 없습니다.";
     if (!email.trim()) return "이메일은 비울 수 없습니다.";
     if (!email.includes("@")) return "이메일 형식이 아닙니다.";
 
@@ -109,10 +109,10 @@ function ProfileSettings() {
     if (trimmedUserName && trimmedUserName.length < 2) return "이름은 2글자 이상 입력해주세요.";
 
     if (isPasswordEditing) {
-      if (!currentPassword.trim()) return "현재 비밀번호를 입력해야 함";
-      if (!newPassword.trim()) return "새 비밀번호를 입력해야 함";
-      if (newPassword.length < 8) return "새 비밀번호는 8자 이상 권장함";
-      if (newPassword !== newPasswordConfirm) return "새 비밀번호 확인이 일치하지 않음";
+      if (!currentPassword.trim()) return "현재 비밀번호를 입력해야 합니다.";
+      if (!newPassword.trim()) return "새 비밀번호를 입력해야 합니다.";
+      if (newPassword.length < 8) return "새 비밀번호는 8자 이상 권장 합니다.";
+      if (newPassword !== newPasswordConfirm) return "새 비밀번호 확인이 일치하지 않습니다.";
     }
     return "";
   };
@@ -655,4 +655,20 @@ function ProfileSettings() {
 }
 
 export default ProfileSettings;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
