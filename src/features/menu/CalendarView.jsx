@@ -14,7 +14,6 @@ function CalendarView({ currentDate, setCurrentDate }) {
 
   const userId = user?.userId || 3; 
 
-  // 날짜 정규화: 26/01/15 -> 2026-01-15 완벽 대응
   const normalizeDate = (dateStr) => {
     if (!dateStr) return "";
     const cleanStr = String(dateStr).trim();
@@ -28,7 +27,6 @@ function CalendarView({ currentDate, setCurrentDate }) {
     return cleanStr;
   };
 
-  // 1. 가계부 목록 로드
   useEffect(() => {
     axios.get('http://localhost:8080/osori/group/gbList', { params: { userId } })
       .then(res => {
@@ -45,7 +43,6 @@ function CalendarView({ currentDate, setCurrentDate }) {
       .catch(() => setLedgers([{ id: 'personal', name: '내 가계부', color: '#0066ff' }]));
   }, [userId]);
 
-  // 2. [핵심 수정] 데이터 필드명 대소문자 통합 매핑
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -55,7 +52,6 @@ function CalendarView({ currentDate, setCurrentDate }) {
 
         const [pRes, ...gRes] = await Promise.all([pReq, ...gReqs]);
 
-        // 개인 데이터 표준화
         const pData = pRes.data.map(t => ({ 
           ledgerId: 'personal',
           date: normalizeDate(t.transDate || t.TRANS_DATE || t.date || t.DATE),
@@ -66,7 +62,6 @@ function CalendarView({ currentDate, setCurrentDate }) {
           memo: t.memo || t.MEMO || ''
         }));
         
-        // 그룹 데이터 표준화 (대문자 필드 대응)
         const gData = gRes.flatMap((res, idx) => 
           res.data.map(t => ({ 
             ledgerId: String(groupIds[idx]), 
@@ -86,7 +81,6 @@ function CalendarView({ currentDate, setCurrentDate }) {
     if (ledgers.length > 0) fetchAllData();
   }, [ledgers, userId]);
 
-  // 필터링 및 렌더링 로직
   const isAllActive = ledgers.length > 0 && activeLedgers.length === ledgers.length;
   const toggleAll = () => setActiveLedgers(isAllActive ? [] : ledgers.map(l => l.id));
   const toggleLedger = (id) => setActiveLedgers(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
