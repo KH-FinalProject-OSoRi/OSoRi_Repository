@@ -1,5 +1,3 @@
-/* src/features/auth/pages/MyAccountBook.css */
-
 :root {
   --primary-color: #00008B;
   --income-color: #2ecc71;
@@ -298,6 +296,7 @@
   border-radius: 8px;
   font-size: 0.95rem;
   box-sizing: border-box;
+  font-family: inherit
 }
 
 .modal-actions {

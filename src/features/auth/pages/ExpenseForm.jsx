@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ExpenseForm.css';
 import transApi from '../../../api/transApi';
 import { useAuth } from '../../../context/AuthContext';
+
 
 const EXPENSE_CATEGORIES = [
   "식비", "생활/마트", "쇼핑", "의료/건강", 
@@ -12,10 +14,11 @@ const INCOME_CATEGORIES = [
   "월급", "용돈", "금융소득", "상여금", "기타"
 ];
 
-
 const ExpenseForm = ({ mode = 'personal', groupId }) => {
 
   const {user} = useAuth();
+
+  const navigate = useNavigate();
 
    // 현재 모드에 따라 보여줄 카테고리 리스트 결정
   const [currentCategories, setCurrentCategories] = useState(EXPENSE_CATEGORIES);
@@ -170,23 +173,7 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
       }
 
       alert("저장되었습니다!");
-      navigator
-      
-      // 저장 후 폼 초기화
-      setFormData(prev => ({
-        ...prev,
-        transDate: '',
-        title: '',
-        originalAmount: '',
-        category: prev.type === '수입' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0],
-        memo: ''
-      }));
-
-      setPreviewUrl(null);
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      navigate('/mypage/myAccountBook');
 
     } catch (error) {
       console.error("Save Error:", error);
