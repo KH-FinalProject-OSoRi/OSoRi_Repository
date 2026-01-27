@@ -27,8 +27,14 @@ export const transApi = {
         return response.data;
     },
 
-    updateTrans: async (updatedData) =>{
-        const response = await api.update()
+    updateTrans: async (updateData) =>{
+        const response = await api.put('/trans/updateTrans', updateData);
+        return response.data;
+    },
+
+    deleteTrans: async (transId) => {
+        const response = await api.delete(`/trans/deleteTrans/${transId}`);
+        return response.data;
     }
 }
 

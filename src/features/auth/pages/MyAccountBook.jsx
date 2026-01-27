@@ -4,6 +4,100 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import transApi from '../../../api/transApi';
 
+// 모달페이지
+const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete }) => {
+    const [formData, setFormData] = useState({
+        text: '', amount: 0, date: '', category: '기타', memo: '', type: 'OUT'
+    });
+
+    useEffect(() => {
+        if (transaction) {
+            setFormData({
+                text: transaction.text,
+                amount: Math.abs(transaction.amount),
+                date: transaction.date,
+                category: transaction.category,
+                memo: transaction.memo || '',
+                type: transaction.type || 'OUT'
+            });
+        }
+    }, [transaction]);
+
+    if (!isOpen) return null;
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                {type === 'edit' ? (
+                    <>
+                        <h3>✏️ 내역 수정</h3>
+                        
+                        <div className="modal-radio-group">
+                            <label className="radio-label">
+                                <input 
+                                    type="radio" name="type" value="IN" 
+                                    checked={formData.type === 'IN'} onChange={handleChange} 
+                                />
+                                <span style={{color: 'var(--income-color)'}}>수입</span>
+                            </label>
+                            <label className="radio-label">
+                                <input 
+                                    type="radio" name="type" value="OUT" 
+                                    checked={formData.type === 'OUT'} onChange={handleChange} 
+                                />
+                                <span style={{color: 'var(--expense-color)'}}>지출</span>
+                            </label>
+                        </div>
+
+                        <div className="modal-form">
+                            <div>
+                                <label className="modal-label">날짜</label>
+                                <input type="date" name="date" className="modal-input" value={formData.date} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <label className="modal-label">내용</label>
+                                <input type="text" name="text" className="modal-input" value={formData.text} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <label className="modal-label">금액</label>
+                                <input type="number" name="amount" className="modal-input" value={formData.amount} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <label className="modal-label">메모</label>
+                                <input 
+                                    type="text" name="memo" className="modal-input" 
+                                    value={formData.memo} onChange={handleChange} 
+                                    placeholder="메모를 입력하세요"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="modal-actions">
+                            <button className="modal-btn cancel" onClick={onClose}>취소</button>
+                            <button className="modal-btn confirm" onClick={() => onSave({ ...transaction, ...formData })}>수정</button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <h3>🗑️ 삭제 확인</h3>
+                        <p style={{textAlign: 'center', color: '#666', fontSize: '0.95rem', margin: '20px 0'}}>
+                            <strong>"{transaction?.text}"</strong> 내역을<br/>정말 삭제하시겠습니까?
+                        </p>
+                        <div className="modal-actions">
+                            <button className="modal-btn cancel" onClick={onClose}>취소</button>
+                            <button className="modal-btn delete" onClick={() => onDelete(transaction.id)}>삭제</button>
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
+    );
+};
 
 // 메인 페이지
 function MyAccountBook() {
@@ -16,7 +110,7 @@ function MyAccountBook() {
 
     // 모달 관련 상태
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState('edit'); // edit 또는 delete
+    const [modalType, setModalType] = useState('edit'); 
     const [selectedItem, setSelectedItem] = useState(null);
 
     const { user } = useAuth();
@@ -24,14 +118,15 @@ function MyAccountBook() {
 
     // 데이터 불러오기
     const fetchTransactions = () => {
-        const userId = user?.USER_ID || user?.id || 1;
-        
+        const userId = user?.userId;
+
         transApi.getUserTrans(userId)
             .then(data => {
                 if (!data || !Array.isArray(data)) {
                     setTransactions([]);
                     return;
                 }
+
                 const mappedData = data.map(item => {
                     const rawDate = item.transDate || item.TRANS_DATE || "";
                     let formattedDate = rawDate;
@@ -47,7 +142,7 @@ function MyAccountBook() {
                         date: formattedDate,
                         type: item.type || item.TYPE,
                         category: item.category || item.CATEGORY || '기타',
-                        memo: item.memo || item.MEMO || ''
+                        memo: item.memo || item.MEMO || '',
                     };
                 });
                 setTransactions(mappedData);
@@ -58,7 +153,6 @@ function MyAccountBook() {
     useEffect(() => {
         fetchTransactions();
     }, [user]);
-
 
     // 모달 핸들러
     const openEditModal = (item) => {
@@ -73,20 +167,28 @@ function MyAccountBook() {
         setIsModalOpen(true);
     };
 
-    // 수정
+    // 수정처리
     const handleSave = async (updatedData) => {
-        try {
-            await transApi.updateTrans({
-                transId: updatedData.id,
-                title: updatedData.text,
-                originalAmount: updatedData.type?.toUpperCase() === 'OUT' ? -Math.abs(updatedData.amount) : Math.abs(updatedData.amount),
-                transDate: updatedData.date,
-                category: updatedData.category,
-                type: updatedData.type 
-            });
+        try{
+            const userId = user?.userId;
+
+            const updateData = {
+                transId: updatedData.id,        
+                title: updatedData.text,        
+                transDate: updatedData.date,     
+                originalAmount: Number(updatedData.amount),
+                category: updatedData.category, 
+                type: updatedData.type,      
+                memo: updatedData.memo || '',     
+                userId:userId,
+                isShared: 'N'
+            };
+            
+            await transApi.updateTrans(updateData);
+
             alert("수정되었습니다.");
             setIsModalOpen(false);
-            fetchTransactions(); // 목록 새로고침
+            fetchTransactions();
         } catch (error) {
             console.error(error);
             alert("수정 중 오류가 발생했습니다.");
@@ -99,7 +201,7 @@ function MyAccountBook() {
             await transApi.deleteTrans(id);
             alert("삭제되었습니다.");
             setIsModalOpen(false);
-            fetchTransactions(); // 목록 새로고침
+            fetchTransactions();
         } catch (error) {
             console.error(error);
             alert("삭제 중 오류가 발생했습니다.");
@@ -136,76 +238,8 @@ function MyAccountBook() {
         else { setShowExpense(true); setShowIncome(false); }
     };
 
-//  모달페이지
-const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete }) => {
-    const [formData, setFormData] = useState({
-        text: '', amount: 0, date: '', category: '기타', memo:''
-    });
-
-    useEffect(() => {
-        if (transaction) {
-            setFormData({
-                text: transaction.text,
-                amount: Math.abs(transaction.amount),
-                date: transaction.date,
-                category: transaction.category,
-                memo:transaction.memo||''
-            });
-        }
-    }, [transaction]);
-
-    if (!isOpen) return null;
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-                {type === 'edit' ? (
-                    <>
-                        <h3>✏️ 내역 수정</h3>
-                        <div className="modal-form">
-                            <div>
-                                <label className="modal-label">날짜</label>
-                                <input type="date" name="date" className="modal-input" value={formData.date} onChange={handleChange} />
-                            </div>
-                            <div>
-                                <label className="modal-label">내용</label>
-                                <input type="text" name="text" className="modal-input" value={formData.text} onChange={handleChange} />
-                            </div>
-                            <div>
-                                <label className="modal-label">금액</label>
-                                <input type="number" name="amount" className="modal-input" value={formData.amount} onChange={handleChange} />
-                            </div>
-                        </div>
-                        <div className="modal-actions">
-                            <button className="modal-btn cancel" onClick={onClose}>취소</button>
-                            <button className="modal-btn confirm" onClick={() => onSave({ ...transaction, ...formData })}>수정</button>
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        <h3>🗑️ 삭제 확인</h3>
-                        <p style={{textAlign: 'center', color: '#666', fontSize: '0.95rem', margin: '20px 0'}}>
-                            <strong>"{transaction?.text}"</strong> 내역을<br/>정말 삭제하시겠습니까?
-                        </p>
-                        <div className="modal-actions">
-                            <button className="modal-btn cancel" onClick={onClose}>취소</button>
-                            <button className="modal-btn delete" onClick={() => onDelete(transaction.id)}>삭제</button>
-                        </div>
-                    </>
-                )}
-            </div>
-        </div>
-    );
-};
-
     return (
         <div className="card">
-            {/* 모달 */}
             <TransactionModal 
                 isOpen={isModalOpen} 
                 type={modalType}
@@ -217,7 +251,6 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
 
             <header><h2 className="header-title">💰 나의 가계부</h2></header>
 
-            {/* 검색 체크박스 */}
             <div className="search-wrapper">
                 <div className="filter-group">
                     <label className="checkbox-label">
@@ -233,7 +266,6 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
                        value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
 
-            {/* 리스트 헤더*/}
             <div className="list-header">
                 <h3 className="section-title">거래 내역</h3>
                 <div className="date-filter-wrapper">
@@ -243,7 +275,6 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
                 </div>
             </div>
             
-            {/* 리스트 목록 */}
             <div className="list-container">
                 {filteredTransactions.length > 0 ? (
                     filteredTransactions.map((t, index) => (
@@ -259,7 +290,6 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
                                     {Math.abs(t.amount).toLocaleString()}원
                                 </span>
 
-                                {/* 수정/삭제 버튼 */}
                                 <div className="item-actions">
                                     <button className="action-btn" onClick={() => openEditModal(t)}>수정</button>
                                     <button className="action-btn del-btn" onClick={() => openDeleteModal(t)}>삭제</button>

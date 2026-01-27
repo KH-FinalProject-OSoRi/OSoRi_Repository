@@ -7,7 +7,7 @@ import AddGroupBudgetModal from "../../group/AddGroupBudgetModal";
 
 const MyPage = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+
   const displayName = user?.nickName || user?.nickname || user?.userName || "회원";
   const email = user?.email || "";
 
@@ -22,9 +22,11 @@ const MyPage = () => {
         const data = await groupBudgetApi.groupBudgetList(user?.userId);
         setGroupBudgetList(data);
       }catch(error){
-        console.error('그룹가계부 목록 조회 실패',error);
-        alert('그룹가계부 목록을 조회할 수 없습니다.');
-        navigate('/mypage');
+        if(setGroupBudgetList.length !== 0){
+          console.error('그룹가계부 목록 조회 실패',error);
+          alert('그룹가계부 목록을 조회할 수 없습니다.');
+          navigate('/mypage');
+        }
       }finally{
         setIsLoading(false);
       }
@@ -77,7 +79,7 @@ const MyPage = () => {
           <div className="account-detail">
             <ul className="sidebar-menu">
               {groupBudgetList.length === 0 &&
-                <li>
+                <li style={{paddingBottom:'20px'}}>
                   관리중인 그룹 가계부가 없습니다.
                 </li>
               }
