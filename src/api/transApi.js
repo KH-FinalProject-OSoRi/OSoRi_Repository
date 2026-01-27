@@ -20,8 +20,16 @@ export const transApi = {
         const response = await api.post('/trans/groupTransSave',formData);
 
         return response.data;
-    }
+    },
 
+    getUserTrans: async (userId) => {
+        const response = await api.get(`/trans/user/${userId}`);
+        return response.data;
+    },
+
+    updateTrans: async (updatedData) =>{
+        const response = await api.update()
+    }
 }
 
 export default transApi;

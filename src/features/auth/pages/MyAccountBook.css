@@ -1,109 +1,321 @@
-/* src/Pages/MainPage.css */
+/* src/features/auth/pages/MyAccountBook.css */
+
 :root {
-  --primary-color: #00008B; /* 오소리 테마 색상 */
+  --primary-color: #00008B;
   --income-color: #2ecc71;
   --expense-color: #e74c3c;
+  --bg-color: #f8f9fa;
+  --text-main: #333333;
+  --text-sub: #888888;
 }
 
 .card {
-  background: var(--card-bg, #ffffff);
+  background: #ffffff;
   border-radius: 20px;
-  padding: 25px;
-  box-shadow: var(--shadow);
-  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  
+  /* 화면 높이 꽉 채우기 */
+  height: calc(100vh - 120px); 
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
   text-align: center;
-}
-
-.balance-title {
-  font-size: 0.9rem;
-  color: var(--text-sub);
-  margin-bottom: 10px;
-}
-
-.balance-amount {
-  font-size: 2rem;
-  font-weight: 800;
-}
-
-.stats-container {
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  
   display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-  border-top: 1px solid #eee;
-  padding-top: 20px;
+  flex-direction: column;
 }
 
-.income { color: var(--income-color); font-weight: bold; }
-.expense { color: var(--expense-color); font-weight: bold; }
+.header-title {
+  margin-bottom: 25px;
+  font-size: 1.5rem;
+  color: var(--text-main);
+  font-weight: 700;
+  flex-shrink: 0;
+}
 
+/* 검색창 + 필터 영역 */
+.search-wrapper {
+  width: 100%;
+  margin: 0 0 25px 0; 
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+}
+
+.filter-group {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-left: 5px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  user-select: none;
+}
+
+.checkbox-label input {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+}
+
+.label-text.income { color: var(--income-color); }
+.label-text.expense { color: var(--expense-color); }
+
+.search-input {
+  flex: 1; 
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: #fff;
+}
+
+/* 헤더 영역 (타이틀 + 날짜) */
+.list-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;         
+  margin-bottom: 15px;
+  padding: 0 5px;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: #444;
+  font-weight: 700;
+  margin: 0; 
+}
+
+.date-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-input {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #555;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.date-separator {
+  font-weight: bold;
+  color: #aaa;
+}
+
+/* 리스트 컨테이너 (남은 공간 꽉 채우기) */
+.list-container {
+  margin: 0 -30px 20px -30px; /* 카드 패딩 무시하고 확장 */
+  width: auto;
+  
+  flex: 1; /* 남은 높이 차지 */
+  min-height: 0; 
+  overflow-y: auto;
+  
+  border-top: 2px solid #333;
+  border-bottom: 1px solid #eee;
+}
+
+.list-container::-webkit-scrollbar { width: 6px; }
+.list-container::-webkit-scrollbar-track { background: #f1f1f1; }
+.list-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+/* 리스트 아이템 */
 .list-item {
   display: flex;
   justify-content: space-between;
-  padding: 15px;
-  background: var(--card-bg);
-  margin-bottom: 10px;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-  border-right: 4px solid #eee;
+  align-items: center;
+  padding: 12px 30px; /* 세로 패딩 약간 줄임 */
+  background-color: #ffffff;
+  border-bottom: 1px solid #eee;
 }
 
-.list-item.plus { border-right-color: var(--income-color); }
-.list-item.minus { border-right-color: var(--expense-color); }
+.list-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* 아이템 정보 (왼쪽) */
+.item-info { text-align: left; }
+
+.item-text {
+  font-weight: 600;
+  display: block;
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.item-date {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+}
+
+/* 아이템 우측 (금액 + 버튼) 컨테이너 */
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* 금액과 버튼 사이 간격 */
+}
+
+.item-amount {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.item-amount.income { color: var(--income-color); }
+.item-amount.expense { color: var(--expense-color); }
+
+/* ★ 수정/삭제 버튼 스타일 (작게 변경) */
+.item-actions {
+  display: flex;
+  gap: 4px; /* 버튼 사이 간격 좁게 */
+}
+
+.action-btn {
+  padding: 4px 8px; /* 아주 작게 패딩 */
+  font-size: 0.75rem; /* 글자 크기 축소 */
+  border-radius: 4px;
+  border: 1px solid #eee;
+  background-color: white;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #f1f1f1;
+  color: #333;
+  border-color: #ccc;
+}
+
+/* 삭제 버튼 호버 시 빨간색 포인트 */
+.action-btn.del-btn:hover {
+  background-color: #fff5f5;
+  color: #e74c3c;
+  border-color: #ffcdd2;
+}
+
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 40px 0;
+}
 
 .add-btn {
+  display: block;
   width: 100%;
+  max-width: 100%; 
+  margin: 0 auto;
   background: var(--primary-color);
   color: white;
   border: none;
   padding: 15px;
   border-radius: 12px;
   font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
   transition: opacity 0.2s;
+  flex-shrink: 0;
 }
 
+.add-btn:hover { opacity: 0.9; }
 
+/* -------------------------------- */
+/* 모달 (팝업) 스타일 */
+/* -------------------------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
-/* src/Pages/MainPage.css (또는 App.css 하단) */
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 350px; /* 모달 크기도 아담하게 */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  text-align: left;
+}
 
-/* 1. 최근 내역 리스트 컨테이너 폭 제한 */
-.list-container {
-  width: 100%;
-  max-width: 650px; /* 요소를 한눈에 보기 편한 너비로 제한 */
-  margin: 0 auto;   /* 중앙 정렬 */
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.modal-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* 2. 각 내역 아이템 스타일 보완 */
-.list-item {
-  padding: 15px 20px;
-  background-color: #ffffff;
-  border: 1px solid #f1f2f6;
-  border-radius: 12px;
-  transition: background-color 0.2s;
-}
-
-.list-item:hover {
-  background-color: #fafafa;
-}
-
-/* 3. 새 내역 추가하기 버튼 크기 축소 */
-.add-btn {
-  display: block;   /* margin auto 적용을 위해 block 설정 */
-  width: 100%;
-  max-width: 300px; /* 버튼이 너무 길지 않게 제한 */
-  margin: 30px auto 10px auto; /* 위아래 여백 및 중앙 정렬 */
-  padding: 12px 24px;
-  font-size: 1rem;
+.modal-label {
+  font-size: 0.85rem;
   font-weight: 600;
-  border-radius: 30px; /* 둥근 버튼으로 변경 */
+  color: #666;
+  margin-bottom: 4px;
+  display: block;
 }
 
-/* (추가 팁) '최근 내역' 타이틀도 정렬 */
-.card h3 {
-  max-width: 650px;
-  margin: 20px auto 15px auto !important;
-  text-align: left;
+.modal-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
 }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 25px;
+}
+
+.modal-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.modal-btn.cancel { background: #f1f1f1; color: #555; }
+.modal-btn.confirm { background: var(--primary-color); color: white; }
+.modal-btn.delete { background: var(--expense-color); color: white; }

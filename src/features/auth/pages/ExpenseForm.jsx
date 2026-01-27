@@ -170,6 +170,7 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
       }
 
       alert("저장되었습니다!");
+      navigator
       
       // 저장 후 폼 초기화
       setFormData(prev => ({
