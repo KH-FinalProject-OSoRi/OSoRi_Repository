@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './MyAccountBook.css';
+import styles from './MyAccountBook.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import transApi from '../../../api/transApi';
 import ExpenseChart from './ExpenseChart';
 import MonthlyTrendChart from  './MonthlyTrendChart';
 
-// ★ [추가] ExpenseForm과 동일한 카테고리 상수 정의
 const EXPENSE_CATEGORIES = [
   "식비", "생활/마트", "쇼핑", "의료/건강", 
   "교통", "문화/여가", "교육", "기타"
@@ -16,9 +15,6 @@ const INCOME_CATEGORIES = [
   "월급", "용돈", "금융소득", "상여금", "기타"
 ];
 
-
-
-// 모달 컴포넌트
 const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete }) => {
     const [currentCategories, setCurrentCategories] = useState(EXPENSE_CATEGORIES);
     
@@ -45,7 +41,6 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
 
     if (!isOpen) return null;
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -68,127 +63,117 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
     const isDetailMode = type === 'edit' || type === 'view';
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-                {isDetailMode ? (
-                    <>
-                        <h3>{isViewMode ? '📄 내역 상세' : '✏️ 내역 수정'}</h3>
-                        
-                        {isViewMode ? (
-                            <div className="modal-type-display" style={{ 
-                                textAlign: 'center', marginBottom: '20px', fontSize: '1.2rem', fontWeight: 'bold',
-                                color: formData.type === 'IN' ? 'var(--income-color)' : 'var(--expense-color)'
-                            }}>
-                                {formData.type === 'IN' ? '수입' : '지출'}
-                            </div>
-                        ) : (
-                            <div className="modal-radio-group">
-                                <label className="radio-label">
-                                    <input 
-                                        type="radio" name="type" value="IN" 
-                                        checked={formData.type === 'IN'} onChange={handleTypeChange} 
-                                    />
-                                    <span style={{color: 'var(--income-color)'}}>수입</span>
-                                </label>
-                                <label className="radio-label">
-                                    <input 
-                                        type="radio" name="type" value="OUT" 
-                                        checked={formData.type === 'OUT'} onChange={handleTypeChange} 
-                                    />
-                                    <span style={{color: 'var(--expense-color)'}}>지출</span>
-                                </label>
-                            </div>
-                        )}
+    <div className={styles['modal-overlay']} onClick={onClose}>
+        <div className={styles['modal-content']} onClick={e => e.stopPropagation()}>
+            {isDetailMode ? (
+                <>
+                    <h3>{isViewMode ? '📄 내역 상세' : '✏️ 내역 수정'}</h3>
+                    
+                    <div className={styles['modal-radio-group']}>
+                        <label className={styles['radio-label']}>
+                            <input 
+                                type="radio" name="type" value="IN" 
+                                checked={formData.type === 'IN'} 
+                                onChange={handleTypeChange} 
+                                disabled={isViewMode} 
+                            />
+                            <span style={{ color: formData.type === 'IN' ? 'var(--income-color)' : '#ccc' }}>수입</span>
+                        </label>
+                        <label className={styles['radio-label']}>
+                            <input 
+                                type="radio" name="type" value="OUT" 
+                                checked={formData.type === 'OUT'} 
+                                onChange={handleTypeChange} 
+                                disabled={isViewMode} 
+                            />
+                            <span style={{ color: formData.type === 'OUT' ? 'var(--expense-color)' : '#ccc' }}>지출</span>
+                        </label>
+                    </div>
 
-                        <div className="modal-form">
-                            <div>
-                                <label className="modal-label">날짜</label>
-                                <input 
-                                    type="date" name="date" className="modal-input" 
-                                    value={formData.date} onChange={handleChange} 
-                                    readOnly={isViewMode} disabled={isViewMode}
-                                />
-                            </div>
-                            <div>
-                                <label className="modal-label">내용</label>
-                                <input 
-                                    type="text" name="text" className="modal-input" 
-                                    value={formData.text} onChange={handleChange} 
-                                    readOnly={isViewMode}
-                                />
-                            </div>
-                            <div>
-                                <label className="modal-label">금액</label>
-                                <input 
-                                    type="number" name="amount" className="modal-input" 
-                                    value={formData.amount} onChange={handleChange} 
-                                    readOnly={isViewMode}
-                                />
-                            </div>
-                            
-                            {/* 카테고리 영역 */}
-                            <div>
-                                <label className="modal-label">카테고리</label>
-                                {isViewMode ? (
-
-                                    <input 
-                                        type="text" name="category" className="modal-input" 
-                                        value={formData.category} readOnly
-                                    />
-                                ) : (
-                                    <select 
-                                        name="category" 
-                                        className="modal-input" 
-                                        value={formData.category} 
-                                        onChange={handleChange}
-                                    >
-                                        {currentCategories.map((cat, index) => (
-                                            <option key={index} value={cat}>{cat}</option>
-                                        ))}
-                                    </select>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="modal-label">메모</label>
-                                <input 
-                                    type="text" name="memo" className="modal-input" 
-                                    value={formData.memo} onChange={handleChange} 
-                                    readOnly={isViewMode}
-                                    placeholder={isViewMode ? "" : "메모를 입력하세요"}
-                                />
-                            </div>
+                    <div className={styles['modal-form']}>
+                        <div>
+                            <label className={styles['modal-label']}>날짜</label>
+                            <input 
+                                type="date" name="date" className={styles['modal-input']} 
+                                value={formData.date} onChange={handleChange} 
+                                readOnly={isViewMode} disabled={isViewMode}
+                            />
                         </div>
-
-                        <div className="modal-actions">
+                        <div>
+                            <label className={styles['modal-label']}>내용</label>
+                            <input 
+                                type="text" name="text" className={styles['modal-input']} 
+                                value={formData.text} onChange={handleChange} 
+                                readOnly={isViewMode}
+                            />
+                        </div>
+                        <div>
+                            <label className={styles['modal-label']}>금액</label>
+                            <input 
+                                type="number" name="amount" className={styles['modal-input']} 
+                                value={formData.amount} onChange={handleChange} 
+                                readOnly={isViewMode}
+                            />
+                        </div>
+                        <div>
+                            <label className={styles['modal-label']}>카테고리</label>
                             {isViewMode ? (
-                                <button className="modal-btn confirm" onClick={onClose} style={{width: '100%'}}>확인</button>
+                                <input 
+                                    type="text" name="category" className={styles['modal-input']} 
+                                    value={formData.category} readOnly
+                                />
                             ) : (
-                                <>
-                                    <button className="modal-btn cancel" onClick={onClose}>취소</button>
-                                    <button className="modal-btn confirm" onClick={() => onSave({ ...transaction, ...formData })}>수정</button>
-                                </>
+                                <select 
+                                    name="category" 
+                                    className={styles['modal-input']} 
+                                    value={formData.category} 
+                                    onChange={handleChange}
+                                >
+                                    {currentCategories.map((cat, index) => (
+                                        <option key={index} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
                             )}
                         </div>
-                    </>
-                ) : (
-                    <>
-                        <h3>🗑️ 삭제 확인</h3>
-                        <p style={{textAlign: 'center', color: '#666', fontSize: '0.95rem', margin: '20px 0'}}>
-                            <strong>"{transaction?.text}"</strong> 내역을<br/>정말 삭제하시겠습니까?
-                        </p>
-                        <div className="modal-actions">
-                            <button className="modal-btn cancel" onClick={onClose}>취소</button>
-                            <button className="modal-btn delete" onClick={() => onDelete(transaction.id)}>삭제</button>
+                        <div>
+                            <label className={styles['modal-label']}>메모</label>
+                            <input 
+                                type="text" name="memo" className={styles['modal-input']} 
+                                value={formData.memo} onChange={handleChange} 
+                                readOnly={isViewMode}
+                                placeholder={isViewMode ? "" : "메모를 입력하세요"}
+                            />
                         </div>
-                    </>
-                )}
-            </div>
+                    </div>
+
+                    <div className={styles['modal-actions']}>
+                        <button className={`${styles['modal-btn']} ${styles.cancel}`} onClick={onClose}>
+                            취소
+                        </button>
+                        {!isViewMode && (
+                            <button className={`${styles['modal-btn']} ${styles.confirm}`} onClick={() => onSave({ ...transaction, ...formData })}>
+                                수정
+                            </button>
+                        )}
+                    </div>
+                </>
+            ) : (
+                <>
+                    <h3>🗑️ 삭제 확인</h3>
+                    <p style={{textAlign: 'center', color: '#666', fontSize: '1rem', margin: '20px 0'}}>
+                        <strong>"{transaction?.text}"</strong> 내역을<br/>정말 삭제하시겠습니까?
+                    </p>
+                    <div className={styles['modal-actions']}>
+                        <button className={`${styles['modal-btn']} ${styles.cancel}`} onClick={onClose}>취소</button>
+                        <button className={`${styles['modal-btn']} ${styles.delete}`} onClick={() => onDelete(transaction.id)}>삭제</button>
+                    </div>
+                </>
+            )}
         </div>
-    );
+    </div>
+);
 };
 
-// 메인 페이지
 function MyAccountBook() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [transactions, setTransactions] = useState([]);
@@ -199,12 +184,11 @@ function MyAccountBook() {
     const [endDate, setEndDate] = useState('');
 
     const [analysisDate, setAnalysisDate] = useState(new Date());
-     // 이전 달로 이동
+
     const handlePrevMonth = () => {
         setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
     };
 
-    // 다음 달로 이동
     const handleNextMonth = () => {
         setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
     };
@@ -212,7 +196,6 @@ function MyAccountBook() {
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1;
 
-    // 모달 관련 상태
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState('view'); 
     const [selectedItem, setSelectedItem] = useState(null);
@@ -220,7 +203,6 @@ function MyAccountBook() {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    // 데이터 불러오기
     const fetchTransactions = () => {
         const userId = user?.userId || user?.USER_ID || user?.id || 1;
         
@@ -257,30 +239,26 @@ function MyAccountBook() {
         fetchTransactions();
     }, [user]);
 
-    // 상세 보기 
     const openViewModal = (item) => {
         setSelectedItem(item);
-        setModalType('view'); // 보기 모드
+        setModalType('view');
         setIsModalOpen(true);
     };
 
-    //  수정 하기 
     const openEditModal = (e, item) => {
         e.stopPropagation(); 
         setSelectedItem(item);
-        setModalType('edit'); // 수정 모드
+        setModalType('edit');
         setIsModalOpen(true);
     };
 
-    // 삭제 하기 
     const openDeleteModal = (e, item) => {
         e.stopPropagation(); 
         setSelectedItem(item);
-        setModalType('delete'); // 삭제 모드
+        setModalType('delete');
         setIsModalOpen(true);
     };
 
-    // 수정 저장
     const handleSave = async (updatedData) => {
         try {
             const currentUserId = user?.userId || user?.USER_ID || user?.id;
@@ -312,7 +290,6 @@ function MyAccountBook() {
         }
     };
 
-    // 삭제 처리
     const handleDelete = async (id) => {
         try {
             await transApi.deleteTrans(id);
@@ -325,21 +302,21 @@ function MyAccountBook() {
         }
     };
 
-    // 필터링
     const filteredTransactions = [...transactions]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .filter((t) => {
-            const matchesSearch = t.text.toLowerCase().includes(searchTerm.toLowerCase());
-            let matchesType = true;
-            if (showIncome || showExpense) {
-                if (showIncome && t.type?.toUpperCase() !== 'IN') matchesType = false;
-                if (showExpense && t.type?.toUpperCase() !== 'OUT') matchesType = false;
-            }
-            let matchesDate = true;
-            if (startDate && t.date < startDate) matchesDate = false;
-            if (endDate && t.date > endDate) matchesDate = false;
-            return matchesSearch && matchesType && matchesDate;
-        });
+         .filter((t) => {
+        const matchesSearch = t.text.toLowerCase().includes(searchTerm.toLowerCase());
+        let matchesType = true;
+        if (showIncome || showExpense) {
+            if (showIncome && t.type?.toUpperCase() !== 'IN') matchesType = false;
+            if (showExpense && t.type?.toUpperCase() !== 'OUT') matchesType = false;
+        }
+        
+        let matchesDate = true;
+        if (startDate && t.date < startDate) matchesDate = false;
+        if (endDate && t.date > endDate) matchesDate = false;
+        
+        return matchesSearch && matchesType && matchesDate;
+    });
 
     const handleIncomeToggle = () => {
         if (showIncome) { setShowIncome(false); } 
@@ -352,7 +329,7 @@ function MyAccountBook() {
     };
 
     return (
-        <div className="card">
+        <div className={styles.card}>
             <TransactionModal 
                 isOpen={isModalOpen} 
                 type={modalType}
@@ -361,97 +338,109 @@ function MyAccountBook() {
                 onSave={handleSave}
                 onDelete={handleDelete}
             />
-            <div className='left-side'>
-                <div className='list-card'>
-                    <header><h2 className="header-title">💰 나의 가계부</h2></header>
+            <div className={styles['left-side']}>
+                <div className={styles['list-card']}>
+                    <header><h2 className={styles['header-title']}>💰 나의 가계부</h2></header>
 
-                    <div className="search-wrapper">
-                        <div className="filter-group">
-                            <label className="checkbox-label">
-                                <input type="checkbox" checked={showIncome} onChange={handleIncomeToggle} />
-                                <span className="label-text income">수입</span>
+                    <div className={styles['search-wrapper']}>
+                        <div className={styles['filter-group']}>
+                            <label className={styles['checkbox-label']}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={showIncome} 
+                                    onChange={handleIncomeToggle} 
+                                />
+                                <span className={`${styles['label-text']} ${styles.income}`}>수입</span>
                             </label>
-                            <label className="checkbox-label">
-                                <input type="checkbox" checked={showExpense} onChange={handleExpenseToggle} />
-                                <span className="label-text expense">지출</span>
+                            <label className={styles['checkbox-label']}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={showExpense} 
+                                    onChange={handleExpenseToggle} 
+                                />
+                                <span className={`${styles['label-text']} ${styles.expense}`}>지출</span>
                             </label>
                         </div>
-                        <input type="text" className="search-input" placeholder="내역 검색" 
-                            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        
+                        <input 
+                            type="text" 
+                            className={styles['search-input']} 
+                            placeholder="내역 검색" 
+                            value={searchTerm} 
+                            onChange={(e) => setSearchTerm(e.target.value)} 
+                        />
                     </div>
 
-                    <div className="list-header">
-                        <h3 className="section-title">거래 내역</h3>
-                        <div className="date-filter-wrapper">
-                            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="date-input" />
-                            <span className="date-separator">~</span>
-                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="date-input" />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: '700' }}>거래 내역</h3>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ddd' }} />
+                            <span>~</span>
+                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ddd' }} />
                         </div>
                     </div>
                     
-                    <div className="list-container">
+                    <div style={{ flex: 1, overflowY: 'auto', borderTop: '2px solid #2d3436' }}>
                         {filteredTransactions.length > 0 ? (
                             filteredTransactions.map((t, index) => (
                                 <div 
                                     key={t.id || index} 
-                                    className="list-item" 
+                                    className={styles['list-item']} 
                                     onClick={() => openViewModal(t)} 
-                                    style={{cursor: 'pointer'}} 
+                                    style={{ 
+                                        display: 'flex', justifyContent: 'space-between', padding: '15px 0', borderBottom: '1px solid #eee', cursor: 'pointer' 
+                                    }} 
                                 >
-                                    <div className="item-info">
-                                        <span className="item-text">{t.text}</span>
-                                        <span className="item-date">{t.date}</span>
+                                    <div>
+                                        <span className={styles['item-text']}>{t.text}</span>
+                                        <span className={styles['item-date']}>{t.date}</span>
                                     </div>
                                     
-                                    <div className="item-right">
-                                        <span className={`item-amount ${t.type?.toUpperCase() === 'IN' ? 'income' : 'expense'}`}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                        <span className={`${styles['item-amount']} ${t.type?.toUpperCase() === 'IN' ? styles.income : styles.expense}`}>
                                             {t.type?.toUpperCase() === 'IN' ? '+' : '-'}
                                             {Math.abs(t.amount).toLocaleString()}원
                                         </span>
 
-                                        <div className="item-actions">
-                                            <button className="action-btn" onClick={(e) => openEditModal(e, t)}>수정</button>
-                                            <button className="action-btn del-btn" onClick={(e) => openDeleteModal(e, t)}>삭제</button>
+                                        <div className={styles['item-actions']}>
+                                            <button className={styles['action-btn']} onClick={(e) => openEditModal(e, t)}>수정</button>
+                                            <button className={`${styles['action-btn']} ${styles['del-btn']}`} onClick={(e) => openDeleteModal(e, t)}>삭제</button>
                                         </div>
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <p className="no-data">표시할 내역이 없습니다.</p>
+                            <p style={{ textAlign: 'center', color: '#999', padding: '40px 0' }}>표시할 내역이 없습니다.</p>
                         )}
                     </div>
                 </div>
-                <button className="add-btn" onClick={() => navigate('/mypage/expenseForm')}>새 내역 추가하기</button>
+                <button className={styles['add-btn']} onClick={() => navigate('/mypage/expenseForm')}>새 내역 추가하기</button>
             </div>
 
-            <div className='right-side'>
-                <div className="analysis-dashboard">
-                    
-                    <div className="dashboard-control-panel">
-                        <button onClick={handlePrevMonth} className="nav-btn">◀</button>
-                        <h3 className="dashboard-title">
-                            📊 {currentYear}년 {currentMonth}월 분석
-                        </h3>
-                        <button onClick={handleNextMonth} className="nav-btn">▶</button>
+            <div className={styles['right-side']}>
+            
+                <div className={styles['month-selector-container']}>
+                    <div className={styles['month-nav-group']}>
+                        <button onClick={handlePrevMonth} className={styles['nav-btn']}>◀</button>
+                        <span style={{ fontWeight: '800', fontSize: '1.2rem' }}>{currentYear}년 {currentMonth}월 분석</span>
+                        <button onClick={handleNextMonth} className={styles['nav-btn']}>▶</button>
                     </div>
-
-                    {/* 차트 영역 */}
-                    <div className="dashboard-chart-group">
-                        <div className="chart-wrapper">
-                            <ExpenseChart transactions={transactions} currentDate={currentDate} />
-                        </div>
-                        <br/>
-                        <div className="chart-wrapper">
-                            <MonthlyTrendChart transactions={transactions} currentDate={currentDate} />
-                        </div>
-                        <br/>
-                    </div>
-
                 </div>
+                        ddd
+                <div className={styles['chart-card']}>
+                    <div className={styles['chart-main-container']}>
+                        <ExpenseChart transactions={transactions} currentDate={currentDate} />
+                    </div>
+                </div>
+
+                <div className={styles['chart-card']}>
+                    <div className={styles['chart-main-container']}>
+                        <MonthlyTrendChart transactions={transactions} currentDate={currentDate} />
+                    </div>
+                </div>
+
             </div>
-
         </div>
-
     );
 }
 
