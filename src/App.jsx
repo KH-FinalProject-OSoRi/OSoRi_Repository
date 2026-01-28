@@ -13,10 +13,14 @@ import RegisterPage from './features/auth/pages/RegisterPage';
 import LoginPage from './features/auth/pages/LoginPage';
 import ExpenseForm from './features/auth/pages/ExpenseForm';
 import MyAccountBook from "./features/auth/pages/MyAccountBook";
-
+import useAlarmSocket from './features/alarm/useAlarmSocket';
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const storedData = JSON.parse(localStorage.getItem("user"));
+  const currentId = storedData ? storedData.loginId : null;
+  const { notifications } = useAlarmSocket(currentId);
+  
   return (
     <Router>
       <Routes>
@@ -33,7 +37,7 @@ function App() {
           path="/mypage"
           element={
             <PrivateRoute>
-              <MyPageLayout />
+              <MyPageLayout notifications={notifications}/>
             </PrivateRoute>
           }
         >

@@ -4,6 +4,7 @@ import "./MyPage.css";
 import { useAuth } from "../../../context/AuthContext";
 import { groupBudgetApi } from "../../../api/groupBudgetApi";
 import AddGroupBudgetModal from "../../group/AddGroupBudgetModal";
+import useAlarmSocket from "../../alarm/useAlarmSocket";
 
 const MyPage = () => {
   const { user } = useAuth();
@@ -14,32 +15,124 @@ const MyPage = () => {
   const [groupBudgetList,setGroupBudgetList] =useState([]);
   const [isLoading,setIsLoading] = useState(true);
   const [isModalOpen,setIsModalOpen] =useState(false);
-  const navigate = useNavigate();
+  
+  const { notifications, setNotifications } = useAlarmSocket(user?.loginId);
+  const [isNotiOpen, setIsNotiOpen] = useState(false);
 
+  //그룹 가계부 리스트 호출
   const fetchGroupBudgetList = async()=>{
-      setIsLoading(true);
-      try{
-        const data = await groupBudgetApi.groupBudgetList(user?.userId);
-        setGroupBudgetList(data);
-      }catch(error){
-        console.error('그룹가계부 목록 조회 실패',error);
-        alert('그룹가계부 목록을 조회할 수 없습니다.');
-        navigate('/mypage');
-      }finally{
-        setIsLoading(false);
-      }
+    if (!user?.userId) return;
+
+    setIsLoading(true);
+    try{
+      const data = await groupBudgetApi.groupBudgetList(user?.userId);
+
+      setGroupBudgetList(data);
+    }catch(error){
+      console.error('그룹가계부 목록 조회 실패',error);
+      alert('그룹가계부 목록을 조회할 수 없습니다.');
+    }finally{
+      setIsLoading(false);
     }
+  };
+
+  //안읽은 알림 목록 조회
+  const fetchNotiList = async(loginId)=>{
+    setIsLoading(true);
+    try{
+      const data = await groupBudgetApi.notiList(loginId);
+
+      setNotifications([...data].reverse());
+    }catch(error){
+      console.error('안읽은 알림 목록 조회 실패',error);
+    }finally{
+      setIsLoading(false);
+    }
+  }
 
   useEffect(()=>{
     fetchGroupBudgetList();
+    navigate('/mypage');
   },[navigate]);
+
+  useEffect(()=>{
+    fetchNotiList(user?.loginId);
+  },[]);
+
+  // 수락/거절 처리 함수
+  const handleInviteAction = async (noti, status) => {
+    console.log("handleInviteAction noti : ",noti.notiId);
+    try {
+      const params = {
+        status: status, // "ACCEPTED" / "REJECTED"
+        inviteNum: noti.inviteNum, // 그룹 가계부 ID
+        receiver: user?.userId    // 현재 사용자 ID
+      };
+
+      const response = await groupBudgetApi.updateNotiStatus(params);
+      if (response === 200) {
+        alert(status === "ACCEPTED" ? "초대를 수락했습니다." : "초대를 거절했습니다.");
+        
+        // 3. 처리가 완료된 알림을 화면에서 제거
+        setNotifications(prev => {
+          if (!prev) return []; // 방어 코드
+          return prev.filter(n => n.notiId !== noti.notiId);
+        });
+        
+        await groupBudgetApi.updateNotiIsRead(noti.notiId);
+        
+        // 수락했을 경우 그룹 가계부 목록을 새로고침
+        if (status === "ACCEPTED") {
+          fetchGroupBudgetList();
+        }
+      }
+    } catch (error) {
+      console.error("초대 상태 변경 실패", error);
+      alert("처리에 실패했습니다.");
+    }
+  };
 
 
   return (
     <main className="fade-in">
       <header className="content-header">
         <h2>마이페이지</h2>
-        <p className="welcome-text">{displayName} 님 환영합니다.</p>
+        <div className="content-header2">
+          <p className="welcome-text">{displayName} 님 환영합니다.</p>
+          {/* 알림 아이콘  */}
+          <div className="alarm-wrapper" onClick={() => setIsNotiOpen(!isNotiOpen)} style={{ cursor: 'pointer', position: 'relative' }}>
+            <img className="alarm" src="https://img.icons8.com/?size=100&id=82779&format=png&color=000000"/>
+            {notifications.length > 0 && <span className="unread"></span>}
+          </div>
+        </div>
+
+        {/* 실시간 알림 목록 드롭다운 */}
+          {isNotiOpen && (
+            <div className="noti-dropdown">
+              <h4 style={{textAlign:"center",marginBottom:"0"}}>알림 목록</h4>
+              {notifications.length === 0 ? (
+                <p className="empty-msg">새로운 알림이 없습니다.</p>
+              ) : (
+                <ul className="sidebar-menu">
+                  {notifications.map((noti) => (
+                    <li key={noti.notiId} className="noti-item">
+                      <p className="noti-text">{noti.message}</p>
+                      
+                      {/* 알림 타입이 'INVITE'일 때만 수락/거절 버튼 노출 */}
+                      {noti.ntype === 'INVITE' ? (
+                        <div className="noti-btns">
+                          <button className="accept-btn" onClick={() => handleInviteAction(noti, "ACCEPTED")}>수락</button>
+                          <button className="reject-btn" onClick={() => handleInviteAction(noti, "REJECTED")}>거절</button>
+                        </div>
+                      ) : (
+                        <span className="noti-label">{noti.message}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
       </header>
 
       <section className="profile-fixed-card">
@@ -51,14 +144,13 @@ const MyPage = () => {
               <p>{email}</p>
             </div>
           </div>
-          <div className="alarm" style={{ border: "3px solid lightgray" }}>🔔</div>
         </div>
       </section>
 
       <div className="account-book-grid">
         <div className="info-card"
           onClick={() =>navigate("/mypage/myAccountBook")} 
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", maxHeight:"200px" }}
         >
           <div className="card-title-area">
             <h3>🏠 내 가계부</h3>
@@ -77,7 +169,7 @@ const MyPage = () => {
           <div className="account-detail">
             <ul className="sidebar-menu">
               {groupBudgetList.length === 0 &&
-                <li>
+                <li style={{paddingBottom:'20px'}}>
                   관리중인 그룹 가계부가 없습니다.
                 </li>
               }
@@ -101,7 +193,8 @@ const MyPage = () => {
             </ul>
             <button 
                 onClick={() => setIsModalOpen(true)}
-                className="alarm"
+                className="menu-item"
+                style={{display:"block", marginTop:"20px", textAlign:"center"}}
             >
              새로운 가계부 만들기
             </button>

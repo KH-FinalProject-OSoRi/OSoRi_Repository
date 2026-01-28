@@ -1,4 +1,5 @@
 import "./main.css";
+import React from "react";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // [CHANGED] AuthContext 사용
@@ -113,12 +114,12 @@ const MainPage = () => {
             className="feature-image-small"
             style={{ margin: "40px auto 0", background: "#FFEBEE" }}
           >
-            <div style={{ fontSize: "4rem" }}></div>
+            <div style={{ fontSize: "4rem" }}>📈</div>
           </div>
 
           <div className="badge-display-inline">
-            <div className="badge-item-small"> 소비패턴 분석</div>
-            <div className="badge-item-small"> 뱃지 획득</div>
+            <div className="badge-item-small">📊 소비패턴 분석</div>
+            <div className="badge-item-small">🏆 뱃지 획득</div>
           </div>
         </div>
       </section>
@@ -148,12 +149,12 @@ const MainPage = () => {
             className="feature-image-small"
             style={{ margin: "40px auto 0", background: "#E8F5E9" }}
           >
-            <div style={{ fontSize: "4rem" }}></div>
+            <div style={{ fontSize: "4rem" }}>👨‍👩‍👧‍👦</div>
           </div>
 
           <div className="badge-display-inline">
-            <div className="badge-item-small"> 공동 관리</div>
-            <div className="badge-item-small"> 챌린지 뱃지</div>
+            <div className="badge-item-small">🤝 공동 관리</div>
+            <div className="badge-item-small">🏅 챌린지 뱃지</div>
           </div>
         </div>
       </section>
@@ -182,7 +183,7 @@ const MainPage = () => {
             className="notification-mockup-main"
             style={{ margin: "40px auto 0" }}
           >
-            <div style={{ fontSize: "4rem" }}></div>
+            <div style={{ fontSize: "4rem" }}>🔔</div>
             <p
               style={{
                 margin: "15px 0 0",
@@ -199,19 +200,19 @@ const MainPage = () => {
       <section className="feature-section">
         <div className="card-grid">
           <div className="feature-card">
-            <span className="icon-box"></span>
+            <span className="icon-box">💰</span>
             <h3>똑똑한 자산 관리</h3>
             <p>내 소비 내역 데이터를 한눈에 확인하세요.</p>
           </div>
 
           <div className="feature-card">
-            <span className="icon-box"></span>
+            <span className="icon-box">📅</span>
             <h3>지출 캘린더</h3>
             <p>언제 어디서 돈을 썼는지 달력으로 한눈에 파악한다.</p>
           </div>
 
           <div className="feature-card">
-            <span className="icon-box"></span>
+            <span className="icon-box">🛡️</span>
             <h3>안심 보안 서비스</h3>
             <p>강력한 보안 기술로 소중한 정보를 안전하게 보호한다.</p>
           </div>

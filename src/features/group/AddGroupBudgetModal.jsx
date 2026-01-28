@@ -23,7 +23,7 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
         const {name,value}=e.target;
         setFormData((prev)=>({
             ...prev,
-            [name]:value
+            [name]:value 
         }));
     };
 
@@ -137,9 +137,11 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
                                onChange={(e)=>setIsbAmount(e.target.checked)}/>
                         <label htmlFor="isbAmount" style={{margin: 0}}>예산 설정하기</label>
                     </div>
+
                     <input type="number" 
                            placeholder="예산 금액 설정" 
-                           name="bAmount" value={formData.bAmount} 
+                           name="bAmount" 
+                           value={formData.bAmount} 
                            onChange={handleChange} 
                            disabled={!isbAmount}
                            style={{ backgroundColor: !isbAmount ? '#f5f5f5' : 'white' }}
@@ -160,7 +162,7 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
                     {memList.length > 0 && (
                         <ul>
                             {memList.map((mem)=>(
-                                <li key={mem.userId} onClick={()=>handleSelectMember(mem)}>
+                                <li key={mem.userId} style={{cursor:"pointer"}} onClick={()=>handleSelectMember(mem)}>
                                     {mem.email} ({mem.loginId}) <span>[추가]</span>
                                 </li>
                             ))}

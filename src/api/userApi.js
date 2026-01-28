@@ -31,7 +31,7 @@ export const userApi = {
 
   // 비밀번호 변경
   changePassword: ({ currentPassword, newPassword }) =>
-    apiFetch("/user/password", {
+    apiFetch("/user/updatePassword", {
       method: "PATCH",
       body: { currentPassword, newPassword },
     }),
@@ -40,7 +40,7 @@ export const userApi = {
   // 예시: POST /osori/user/withdraw
   // (DELETE + body는 서버에서 막는 경우가 많아서 POST로 잡아둠)
   withdraw: ({ password }) =>
-    apiFetch("/user/withdraw", {
+    apiFetch("/user/delete", {
       method: "POST",
       body: { password },
     }),

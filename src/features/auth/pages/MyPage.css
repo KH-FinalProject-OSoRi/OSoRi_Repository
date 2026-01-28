@@ -31,10 +31,9 @@
   display:flex;
   justify-content: center;
   flex-direction: column;
-  
 }
 
-.menu-item, .alarm {
+.menu-item {
   padding: 15px 20px;
   margin-bottom: 8px;
   border-radius: 12px;
@@ -58,17 +57,114 @@
 }
 
 .alarm{
-  display:block;
-  background-color: white;
   border: 3px solid lightgray;
-  align-items: center;
-  text-align: center;
+  border-radius: 50%;
+  width:30px;
+  margin:0px;
+  padding:20px;
+  position: relative;
 }
 
 .alarm:hover{
-  background-color: #f8f9fa;
-  border: 3px solid lightgray;
+  background-color: #c1c1c1;
   color: #333;
+}
+
+.unread{
+  content: '';
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  border: 5px solid white; 
+  z-index: 10;
+}
+
+/* 알림 드롭다운 스타일 */
+.noti-dropdown {
+  position: absolute;
+  top: 240px;
+  right: 40px;
+  width: 400px;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.noti-dropdown::-webkit-scrollbar {
+  width: 6px; /* 스크롤바 두께 */
+}
+
+.noti-item{
+  padding: 12px 16px;
+  border-bottom: 1px solid #f9f9f9;
+  transition: background-color 0.2s;
+}
+
+.noti-item:last-child {
+  border-bottom: none;
+}
+
+.noti-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* 수락/거절 버튼 그룹 */
+.noti-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.noti-btns button {
+  flex: 1;
+  padding: 6px 0;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border:2px solid lightgray;
+}
+
+.accept-btn, .reject-btn {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.accept-btn:hover {
+  background-color: #0066ff;
+  color: white;
+}
+
+.reject-btn:hover {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+
+.noti-label {
+  font-size: 11px;
+  color: #aaa;
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 30px 0;
+  color: #999;
+  font-size: 14px;
 }
 
 .mypage-content {
@@ -79,7 +175,14 @@
 }
 
 .content-header {
-  margin-bottom: 30px;
+  padding:30px;
+  padding-top:0px;
+}
+
+.content-header2 {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .content-header h2 {

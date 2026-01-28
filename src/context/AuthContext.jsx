@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { authApi } from "../api/authApi"; // [CHANGED] 로그아웃 API 호출하려고 추가
+import React from "react"
 
 const AuthContext = createContext(null);
 
