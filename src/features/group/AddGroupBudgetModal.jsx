@@ -97,7 +97,7 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
 
             //새로 생성된 그룹가계부
             const newGroup = await groupBudgetApi.create(submitData);
-
+            
             if(newGroup && newGroup.groupbId){
                 const addMemPromise = selectedMemList.map(mem=>{
                     return groupBudgetApi.addMemList({

@@ -51,7 +51,7 @@ export default function LoginPage() {
       if (form.remember) localStorage.setItem("savedLoginId", loginId);
       else localStorage.removeItem("savedLoginId");
 
-      // ============================================================
+      // =======================================================
       // [CHANGED] ✅ status === "H" 이면:
       // 1) 서버가 내려준 message(alert) 띄움
       // 2) 프로필 설정으로 강제 이동
@@ -74,7 +74,7 @@ export default function LoginPage() {
   return (
     <div className={styles.wrap}>
       <Link to="/" className={styles.title}>
-        OSoRi
+        OSORI
       </Link>
 
       <form className={styles.form} onSubmit={onSubmit}>
@@ -129,9 +129,29 @@ export default function LoginPage() {
         </div>
       </div>
 
+      {/* [BEFORE] 하단 버튼 2개(아이디/비밀번호 찾기 미구현) */}
+      {/*
+            <div className={styles.bottomRow}>
+              <button className={styles.subBtn} type="button">
+                아이디/비밀번호 찾기
+              </button>
+              <button className={styles.subBtn} type="button" onClick={() => navigate("/register")}>
+                회원가입
+              </button>
+            </div>
+      */}
+
+      {/* [CHANGED] 하단 버튼 3개: 아이디 찾기 / 비밀번호 찾기 / 회원가입 */}
       <div className={styles.bottomRow}>
-        <button className={styles.subBtn} type="button">
-          아이디/비밀번호 찾기
+        <button className={styles.subBtn} type="button" onClick={() => navigate("/find-id")}>
+          아이디 찾기
+        </button>
+        <button
+          className={styles.subBtn}
+          type="button"
+          onClick={() => navigate("/find-password")}
+        >
+          비밀번호 찾기
         </button>
         <button className={styles.subBtn} type="button" onClick={() => navigate("/register")}>
           회원가입

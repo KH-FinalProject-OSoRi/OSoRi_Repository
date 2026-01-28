@@ -9,6 +9,7 @@ import useAlarmSocket from "../../alarm/useAlarmSocket";
 const MyPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const displayName = user?.nickName || user?.nickname || user?.userName || "회원";
   const email = user?.email || "";
 
@@ -21,20 +22,20 @@ const MyPage = () => {
 
   //그룹 가계부 리스트 호출
   const fetchGroupBudgetList = async()=>{
-    if (!user?.userId) return;
+      if (!user?.userId) return;
+      setIsLoading(true);
+      try{
+        const data = await groupBudgetApi.groupBudgetList(user?.userId);
 
-    setIsLoading(true);
-    try{
-      const data = await groupBudgetApi.groupBudgetList(user?.userId);
-
-      setGroupBudgetList(data);
-    }catch(error){
-      console.error('그룹가계부 목록 조회 실패',error);
-      alert('그룹가계부 목록을 조회할 수 없습니다.');
-    }finally{
-      setIsLoading(false);
+        setGroupBudgetList(data);
+      }catch(error){
+        console.error('그룹가계부 목록 조회 실패',error);
+        alert('그룹가계부 목록을 조회할 수 없습니다.');
+        navigate('/mypage');    
+      }finally{
+        setIsLoading(false);
+      }
     }
-  };
 
   //안읽은 알림 목록 조회
   const fetchNotiList = async(loginId)=>{
@@ -179,7 +180,7 @@ const MyPage = () => {
                   <li key={gb.groupbId}>
                     <NavLink
                       to={{
-                            pathname: "/mypage/groupBudget",
+                            pathname: "/mypage/groupAccountBook",
                             search: `?groupId=${gb?.groupbId}`,
                           }}
                       className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}

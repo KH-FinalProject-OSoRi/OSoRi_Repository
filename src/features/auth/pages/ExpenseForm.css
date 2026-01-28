@@ -2,7 +2,7 @@
   width: 100%;
   min-height: calc(100vh - 70px);
   background-color: #f8f9fa;
-  padding: 10px 20px 50px 20px; 
+  padding: 0px 20px 50px 20px; 
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -20,6 +20,7 @@
   padding: 60px;
   box-sizing: border-box;
   animation: slideUp 0.5s ease-out;
+  margin-top: 0;
 }
 
 @keyframes slideUp {
