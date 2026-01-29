@@ -104,7 +104,7 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
                             </div>
                             <div style={{ gridColumn: 'span 2' }}>
                                 <label className="modal-label">메모</label>
-                                <input type="text" name="memo" value={formData.memo} className="modal-input" readOnly={isViewMode} onChange={handleChange} placeholder="메모를 입력하세요" />
+                                <input type="text" name="memo" value={formData.memo} className="modal-input" readOnly={isViewMode} onChange={handleChange} placeholder={isViewMode ? "" : "메모를 입력하세요"} />
                             </div>
                         </div>
                     </>

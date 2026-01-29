@@ -24,7 +24,7 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
-
+  const [recentItems, setRecentItems] = useState([]);
   const [formData, setFormData] = useState({
     type: '지출',
     transDate: '',      
@@ -33,6 +33,36 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
     category: EXPENSE_CATEGORIES[0], 
     memo: ''
   });
+
+  useEffect(() => {
+    const fetchRecent = async () => {
+      if (user?.userId) {
+        try {
+          const data = await transApi.recentTrans(user.userId);
+          setRecentItems(data || []);
+        } catch (error) {
+          console.error("최근 내역 로드 실패", error);
+        }
+      }
+    };
+    fetchRecent();
+  }, [user?.userId]);
+
+  const handleQuickFill = (item) => {
+    const isIncome = item.type === 'IN';
+    const typeLabel = isIncome ? '수입' : '지출';
+    const categories = isIncome ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+
+    setCurrentCategories(categories);
+    setFormData({
+      ...formData,
+      type: typeLabel,
+      title: item.title,
+      originalAmount: item.originalAmount,
+      category: categories.includes(item.category) ? item.category : categories[0],
+      // 날짜는 비워두기
+    });
+  };
 
   // 그룹 멤버 로드
   useEffect(() => {
@@ -205,6 +235,25 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
             <button type="button" className={`type-btn ${formData.type === '지출' ? 'active expense' : ''}`} onClick={() => handleTypeToggle('지출')}>지출</button>
           </div>
         </div>
+
+        {mode === 'personal'&& recentItems.length > 0 && (
+          <div className="recent-container">
+            <p className="recent-title">⚡ 최근 내역으로 빠른 입력</p>
+            <div className="recent-list">
+              {recentItems.map((item, index) => (
+                <button 
+                  key={index} 
+                  type="button" 
+                  className={`recent-item-chip ${item.type === 'IN' ? 'income' : 'expense'}`}
+                  onClick={() => handleQuickFill(item)}
+                >
+                  <span className="recent-item-name">{item.title}</span>
+                  <span className="recent-item-price">{Number(item.originalAmount).toLocaleString()}원</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {formData.type === '지출' && (
           <div className="ocr-upload-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop} onClick={() => fileInputRef.current.click()}>

@@ -55,6 +55,11 @@ export const transApi = {
         const response = await api.get(`/trans/groupInfo/${groupId}`);
         return response.data;
     },
+
+    recentTrans: async (userId) =>{
+        const response = await api.get(`/trans/recentTrans/${userId}`);
+        return response.data;
+    }
 }
 
 export default transApi;

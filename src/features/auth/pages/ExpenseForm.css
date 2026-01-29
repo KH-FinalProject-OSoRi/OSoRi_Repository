@@ -328,3 +328,74 @@ textarea.input-field {
     color: #ff4757;              
     font-weight: 800;
 }
+
+.recent-container {
+  margin: 10px 0 20px 0;
+  width: 100%; 
+}
+
+.recent-list {
+  display: flex;
+  gap: 8px; 
+  width: 100%;
+  justify-content: space-between; 
+}
+
+.recent-item-chip {
+  flex: 1; 
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 5px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.recent-item-chip.income {
+  border-left: 4px solid #3b82f6;
+  background-color: #f0f7ff;
+}
+.recent-item-chip.income .recent-item-price {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.recent-item-chip.income:hover,
+.recent-item-chip.income:focus {
+  border: 2px solid #1d4ed8 !important;
+  outline: none;
+}
+
+.recent-item-chip.expense {
+  border-left: 4px solid #ef4444;
+  background-color: #fff5f5;
+}
+.recent-item-chip.expense .recent-item-price {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.recent-item-chip.expense:hover,
+.recent-item-chip.expense:focus {
+  border: 2px solid #b91c1c !important;
+  outline: none;
+}
+
+.recent-item-name {
+  font-size: 0.85rem;
+  color: #333;
+  margin-bottom: 2px;
+  width: 95%;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-item-price {
+  font-size: 0.8rem;
+}
