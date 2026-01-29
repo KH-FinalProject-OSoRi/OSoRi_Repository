@@ -428,7 +428,6 @@ function MyAccountBook() {
                         <button onClick={handleNextMonth} className={styles['nav-btn']}>▶</button>
                     </div>
                 </div>
-
                 <div className={styles['chart-card']}>
                     <div className={styles['chart-main-container']}>
                         <ExpenseChart transactions={transactions} currentDate={currentDate} />

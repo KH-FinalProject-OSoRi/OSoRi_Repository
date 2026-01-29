@@ -3,6 +3,9 @@ import './GroupAccountBook.css';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import transApi from '../../api/transApi';
+import GroupBudgetGauge from '../Util/GroupBudgetGaugeChart';
+import MemberChart from '../Util/MemberChart';
+//import styles from '../auth/pages/MyAccountBook.module.css'
 
 const EXPENSE_CATEGORIES = [
   "식비", "생활/마트", "쇼핑", "의료/건강", 
@@ -137,6 +140,8 @@ function GroupAccountBook() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState('view'); 
     const [selectedItem, setSelectedItem] = useState(null);
+
+    const [currentDate, setCurrentDate] = useState(new Date());
 
     const [groupInfo, setGroupInfo] = useState({
         title: '그룹 가계부',
@@ -277,6 +282,7 @@ function GroupAccountBook() {
         .reduce((acc, cur) => acc + Number(cur.amount), 0);
 
     return (
+        <>
         <div className="card">
             <TransactionModal 
                 isOpen={isModalOpen} type={modalType} transaction={selectedItem}
@@ -377,6 +383,27 @@ function GroupAccountBook() {
             </div>
             <button className="add-btn" onClick={() => navigate(`/mypage/group/${currentGroupId}/expenseForm`)}>새 내역 추가하기</button>
         </div>
+        <div>
+            {/* <div className={styles['month-selector-container']}>
+                <div className={styles['month-nav-group']}>
+                    <button onClick={handlePrevMonth} className={styles['nav-btn']}>◀</button>
+                    <span style={{ fontWeight: '800', fontSize: '1.2rem' }}>{currentYear}년 {currentMonth}월 분석</span>
+                    <button onClick={handleNextMonth} className={styles['nav-btn']}>▶</button>
+                </div>
+            </div> */}
+            <GroupBudgetGauge
+                transactions={transactions} 
+                groupbId={currentGroupId} 
+                monthlyBudget={groupInfo.budget} 
+                currentDate={currentDate}
+            />
+            <MemberChart
+                transactions={transactions} 
+                groupbId={currentGroupId} 
+                currentDate={currentDate}
+            />
+        </div>
+        </>
     );
 }
 
