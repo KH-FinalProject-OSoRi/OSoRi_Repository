@@ -4,7 +4,6 @@ import './ExpenseForm.css';
 import transApi from '../../../api/transApi';
 import { useAuth } from '../../../context/AuthContext';
 
-
 const EXPENSE_CATEGORIES = [
   "식비", "생활/마트", "쇼핑", "의료/건강", 
   "교통", "문화/여가", "교육", "기타"
@@ -19,6 +18,12 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
   const {user} = useAuth();
 
   const navigate = useNavigate();
+
+  //멤버찾기
+  const [isSplitActive, setIsSplitActive] = useState(false);
+  const [searchNickname, setSearchNickname] = useState(''); 
+  const [memList, setMemList] = useState([]);
+  const [selectedMemList, setSelectedMemList] = useState([]);
 
    // 현재 모드에 따라 보여줄 카테고리 리스트 결정
   const [currentCategories, setCurrentCategories] = useState(EXPENSE_CATEGORIES);
@@ -35,6 +40,42 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
     category: EXPENSE_CATEGORIES[0], 
     memo: ''
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchKeyword.trim().length >= 1) { 
+        fetchMemList();
+      } else {
+        setMemList([]);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchNickname]);
+
+  const fetchMemList = async () => {
+    try {
+      // 닉네임 검색 API 호출
+      const data = await groupBudgetApi.searchMem(searchNickname);
+      // 자신은 제외
+      setMemList(Array.isArray(data) ? data.filter(mem => mem.userId !== user?.userId) : []);
+    } catch (error) {
+      console.error('멤버 조회 실패', error);
+    }
+  };
+
+  const handleSelectMember = (targetUser) => {
+    if (selectedMemList.some(mem => mem.userId === targetUser.userId)) {
+      alert("이미 추가된 멤버입니다.");
+      return;
+    }
+    setSelectedMemList(prev => [...prev, targetUser]);
+    setSearchKeyword("");
+    setMemList([]);
+  };
+
+  const handleDeleteMember = (delId) => {
+    setSelectedMemList(prev => prev.filter(mem => mem.userId !== delId));
+  };
 
   const handleTypeToggle = (type) => {
     const newCategories = type === '수입' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
@@ -153,6 +194,8 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
     }
 
     try {
+      const isIncome = formData.type === '수입';
+      const transType = isIncome ? 'IN' : 'OUT';
 
       // 그룹 모드
       if (mode === 'group') {
@@ -162,18 +205,42 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
         }
         
         // 그룹 API 호출
-        await transApi.groupTransSave({ ...formData,groupId: groupId, userId: user?.userId ,type: formData.type === '수입' ? 'IN' : 'OUT'})
+        await transApi.groupTransSave({ ...formData, userId: user?.userId ,groupBId: Number(groupId),type: formData.type === '수입' ? 'IN' : 'OUT',nickName: user?.nickname || ""})
 
+        if (isSplitActive && selectedMemList.length > 0) {
+
+        const totalPeople = selectedMemList.length + 1;
+        const splitAmount = Math.floor(Number(formData.originalAmount) / totalPeople);
+        const allMemberIds = [...selectedMemList.map(m => m.userId), user?.userId];
+
+        // 선택된 멤버 개인 가계부 저장 API 
+        const splitPromises = allMemberIds.map(targetId => {
+          return transApi.myTransSave({
+            ...formData,
+            title: `[그룹분할] ${formData.title}`, // 제목 수정
+            originalAmount: splitAmount,           // 분할된 금액
+            userId: targetId,                    // 해당 멤버의 ID
+            type: transType,
+            memo: `${user?.nickname}님이 등록한 그룹 지출 분할`
+          });
+        });
+
+        await Promise.all(splitPromises);
         
+      }
+
       } else {
 
         // 개인 모드
         await transApi.myTransSave({ ...formData, userId: user?.userId ,type: formData.type === '수입' ? 'IN' : 'OUT'})
 
       }
-
       alert("저장되었습니다!");
-      navigate('/mypage/myAccountBook');
+      if (mode === 'group') {
+          navigate(`/mypage/groupAccountBook?groupId=${groupId}`);
+      } else {
+          navigate('/mypage/myAccountBook');
+      }
 
     } catch (error) {
       console.error("Save Error:", error);
@@ -303,6 +370,50 @@ const ExpenseForm = ({ mode = 'personal', groupId }) => {
               onChange={handleChange}
             ></textarea>
           </div>
+
+          {/* 나눌 멤버 */}
+          {mode === 'group' && formData.type === '지출' && (
+            <div className="split-member-section">
+              <div className="checkbox-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                <input 
+                  type="checkbox" 
+                  id="splitActive" 
+                  checked={isSplitActive} 
+                  onChange={(e) => setIsSplitActive(e.target.checked)} 
+                />
+                <label htmlFor="splitActive" style={{ fontWeight: 'bold', cursor: 'pointer' }}>나눌 멤버 추가하기 (N빵)</label>
+              </div>
+
+              {isSplitActive && (
+                <div className="member-search-area" style={{ background: '#f8f9fa', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="검색할 멤버 닉네임 입력"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                  />
+                  {memList.length > 0 && (
+                    <ul className="search-results-list" style={{ listStyle: 'none', padding: '10px 0' }}>
+                      {memList.map((mem) => (
+                        <li key={mem.userId} onClick={() => handleSelectMember(mem)} style={{ padding: '8px', cursor: 'pointer', borderBottom: '1px solid #ddd' }}>
+                          {mem.nickname} ({mem.loginId}) <span style={{ color: '#00008B', fontWeight: 'bold' }}>[추가]</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="selected-members-badges" style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {selectedMemList.map((mem) => (
+                      <span key={mem.userId} className="member-badge" style={{ background: '#00008B', color: 'white', padding: '5px 12px', borderRadius: '20px', fontSize: '0.85rem' }}>
+                        {mem.loginId} 
+                        <button type="button" onClick={() => handleDeleteMember(mem.userId)} style={{ background: 'none', border: 'none', color: 'white', marginLeft: '5px', cursor: 'pointer' }}>×</button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <button type="submit" className={`submit-btn ${formData.type === '지출' ? 'expense-mode' : ''}`}>
             {formData.type === '수입' ? '수입 등록하기' : '지출 등록하기'}
