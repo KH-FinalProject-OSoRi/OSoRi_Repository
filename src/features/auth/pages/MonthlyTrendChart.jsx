@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import { predictNextMonthExpense, calculateProjectedExpense } from '../../Util/analytics';
+import styles from './MyAccountBook.module.css';
 
 // Chart.js 필수 구성 요소 등록
 ChartJS.register(
@@ -96,17 +97,17 @@ function MonthlyTrendChart({ transactions = [], currentDate }) {
     projectedData = [...projectedData, predictedAmount];
 
     summaryContent = (
-      <div className="chart-summary">
-        <p>이번 달 총 <strong>{projectedCurrent.toLocaleString()}원</strong> 지출 예상</p>
+      <div className={styles['chart-summary']} style={{textAlign : 'center'}}>
+        이번 달 총 <strong>{projectedCurrent.toLocaleString()}원</strong> 지출 예상 &nbsp;&nbsp;|&nbsp;&nbsp;
         {/*<p><span>({Math.round((currentMonthSpent / projectedCurrent) * 100)}% 진행 중)</span></p>*/}
-        <p style={{marginTop: '8px', fontSize: '0.8rem', color: '#888'}}>
-          다음 달 예상 지출: 약 {predictedAmount.toLocaleString()}원
-        </p>
+   
+         다음 달 예상 지출: 약 <strong>{predictedAmount.toLocaleString()}원</strong>
+        
       </div>
     );
   } else if (availableDataPoints < 2) {
     summaryContent = (
-      <p className="chart-summary" style={{ color: '#b2bec3' }}>
+      <p className={styles['chart-summary']} style={{ color: '#b2bec3' }}>
         데이터가 2개월 이상 쌓이면 지출 예측 리포트를 제공해 드려요!
       </p>
     );
@@ -130,6 +131,7 @@ function MonthlyTrendChart({ transactions = [], currentDate }) {
         borderColor: '#e74c3c',
         borderDash: [5, 5],
         pointRadius: 0,
+        pointHitRaduis : 15,
         fill: false,
         order: 1
       },
@@ -163,15 +165,31 @@ function MonthlyTrendChart({ transactions = [], currentDate }) {
   const options = {
     responsive: true,
     maintainAspectRatio: false, // 부모 높이에 맞춤
+    interaction : {
+      intersect : false,
+      mode : 'index',
+    },
     layout: {
-      padding: 0 // [중요] 내부 여백 0
+      padding: {
+      left: 40,   // 왼쪽 여백
+      right: 40,  // 오른쪽 여백
+      top: 0,     // 위쪽 (필요 없으면 0)
+      bottom: 0   // 아래쪽 (필요 없으면 0)
+    }
     },
     plugins: {
       legend: {
         display: true,
         position: 'bottom',
         labels: { boxWidth: 10, font: { size: 10 }, padding: 5 }
-      }
+      },
+
+      tooltip : {
+        enabled : true,
+        filter : function (tooltipItem) {
+          return tooltipItem.raw > 0;
+        },
+      },
     },
     scales: {
       y: {
@@ -187,10 +205,10 @@ function MonthlyTrendChart({ transactions = [], currentDate }) {
   };
 
   return (
-    <div className="chart-card">
+    <div className={styles['chart-card']}>
       <h3>📈 월별 지출 분석 및 예측</h3>
-      <div className='chart-main-container'>
-        <Chart type="bar" data={data} options={options} />
+      <div className={styles['chart-main-container']}>
+        <Chart data={data} options={options} />
       </div>
       {summaryContent}
     </div>

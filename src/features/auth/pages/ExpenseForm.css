@@ -239,3 +239,92 @@ textarea.input-field {
   .expense-card { padding: 30px 20px; }
   .section-title { font-size: 1.8rem; }
 }
+
+.split-section {
+    grid-column: 1 / -1;
+    border-top: 1px solid #eee;
+    padding-top: 30px;
+    margin-top: 10px;
+}
+
+.split-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.split-toggle-wrapper input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.split-toggle-label {
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #333;
+}
+
+.member-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 25px;
+    background-color: #fcfcfc;
+    border-radius: 18px;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 20px;
+}
+
+.member-item-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    transition: background 0.2s;
+}
+
+.member-item-label:hover {
+    background-color: #f0f4ff;
+}
+
+.member-nickname {
+    font-weight: 600;
+    color: #444;
+}
+
+.member-loginid {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.split-result-box {
+    background-color: transparent; 
+    padding: 10px 5px;           
+    border: none;              
+    text-align: left;            
+    margin-top: 15px;
+    margin-bottom: 10px;
+    animation: slideUp 0.3s ease-out;
+}
+
+.split-result-info {
+    font-size: 0.9rem;
+    color: #666;             
+}
+
+.split-result-amount {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 0;
+    font-weight: 700;
+}
+
+.split-result-amount strong {
+    color: #ff4757;              
+    font-weight: 800;
+}
