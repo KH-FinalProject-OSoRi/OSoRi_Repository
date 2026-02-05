@@ -1,14 +1,6 @@
-// src/features/auth/pages/FixedTransModal.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { fixedTransApi } from "../../../api/fixedTransApi";
-
-// [CHANGED] Budget 모달 CSS 제거
-// import "../../group/AddGroupBudgetModal.css";
-
-// [ADDED] FixedTransModal 전용 CSS
 import "./FixedTransModal.css";
-
-// [ADDED] MYTRANS 카테고리 옵션 동일
 const CATEGORY_OPTIONS = ["식비", "생활/마트", "쇼핑", "의료/건강", "교통", "문화/여가", "교육", "기타"];
 
 export default function FixedTransModal({

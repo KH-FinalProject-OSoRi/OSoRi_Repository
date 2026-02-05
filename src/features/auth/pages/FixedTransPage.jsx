@@ -1,4 +1,3 @@
-// src/features/auth/pages/FixedTransPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import "./MyPage.css";
 import { useAuth } from "../../../context/AuthContext";
@@ -37,7 +36,6 @@ export default function FixedTransPage() {
 
   useEffect(() => {
     fetchList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const openCreate = () => {

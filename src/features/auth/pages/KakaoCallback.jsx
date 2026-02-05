@@ -1,4 +1,3 @@
-/* KakaoCallback.jsx */
 import { useEffect, useRef } from "react"; // useRef 추가
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../../../api/http"; 
@@ -23,7 +22,16 @@ export default function KakaoCallback() {
               state: { kakaoEmail: res.email, kakaoNickname: res.nickName, providerUserId: res.providerUserId } 
             });
           } else {
-            login(res);
+            const status = res?.user?.status;
+
+            if(status==="H")  {
+              alert(res.message);
+            } else if(status==="N"){
+              alert(res.message);
+              <Link to="/login"></Link> // 탈퇴한 회원이면 강제로 로그인 화면으로 이동 
+            }
+            
+            login(res); // 일반 로그인 마냥 감
             navigate("/mypage", { replace: true });
           }
         })

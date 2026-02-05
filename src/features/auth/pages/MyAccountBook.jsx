@@ -45,6 +45,12 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+            if (name === 'amount' && value < 0) {
+                    alert("금액은 0보다 커야 합니다.");
+                    return;
+                }
+
             if (name === 'date' && value > today) {
             alert("미래 날짜는 선택할 수 없습니다.");
             setFormData(prev => ({ ...prev, [name]: today }));
@@ -125,7 +131,7 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
                             <input 
                                 type="number" name="amount" className={styles['modal-input']} 
                                 value={formData.amount} onChange={handleChange} 
-                                readOnly={isViewMode}
+                                readOnly={isViewMode} min="0"
                             />
                         </div>
                         <div>

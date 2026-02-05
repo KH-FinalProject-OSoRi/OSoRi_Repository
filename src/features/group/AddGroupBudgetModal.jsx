@@ -21,6 +21,11 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
 
     const handleChange = (e)=>{
         const {name,value}=e.target;
+        if (name === 'bAmount' && value < 0) {
+        alert("예산은 0보다 커야 합니다.");
+        return; 
+    }
+
         setFormData((prev)=>({
             ...prev,
             [name]:value 
@@ -151,6 +156,7 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
                             value={formData.bAmount} 
                             onChange={handleChange} 
                             disabled={!isbAmount}
+                            min="0"
                             style={{ backgroundColor: !isbAmount ? '#f5f5f5' : 'white' }}
                         />
                         

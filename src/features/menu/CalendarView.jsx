@@ -143,12 +143,13 @@ function CalendarView({ currentDate, setCurrentDate }) {
 };
 
   return (
-    <main className="fade-in">
+    <main className="fade-in calendar-page-container">
       <div className="calendar-page-container">
         <header className='content-header'>
           <h2>캘린더뷰</h2>
           <p>한 달의 소비 흐름, 오소리가 꼼꼼하게 기록하고 있어요.</p>
         </header>
+        
         <div className="ledger-filter-bar" style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
           <label className="filter-chip">
             <input type="checkbox" checked={isAllActive} onChange={toggleAll} />
