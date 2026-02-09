@@ -170,14 +170,15 @@ const MyPage = () => {
     <main className="fade-in">
       <header className="content-header">
         <h2>마이페이지</h2>
-        <div className="content-header2">
-          <p className="welcome-text">{displayName} 님 환영합니다.</p>
-          {/* 알림 아이콘  */}
-          <div className="alarm-wrapper" onClick={() => setIsNotiOpen(!isNotiOpen)} style={{ cursor: 'pointer', position: 'relative' }}>
-            <img className="alarm" src="https://img.icons8.com/?size=100&id=82779&format=png&color=000000"/>
-            {notifications.length > 0 && <span className="unread"></span>}
+
+        <p className="welcome-text">{displayName} 님 환영합니다.</p>
+
+          <div className="content-header2">
+            <div className="alarm-wrapper" onClick={() => setIsNotiOpen(!isNotiOpen)} style={{ cursor: 'pointer', position: 'relative' }}>
+              <img className="alarm" src="https://img.icons8.com/?size=100&id=82779&format=png&color=000000"/>
+              {notifications.length > 0 && <span className="unread"></span>}
+            </div>
           </div>
-        </div>
 
         {/* 실시간 알림 목록 드롭다운 */}
           {isNotiOpen && (
@@ -256,8 +257,8 @@ const MyPage = () => {
             <h3>🏠 내 가계부</h3>
           </div>
           <div className="account-detail">
-            <p className="amount-title">이번 달 지출 </p>
-            <p className="amount">{totalMonthlyExpenditure.toLocaleString()}원</p>
+            <p className="amount-title"  style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>이번 달 지출 </p>
+            <p className="amount" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>{totalMonthlyExpenditure.toLocaleString()}원</p>
             
             <ZScoreNotification transactions={transactions} currentDate={currentDate}/>
           </div>

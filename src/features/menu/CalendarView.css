@@ -2,43 +2,47 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 .content-header {
-  padding:30px;
-  padding-top:0px;
+  padding: 30px;
+  padding-top: 0px; 
+  margin-bottom: 10px;
 }
 
-.calender-title {
-    display: flex;             /* 한 줄로 배치 */
-    justify-content: space-between; /* 양 끝으로 밀어내기 */
-    align-items: center;       /* 세로 중앙 정렬 */
-    width: 100%;               /* 부모 너비 꽉 채우기 */
-    padding: 10px 0;           /* 위아래 여백 (필요시 조절) */
-    border-bottom: 1px solid #e9ecef; /* 제목 아래 구분선 (선택 사항) */
+.content-header2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .calendar-header {
-    margin: 0;                 /* 기본 마진 제거 */
-    font-size: 1.8rem;
-    font-weight: 800;
+  margin: 0;
+  margin-bottom: 1px !important;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.content-header p {
+  font-family: 'Pretendard', sans-serif !important;
+  font-weight: 600 !important;
+  color: #666 !important;
 }
 
 .calendar-summary {
-    font-size: 1rem;
-    color: #495057;
-    font-weight: 500;
-    margin : 0 0 15px 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+  font-size: 1rem !important;
+  color: #666 !important;    
+  font-weight: 600 !important;
+  margin: 6px 0 0; 
 }
-
 
 .calendar-page-container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding: 20px;
   width: 100%;
   height: calc(100vh - 0px);
   box-sizing: border-box;
   overflow: hidden;
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .ledger-filter-bar {
@@ -89,9 +93,9 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 100%;         /* 부모 높이에 딱 맞춤 */
+  height: 100%;         
   box-sizing: border-box;
-  overflow: hidden;     /* 🌟 내부 요소가 밖으로 나가는 것 방지 */
+  overflow: hidden;    
 }
 
 .detail-card {
@@ -109,13 +113,13 @@
   border: none !important;
   display: flex;
   flex-direction: column;
-  flex: 1;              /* 카드의 남은 높이를 다 가져감 */
-  min-height: 0;        /* 🌟 중요: 자식이 부모를 뚫고 나가는 현상 방지 */
+  flex: 1;             
+  min-height: 0;        
 }
 
 .react-calendar__month-view__days {
   display: grid !important;
-  grid-template-columns: repeat(7, 1fr); /* ⭐ 핵심 */
+  grid-template-columns: repeat(7, 1fr); 
   grid-auto-rows: 1fr;
   gap: 4px;
   height: 95%;

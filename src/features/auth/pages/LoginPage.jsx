@@ -29,7 +29,13 @@ export default function LoginPage() {
     } else if (savedLoginId) {
       setForm((p) => ({ ...p, loginId: savedLoginId, remember: true }));
     }
-  }, [location.state]);
+
+    const params = new URLSearchParams(location.search);
+    if (params.get("auth") === "false") {
+      alert("로그인 후 이용 가능한 서비스입니다.");
+      navigate("/login", { replace: true });
+    }
+  }, [location.state , location.search, navigate]);
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -53,6 +59,10 @@ export default function LoginPage() {
       //로그인 성공이면 token/user 저장부터 해야 PrivateRoute 통과가 안정적임
       login(res);
 
+      if (res.token) {
+        localStorage.setItem("token", res.token); 
+      }
+      
       if (form.remember) localStorage.setItem("savedLoginId", loginId);
       else localStorage.removeItem("savedLoginId");
 
