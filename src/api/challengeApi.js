@@ -76,6 +76,15 @@ export const challengeApi = {
     return response.data;
   },
 
+  // [ADDED] 특정 챌린지의 실시간 진행 수치(금액/횟수/일자별) 호출
+  getChallengeProgress: async (userId, challengeId) => {
+    const response = await api.get('/challenges/mychallenges/progress', {
+      params: { userId, challengeId }
+    });
+    return response.data;
+  }
+
+
 
 };
 

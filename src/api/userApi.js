@@ -25,6 +25,12 @@ export const userApi = {
       method: "DELETE",
       body: { password },
     }),
+
+  unlinkKakao: () => {
+    return apiFetch("/user/kakao/unlink", {
+      method: "POST", // 연동 해제는 데이터를 변경하므로 POST 방식이 적합합니다.
+    });
+  },  
 };
 
 

@@ -300,13 +300,36 @@ function ProfileSettings() {
     } catch (err) {
       const message =
         err?.data?.message ||
-        (typeof err?.data === "string" ? err.data : "저장 중 오류가 발생했음");
+        (typeof err?.data === "string" ? err.data : "저장 중 오류가 발생했습니다.");
       setSaveError(message);
       alert(message);
     } finally {
       setIsSaving(false);
     }
   };
+
+  const handleUnlinkKakao = async () => {
+    if (!window.confirm("카카오 연동을 해제하시겠습니까? 해제 후에는 아이디와 비밀번호로 로그인해야 합니다.")) return;
+
+    try {
+      // 1. 서버에 연동 해제 요청 (userApi에 정의 필요)
+      await userApi.unlinkKakao(); 
+      
+      alert("카카오 연동이 해제되었습니다.");
+
+      // 2. 중요: 현재 프론트엔드 user 상태에서 loginType을 제거
+      // 그래야 화면에서 즉시 '연동 해제' 버튼이 사라집니다.
+      const updatedUser = { ...user, loginType: null };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+    } catch (err) {
+      console.error("연동 해제 실패:", err);
+      alert("연동 해제 중 오류가 발생했습니다.");
+    }
+};
+
+
 
   // ✅ 원래 회원탈퇴 UX: 위험 카드 클릭 → 모달 열기
   const openWithdraw = () => {
@@ -460,10 +483,11 @@ function ProfileSettings() {
 
             <div className="ps-form">
               <div className="ps-field">
-                <label className="ps-label">이메일</label>
+                <label className="ps-label">이메일 (읽기만 가능)</label>
                 <input
                   className="ps-input"
                   value={email}
+                  readOnly
                   onChange={(e) => {
                     setEmail(e.target.value);
                     setFieldErrors((prev) => ({ ...prev, email: "" }));
@@ -473,6 +497,30 @@ function ProfileSettings() {
                 />
                 {fieldErrors.email && <div className="ps-field-error">{fieldErrors.email}</div>}
               </div>
+
+              {user?.loginType === 'KAKAO' && (
+                <>
+                  <div className="ps-divider" />
+                  <div className="ps-field">
+                    <div className="ps-row-between">
+                      <label className="ps-label">계정 연동</label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#666' }}>카카오 계정 연동 중</span>
+                        <button 
+                          type="button" 
+                          className="ps-link-btn" 
+                          style={{ color: '#ff4d4f', fontWeight: 'bold' }}
+                          onClick={handleUnlinkKakao}
+                        >
+                          연동 해제
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+
             </div>
 
             <div className="ps-divider" />
