@@ -8,7 +8,7 @@ export default function KakaoCallback() {
   const { login } = useAuth();
   const hasCalled = useRef(false); // 실행 여부 체크용
 
-  useEffect(() => {
+ useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("code");
     
     // 코드가 있고, 아직 API를 호출하지 않았을 때만 실행

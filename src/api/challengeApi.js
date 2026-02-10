@@ -37,7 +37,7 @@ export const challengeApi = {
     }),
 
   // 그룹챌린지
-  myJoinedList: ({ userId, challengeMode } = {}) => {
+  getMyJoinedList: ({ userId, challengeMode } = {}) => {
     const qs = new URLSearchParams();
     if (userId != null) qs.set("userId", userId);
     if (challengeMode) qs.set("challengeMode", challengeMode);
@@ -46,25 +46,25 @@ export const challengeApi = {
   },
 
   // 2️⃣ ✅ 그룹 챌린지 전용 참여 (POST /challenges/group)
-  joinGroup: async (groupChallData) => {
+  joinGroupChallenge: async (groupChallData) => {
     // 컨트롤러의 @PostMapping("/group") 호출
     const response = await api.post('/challenges/group', groupChallData);
     return response.data;
   },
 
   // 3️⃣ ✅ 그룹 챌린지 전용 참여 목록 (GET /challenges/myJoinedList)
-  groupJoinedList: async (groupbId) => {
+  getGroupJoinedList: async (groupbId, userId) => {
     // 컨트롤러의 @GetMapping("/myJoinedList") 호출
-    const response = await api.get('/challenges/myJoinedList', {
-      params: { groupbId }
+    const response = await api.get('/challenges/groupJoinedList', {
+      params: { groupbId, userId }
     });
     return response.data;
   },
 
-  groupPastJoinedList: async (groupbId) => {
+  getGroupPastChallengeList: async (groupbId, userId) => {
     // 백엔드 컨트롤러에 정의한 매핑 주소와 일치해야 합니다.
     const response = await api.get(`/challenges/group/past`, {
-      params: { groupbId }
+      params: { groupbId, userId }
     });
     return response.data;
   },
@@ -75,6 +75,15 @@ export const challengeApi = {
     });
     return response.data;
   },
+
+  // [ADDED] 특정 챌린지의 실시간 진행 수치(금액/횟수/일자별) 호출
+  getChallengeProgress: async (userId, challengeId) => {
+    const response = await api.get('/challenges/mychallenges/progress', {
+      params: { userId, challengeId }
+    });
+    return response.data;
+  }
+
 
 
 };

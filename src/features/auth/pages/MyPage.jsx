@@ -9,6 +9,7 @@ import ZScoreNotification from "../../Util/ZScoreNotification";
 import transApi from "../../../api/transApi";
 import OldGroupBudgetModal from "../../group/OldGroupBudgetModal";
 import { useGroupBudgets } from "../../../hooks/useGroupBudgets";
+import { badgeApi } from "../../../api/badgeApi";
 
 const MyPage = ({refreshGroupList}) => {
   const { user } = useAuth();
@@ -23,7 +24,9 @@ const MyPage = ({refreshGroupList}) => {
   const [transactions, setTransactions] = useState([]);
   const { notifications, setNotifications } = useAlarmSocket(user?.loginId);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
+  const [badges, setBadges] = useState([]);
   const { groupBudgetList = [], isLoading: isGroupLoading, fetchGroupBudgetList } = useGroupBudgets(user?.userId);
+
   const serverAvatarUrl = user?.changeName 
     ? `http://localhost:8080/osori/upload/profiles/${user.changeName}` 
     : "";
@@ -100,6 +103,22 @@ const MyPage = ({refreshGroupList}) => {
   useEffect(()=>{
     fetchNotiList(user?.loginId);
   },[]);
+
+  // badgeApi 불러오기
+  useEffect(() => {
+        const fetchBadges = async () => {
+            if (user?.userId) {
+                try {
+                    // 기존 transApi 스타일과 동일하게 호출
+                    const data = await badgeApi.getUserBadges(user?.userId);
+                    setBadges(data);
+                } catch (error) {
+                    console.error("뱃지 로딩 에러:", error);
+                }
+            }
+        };
+        fetchBadges();
+    }, [user?.userId]);
 
   // 수락/거절 처리 함수
   const handleInviteAction = async (noti, status) => {
@@ -207,6 +226,25 @@ const MyPage = ({refreshGroupList}) => {
               <h3>{displayName}</h3>
               <p>{email}</p>
             </div>
+          <div className="v-line" />
+          {/* 뱃지 */}
+          {/* 뱃지 (최근 1개만) */}
+          <div className="badge-list">
+            {badges.length > 0 ? (
+              <img
+                key={badges[0].badgeId}
+                src={`http://localhost:8080/osori${badges[0].badgeIconUrl}`}
+                alt={badges[0].badgeName}
+                title={badges[0].badgeName}
+                style={{ width: "90px", height: "90px", objectFit: "contain" }}
+              />
+            ) : (
+              <p>아직 획득한 뱃지가 없습니다.</p>
+            )}
+          </div>
+
+          
+
           </div>
         </div>
       </section>
