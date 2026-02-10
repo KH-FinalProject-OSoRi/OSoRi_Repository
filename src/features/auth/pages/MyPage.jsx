@@ -17,7 +17,7 @@ const MyPage = ({refreshGroupList}) => {
   const displayName = user?.nickName || user?.nickname || user?.userName || "회원";
   const email = user?.email || "";
 
-  const [isLoading,setIsLoading, fetchGroupBudgetList] = useState(true); 
+  const [isLoading,setIsLoading] = useState(true); 
   const [isModalOpen,setIsModalOpen] =useState(false); //새로운 그룹가계부 생성 모달
   const [isModalOpen2, setIsModalOpen2] = useState(false); //이전 가계부 목록 모달
   const [currentDate, setCurrentDate] = useState(new Date());

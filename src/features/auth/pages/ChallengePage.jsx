@@ -83,7 +83,7 @@ export default function ChallengePage() {
 
   const fmtType = (t) => {
     if (t === "IN") return "수입";
-    if (t === "OUT") return "지출";
+    if (t === "OUT" || t === "EXPENSE" ) return "지출";
     return t || "-";
   };
 
@@ -195,7 +195,7 @@ export default function ChallengePage() {
       let data;
       if (mode === "GROUP") {
         if (!selectedGroupId) return;
-        data = await challengeApi.groupJoinedList(selectedGroupId); 
+        data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
       } else {
         data = await challengeApi.myJoinedList({
           userId: user.userId,
@@ -379,12 +379,12 @@ export default function ChallengePage() {
                   <article key={id + desc} className="cp-card">
                     <div className="cp-cardTop">
                       <div className="cp-badge">{fmtMode(challengeMode)}</div>
-                      <div className="cp-id">{id}</div>
+                      {/* <div className="cp-id">{id}</div> */}
                     </div>
                     
                     {challengeMode === "GROUP" && selectedGroupId && (
                       <p><span style={{ fontSize: "11px", color: "#4A90E2", fontWeight: "bold" }}>
-                        [ {groupBudgetList.find(g => String(g.groupbId) === String(selectedGroupId))?.title || "선택됨"} ] 대상
+                        {/* [ {groupBudgetList.find(g => String(g.groupbId) === String(selectedGroupId))?.title || "선택됨"} ] 대상 */}
                       </span></p>
                     )}
 
