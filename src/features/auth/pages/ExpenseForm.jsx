@@ -28,6 +28,7 @@ const ExpenseForm = ({ mode = 'personal', groupId, groupStart, groupEnd }) => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
   const [recentItems, setRecentItems] = useState([]);
+
   const getToday = () => {
     const date = new Date();
     const year = date.getFullYear();
@@ -94,6 +95,7 @@ const handleAmountInput = (userId, value) => {
       
 
       if (groupInfoResponse) {
+        setGroupName(groupInfoResponse.title || groupInfoResponse.TITLE);
         const sDate = groupInfoResponse.startDate || groupInfoResponse.START_DATE || '';
         const eDate = groupInfoResponse.endDate || groupInfoResponse.END_DATE || '';
 
@@ -156,6 +158,12 @@ const handleAmountInput = (userId, value) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'originalAmount' && value < 0) {
+        alert("금액은 음수를 입력할 수 없습니다.");
+        setFormData(prev => ({ ...prev, [name]: '' }));
+        return;
+      }
 
     if (name === 'transDate' && value) {
       const today = getToday();
@@ -231,15 +239,15 @@ const handleAmountInput = (userId, value) => {
 
         if (formattedDate) {
           if (mode === 'group' && groupPeriod.start && formattedDate < groupPeriod.start) {
-            alert(`그룹 시작일(${groupPeriod.start}) 이전 날짜가 감지되어 시작일로 변경되었습니다.`);
-            finalDate = groupPeriod.start;
+            alert(`그룹 시작일(${groupPeriod.start}) 이전 날짜가 감지되어 오늘 날짜로 변경되었습니다.`);
+            finalDate = today;
           }
           else if (formattedDate > maxLimit) {
             const msg = maxLimit === today
               ? "미래 날짜는 등록할 수 없어 오늘 날짜로 변경되었습니다."
-              : `그룹 종료일(${maxLimit}) 이후 날짜는 등록할 수 없어 종료일로 변경되었습니다.`;
+              : `그룹 종료일(${maxLimit}) 이후 날짜는 등록할 수 없어 오늘 날짜로 변경되었습니다.`;
             alert(`${msg}`);
-            finalDate = maxLimit;
+            finalDate = today;
           }
         }
         setFormData(prev => ({
@@ -261,7 +269,7 @@ const handleAmountInput = (userId, value) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.transDate || !formData.originalAmount || !formData.title) {
+    if (!formData.transDate || !formData.originalAmount || Number(formData.originalAmount) <= 0 || !formData.title) {
       alert("필수 입력 항목을 확인해주세요.");
       return;
     }
@@ -330,7 +338,7 @@ const handleAmountInput = (userId, value) => {
               type: transType,
               isShared: 'Y',
               groupTransId: Number(groupId),
-              memo: `${user?.nickName}님이 등록한 지출 분할`
+              memo: `[${user?.nickName}]님이 [${groupName}]에 등록한 지출 분할`
             });
           });
 
@@ -345,7 +353,7 @@ const handleAmountInput = (userId, value) => {
               type: transType,
               isShared: 'Y',
               groupTransId: Number(groupId),
-              memo: `그룹 지출 정산`
+              memo: `[${groupName}] 그룹 지출 정산`
             }));
           }
 
@@ -425,7 +433,7 @@ const handleAmountInput = (userId, value) => {
               }
             }} required /></div>
           <div className="input-group"><label className="input-label">{formData.type === '수입' ? '입금처 / 내용' : '거래처 / 가게명'}</label><input type="text" name="title" className="input-field" placeholder={formData.type === '수입' ? "예: 회사, 부모님" : "예: 스타벅스, 식당"} value={formData.title} onChange={handleChange} required /></div>
-          <div className="input-group"><label className="input-label">금액</label><div className="amount-wrapper"><input type="number" name="originalAmount" className="input-field" placeholder="0" value={formData.originalAmount} onChange={handleChange} required /><span className="currency-unit">원</span></div></div>
+          <div className="input-group"><label className="input-label">금액</label><div className="amount-wrapper"><input type="number" name="originalAmount" className="input-field" placeholder="0" value={formData.originalAmount} onChange={handleChange} min="0" required /><span className="currency-unit">원</span></div></div>
           <div className="input-group"><label className="input-label">카테고리</label><select name="category" className="input-field" value={formData.category} onChange={handleChange}>{currentCategories.map((cat, index) => <option key={index} value={cat}>{cat}</option>)}</select></div>
           <div className="input-group"><label className="input-label">메모</label><textarea name="memo" className="input-field" placeholder="내용을 입력하세요 (선택)" value={formData.memo} onChange={handleChange}></textarea></div>
 

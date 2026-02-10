@@ -3,7 +3,7 @@ import {useState,useEffect,useRef} from 'react';
 import { groupBudgetApi } from '../../api/groupBudgetApi';
 import './AddGroupBudgetModal.css'
 
-const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
+const AddGroupBudgetModal=({userId,onClose,onSuccess,refreshGroupList})=>{
     const [isLoading,setIsLoading] =useState(false);
     const [isbAmount,setIsbAmount] = useState(false);
     const navigate = useNavigate();
@@ -21,6 +21,11 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
 
     const handleChange = (e)=>{
         const {name,value}=e.target;
+        if (name === 'bAmount' && value < 0) {
+        alert("예산은 0보다 커야 합니다.");
+        return; 
+    }
+
         setFormData((prev)=>({
             ...prev,
             [name]:value 
@@ -115,9 +120,14 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
 
                 await Promise.all(addMemPromise);
 
+                if (refreshGroupList) {
+                    console.log("App의 데이터를 새로고침합니다...");
+                    await refreshGroupList(); 
+                }
+
                 alert("그룹가계부 추가에 성공했습니다!");
                 onSuccess();
-                navigate('/mypage');
+                navigate(`/mypage/groupAccountBook?groupId=${newGroup.groupbId}`);
             }
         }catch(error){
             console.error('그룹가계부 추가 실패'+error);
@@ -134,7 +144,7 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
                 <form onSubmit={handleSubmit} className="formStyle">
                     <div className="form-content">
                         <label htmlFor="title">그룹가계부 이름</label>
-                        <input type="text" id="title" name="title" value={formData.title} onChange={handleChange} placeholder="이름" required/> 가계부
+                        <input type="text" id="title" name="title" value={formData.title} onChange={handleChange} placeholder="이름" required/>
                         
                         <div className='checkbox-group'>
                             <input type="checkBox" 
@@ -151,6 +161,7 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
                             value={formData.bAmount} 
                             onChange={handleChange} 
                             disabled={!isbAmount}
+                            min="0"
                             style={{ backgroundColor: !isbAmount ? '#f5f5f5' : 'white' }}
                         />
                         

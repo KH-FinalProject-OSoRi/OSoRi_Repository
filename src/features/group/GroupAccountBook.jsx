@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import './GroupAccountBook.css';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -6,6 +6,7 @@ import transApi from '../../api/transApi';
 import GroupBudgetGauge from './GroupBudgetGaugeChart';
 import MemberChart from './MemberChart';
 import { groupBudgetApi } from '../../api/groupBudgetApi';
+import './AddGroupBudgetModal.css';
 
 const EXPENSE_CATEGORIES = [
   "식비", "생활/마트", "쇼핑", "의료/건강", 
@@ -161,6 +162,60 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
         bAmount: 0
     });
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [memList, setMemList] = useState([]);
+    const [selectedMemList, setSelectedMemList] = useState([]);
+    const overlayRef = useRef(null);
+    const [searchKeyword,setSearchKeyword] = useState('');
+    const { user } = useAuth();
+    
+
+    window.addEventListener('click',(e)=>{
+        e.target == overlayRef.current ? onClose() : false;
+    });
+
+    const fetchMemList = async()=>{
+        try{
+            const data = await groupBudgetApi.searchMem(searchKeyword);
+
+            setMemList(Array.isArray(data) ? data : []);
+            setMemList(prev=>prev.filter(mem=>mem.userId !== user?.userId));
+        }catch(error){
+            console.error('회원 리스트 목록 조회 실패',error);
+        }
+    };
+
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if (searchKeyword.trim().length >= 2) { // 2글자 이상일 때만 호출
+                fetchMemList();
+            } else {
+                setMemList([]); // 검색어가 짧으면 리스트 비우기
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    },[searchKeyword]);
+
+    //추가 멤버들 핸들러
+    const handleSelectMember=(user)=>{
+        const isAlreadySelected = selectedMemList.some(mem=>mem.userId === user?.userId);
+
+        if(isAlreadySelected){
+            alert("이미 추가된 회원입니다.");
+            return;
+        }
+
+        setSelectedMemList(prev => [...prev, user]);
+    
+        // 선택 후 검색어 초기화 (옵션)
+        setSearchKeyword("");
+        setMemList([]); 
+    }
+
+    //선택 취소 핸들러
+    const handleDeleteSelectMem=(delMemId)=>{
+        setSelectedMemList(prev=>prev.filter(mem=>mem.userId !== delMemId));
+    }
 
     useEffect(() => {
         if (groupData) {
@@ -191,8 +246,7 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
             alert("예산은 0보다 커야 합니다.");
             return;
         }
-        
-        onUpdate(formData); 
+        onUpdate(formData,selectedMemList); 
     };
 
     return (
@@ -223,7 +277,33 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
                             onChange={handleChange}
                         />
                     </div>
-                </div>
+                
+                    <label htmlFor="memList">회원 추가</label>
+                    <input type="text" 
+                        name="search" 
+                        placeholder='검색할 이메일을 입력해주세요.' 
+                        value={searchKeyword} 
+                        onChange={(e)=>setSearchKeyword(e.target.value)}>
+                    </input>
+                    {memList.length > 0 && (
+                        <ul className="mem-list">
+                            {memList.map((mem)=>(
+                                <li key={mem.userId} style={{cursor:"pointer"}} onClick={()=>handleSelectMember(mem)}>
+                                    {mem.email} ({mem.nickName}) <span>[추가]</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    <div className="selected-members">
+                        <label>선택된 멤버:</label>
+                        {selectedMemList.map((mem) => (
+                            <span key={mem.userId} className="member-badge">
+                                {mem.nickName} 
+                                <button onClick={() => handleDeleteSelectMem(mem.userId)}>x</button>
+                            </span>
+                        ))}
+                    </div>
+                </div>        
 
                 <div className="modal-actions">
                     <button 
@@ -446,19 +526,32 @@ function GroupAccountBook() {
     }, [currentGroupId, user?.userId]);
 
     //수정 실행 함수
-    const handleGbUpdate = async (updateData) => {
+    const handleGbUpdate = async (updateData,selectedMemList) => {
         try {
             const response = await groupBudgetApi.updateGroupB({
                 groupbId: updateData.groupbId,
                 title: updateData.title,
                 bAmount: updateData.bAmount
             });
-
-            alert("그룹 가계부 정보가 성공적으로 수정되었습니다!");
-                
-            setIsUpdateModalOpen(false);
             
-            fetchGroupInfo();
+            if(response && response.groupbId){
+                const addMemPromise = selectedMemList.map(mem=>{
+                    return groupBudgetApi.addMemList({
+                        groupbId: response.groupbId,
+                        userId: mem.userId,
+                        role:'MEMBER'
+                    });
+                });
+
+                await Promise.all(addMemPromise);
+
+                alert("그룹 가계부 정보가 성공적으로 수정되었습니다!");
+
+                setIsUpdateModalOpen(false);
+                
+                fetchGroupInfo();
+            }
+                
         } catch (error) {
             console.error('그룹 가계부 수정 실패:', error);
             alert("수정 중 오류가 발생했습니다. 다시 시도해 주세요.");
@@ -516,13 +609,15 @@ function GroupAccountBook() {
                                 </div>
                                 <div className="group-date-badge">
                                     🗓️ {groupInfo.startDate} ~ {groupInfo.endDate}
+                                    {/*그룹가계부 관리자만 수정가능 */}
+                                    {isAdmin && (
+                                        <div className="editBtn">
+                                            <button onClick={() => setIsUpdateModalOpen(true)}>
+                                                수정
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                                {/*그룹가계부 관리자만 수정가능 */}
-                                {isAdmin && (
-                                    <button onClick={() => setIsUpdateModalOpen(true)}>
-                                        수정
-                                    </button>
-                                )}
                             </header>
 
                             <div className="summary-section">

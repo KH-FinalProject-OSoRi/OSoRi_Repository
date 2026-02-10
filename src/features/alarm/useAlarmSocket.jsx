@@ -1,35 +1,49 @@
 import { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { useNavigate } from "react-router-dom"; 
 
-const useAlarmSocket = (userId) => {
+const useAlarmSocket = (userId,refreshGroupList) => {
     const [notifications, setNotifications] = useState([]);
-    const [stompClient, setStompClient] = useState(null);
-
+    const navigate = useNavigate()
+;
     useEffect(() => {
         if (!userId) return; //유저 정보 없으면 리턴
 
         const client = new Client({
             webSocketFactory: () => new SockJS("http://localhost:8080/osori/ws"),
             onConnect: () => {
-                //console.log("소켓 연결 성공");
-                
                 // 서버의 convertAndSendToUser에 대응하는 구독 경로
                 client.subscribe(`/single/notifications/${userId}`, (message) => {
-                    console.log("실시간 메시지 도착: ",message.body)
                     const newNoti = JSON.parse(message.body);
-                    setNotifications((prev) => [newNoti, ...prev]);
-                    //setNotifications((prev) => [newNoti, ...prev].slice(0, 5)); // 최신 5개 유지
+                    console.log(newNoti);
+                    if (newNoti.ntype === "GROUP_DELETED") {
+                        // 현재 내가 보고 있는 페이지가 삭제된 그룹 페이지인지 확인
+                        const queryParams = new URLSearchParams(window.location.search);
+                        const currentGroupId = queryParams.get("groupId");
+
+                        if (Number(currentGroupId) === newNoti.inviteNum) {
+                            alert(`참여중인 가계부 [${newNoti.message}]가 삭제되었습니다.`);
+                            navigate("/mypage", { replace: true });
+                        }
+                    } else if (newNoti.ntype === "INVITE") {
+                        if (refreshGroupList) refreshGroupList();
+
+                        //일반 알림
+                        setNotifications((prev) => [newNoti, ...prev]); 
+                    } else{
+                        //다른 알림
+                        setNotifications((prev) => [newNoti, ...prev]); 
+                    }
                 });
             },
             onStompError: (frame) => console.error("STOMP 에러:", frame),
         });
 
         client.activate();
-        //setStompClient(client);
 
         return () => client.deactivate();
-    }, [userId]);
+    }, [userId,refreshGroupList]);
 
     return { notifications, setNotifications };
 };
