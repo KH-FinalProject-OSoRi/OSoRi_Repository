@@ -497,127 +497,127 @@ function ProfileSettings() {
               <h3>계정 정보</h3>
             </div>
 
-            <div className="ps-form">
-              <div className="ps-field">
-                <label className="ps-label">이메일 (읽기만 가능)</label>
-                <input
-                  className="ps-input"
-                  value={email}
-                  readOnly
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setFieldErrors((prev) => ({ ...prev, email: "" }));
-                  }}
-                  onBlur={checkEmailDuplicate}
-                  placeholder="이메일"
-                />
-                {fieldErrors.email && <div className="ps-field-error">{fieldErrors.email}</div>}
-              </div>
+            <div className="ps-scroll-area">
+              <div className="ps-form">
+                <div className="ps-field">
+                  <label className="ps-label">이메일 (읽기만 가능)</label>
+                  <input
+                    className="ps-input"
+                    value={email}
+                    readOnly
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setFieldErrors((prev) => ({ ...prev, email: "" }));
+                    }}
+                    onBlur={checkEmailDuplicate}
+                    placeholder="이메일"
+                  />
+                  {fieldErrors.email && <div className="ps-field-error">{fieldErrors.email}</div>}
+                </div>
 
-              {user?.loginType === 'KAKAO' && (
-                <>
-                  <div className="ps-divider" />
-                  <div className="ps-field">
-                    <div className="ps-row-between">
-                      <label className="ps-label">계정 연동</label>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '0.9rem', color: '#666' }}>카카오 계정 연동 중</span>
-                        <button 
-                          type="button" 
-                          className="ps-link-btn" 
-                          style={{ color: '#ff4d4f', fontWeight: 'bold' }}
-                          onClick={handleUnlinkKakao}
-                        >
-                          연동 해제
-                        </button>
+                {user?.loginType === 'KAKAO' && (
+                  <>
+                    <div className="ps-divider" />
+                    <div className="ps-field">
+                      <div className="ps-row-between">
+                        <label className="ps-label">계정 연동</label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{ fontSize: '0.9rem', color: '#666' }}>카카오 계정 연동 중</span>
+                          <button 
+                            type="button" 
+                            className="ps-link-btn" 
+                            style={{ color: '#ff4d4f', fontWeight: 'bold' }}
+                            onClick={handleUnlinkKakao}
+                          >
+                            연동 해제
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              )}
-
-
-            </div>
-
-            <div className="ps-divider" />
-
-            <div className="ps-field">
-              <div className="ps-row-between">
-                <label className="ps-label">비밀번호</label>
-                <button
-                  type="button"
-                  className="ps-link-btn"
-                  onClick={() => setIsPasswordEditing((v) => !v)}
-                >
-                  {isPasswordEditing ? "닫기" : "비밀번호 변경"}
-                </button>
+                  </>
+                )}
               </div>
 
-              {isPasswordEditing && (
-                <div className="ps-password-box">
-                  <div className="ps-field">
-                    <label className="ps-label">현재 비밀번호</label>
-                    <input
-                      className="ps-input"
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="현재 비밀번호"
-                    />
-                  </div>
+              <div className="ps-divider" />
 
-                  <div className="ps-field">
-                    <label className="ps-label">새 비밀번호</label>
-                    <input
-                      className="ps-input"
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="새 비밀번호"
-                    />
-
-                    {isSamePw && (
-                      <div className="ps-field-error">
-                        현재 비밀번호와 일치합니다. 다른 비밀번호로 입력해주세요.
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="ps-field">
-                    <label className="ps-label">새 비밀번호 확인</label>
-                    <input
-                      className="ps-input"
-                      type="password"
-                      value={newPasswordConfirm}
-                      onChange={(e) => setNewPasswordConfirm(e.target.value)}
-                      onBlur={(e) => {
-                        const a = (newPassword || "").trim();
-                        const b = (e.target.value || "").trim();
-
-                        if (!b) {
-                          setPwMatchMsg("");
-                          setPwMatchOk(null);
-                          return;
-                        }
-
-                        if (a === b) {
-                          setPwMatchMsg("새 비밀번호와 일치합니다.");
-                          setPwMatchOk(true);
-                        } else {
-                          setPwMatchMsg("새 비밀번호와 일치하지 않습니다.");
-                          setPwMatchOk(false);
-                        }
-                      }}
-                      placeholder="새 비밀번호 확인"
-                    />
-                    {pwMatchMsg && (
-                      <div className={pwMatchOk ? "ps-help" : "ps-field-error"}>
-                        {pwMatchMsg}
-                      </div>
-                    )}
-                  </div>
+              <div className="ps-field">
+                <div className="ps-row-between">
+                  <label className="ps-label">비밀번호</label>
+                  <button
+                    type="button"
+                    className="ps-link-btn"
+                    onClick={() => setIsPasswordEditing((v) => !v)}
+                  >
+                    {isPasswordEditing ? "닫기" : "비밀번호 변경"}
+                  </button>
                 </div>
-              )}
+
+                {isPasswordEditing && (
+                  <div className="ps-password-box">
+                    <div className="ps-field">
+                      <label className="ps-label">현재 비밀번호</label>
+                      <input
+                        className="ps-input"
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        placeholder="현재 비밀번호"
+                      />
+                    </div>
+
+                    <div className="ps-field">
+                      <label className="ps-label">새 비밀번호</label>
+                      <input
+                        className="ps-input"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="새 비밀번호"
+                      />
+
+                      {isSamePw && (
+                        <div className="ps-field-error">
+                          현재 비밀번호와 일치합니다. 다른 비밀번호로 입력해주세요.
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="ps-field">
+                      <label className="ps-label">새 비밀번호 확인</label>
+                      <input
+                        className="ps-input"
+                        type="password"
+                        value={newPasswordConfirm}
+                        onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                        onBlur={(e) => {
+                          const a = (newPassword || "").trim();
+                          const b = (e.target.value || "").trim();
+
+                          if (!b) {
+                            setPwMatchMsg("");
+                            setPwMatchOk(null);
+                            return;
+                          }
+
+                          if (a === b) {
+                            setPwMatchMsg("새 비밀번호와 일치합니다.");
+                            setPwMatchOk(true);
+                          } else {
+                            setPwMatchMsg("새 비밀번호와 일치하지 않습니다.");
+                            setPwMatchOk(false);
+                          }
+                        }}
+                        placeholder="새 비밀번호 확인"
+                      />
+                      {pwMatchMsg && (
+                        <div className={pwMatchOk ? "ps-help" : "ps-field-error"}>
+                          {pwMatchMsg}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="ps-actions ps-actions-in-card">

@@ -172,9 +172,9 @@ export default function SocialRegisterPage() {
         <div style={{ fontWeight: "bold", fontSize: "16px", marginBottom: "10px", display: "flex", alignItems: "center" }}>
           💡 기존 계정과 연결하고 싶으신가요?
         </div>
-        <p style={{ margin: "0 0 10px 0" }}>
+        {/* <p style={{ margin: "0 0 10px 0" }}>
           현재 카카오 이메일(<b>{kakaoEmail}</b>)이 기존 가입 정보와 달라 자동으로 연결되지 않았습니다.
-        </p>
+        </p> */}
         <ul style={{ margin: "0", paddingLeft: "18px", fontSize: "13.5px" }}>
           <li style={{ marginBottom: "5px" }}>
             <b>기존 계정을 쓰시려면:</b> 일반 로그인을 통해 접속한 후, 기존 계정을 <b>탈퇴</b>하고 현재 카카오 계정으로 다시 가입해 주세요.
