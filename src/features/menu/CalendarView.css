@@ -43,6 +43,7 @@
 
 .ledger-filter-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   padding: 12px 25px;
   background: white;

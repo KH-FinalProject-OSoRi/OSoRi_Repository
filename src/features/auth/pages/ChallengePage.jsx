@@ -128,7 +128,7 @@ export default function ChallengePage() {
     try {
       let data;
       if (challengeMode === "GROUP") {
-        data = await challengeApi.groupPastJoinedList(selectedGroupId); 
+        data = await challengeApi.getGroupPastChallengeList(selectedGroupId, user.userId); 
       } else {
         // 기존 개인 챌린지 로직
         data = await challengeApi.myPastJoinedList({
@@ -179,7 +179,7 @@ const loadMyJoined = async (mode) => {
     let data;
     if (mode === "GROUP") {
       if (!selectedGroupId) return;
-      data = await challengeApi.groupJoinedList(selectedGroupId); 
+      data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
     } else {
       data = await challengeApi.myJoinedList({
         userId: user.userId,
@@ -346,7 +346,7 @@ const loadRanking = async (challengeId) => {
       let res;
 
       if (challengeMode === "GROUP") {
-        res = await challengeApi.joinGroup({
+        res = await challengeApi.joinGroupChallenge({
           userId: user.userId,
           challengeId: selected.challengeId,
           groupbId: selectedGroupId,
