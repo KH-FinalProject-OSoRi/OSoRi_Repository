@@ -10,7 +10,7 @@ import transApi from "../../../api/transApi";
 import OldGroupBudgetModal from "../../group/OldGroupBudgetModal";
 import { useGroupBudgets } from "../../../hooks/useGroupBudgets";
 
-const MyPage = () => {
+const MyPage = ({refreshGroupList}) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const displayName = user?.nickName || user?.nickname || user?.userName || "회원";
@@ -264,7 +264,8 @@ const MyPage = () => {
               <AddGroupBudgetModal 
                 userId={user?.userId} 
                 onClose={() => setIsModalOpen(false)} 
-                onSuccess={() => {
+                refreshGroupList={refreshGroupList}
+                onSuccess={async () => {
                   setIsModalOpen(false);
                   fetchGroupBudgetList(); //목록 새로고침
                 }}

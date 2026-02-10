@@ -3,7 +3,7 @@ import {useState,useEffect,useRef} from 'react';
 import { groupBudgetApi } from '../../api/groupBudgetApi';
 import './AddGroupBudgetModal.css'
 
-const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
+const AddGroupBudgetModal=({userId,onClose,onSuccess,refreshGroupList})=>{
     const [isLoading,setIsLoading] =useState(false);
     const [isbAmount,setIsbAmount] = useState(false);
     const navigate = useNavigate();
@@ -120,9 +120,14 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
 
                 await Promise.all(addMemPromise);
 
+                if (refreshGroupList) {
+                    console.log("App의 데이터를 새로고침합니다...");
+                    await refreshGroupList(); 
+                }
+
                 alert("그룹가계부 추가에 성공했습니다!");
                 onSuccess();
-                navigate('/mypage');
+                navigate(`/mypage/groupAccountBook?groupId=${newGroup.groupbId}`);
             }
         }catch(error){
             console.error('그룹가계부 추가 실패'+error);

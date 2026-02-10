@@ -468,6 +468,43 @@
   font-size: 13px;
 }
 
+.new-question-input-area{
+  width: 88%;
+  padding: 8px 12px;
+  margin-top: 6px;
+  border: 1px solid #0066ff;
+  background: white;
+  border-radius: 20px;
+  font-size: 13px;
+  text-align: center
+}
+
+.new-question-input-area input {
+    border: 1px solid #ccc;
+    border-radius: 8px; 
+    background-color: white; 
+    padding: 5px 10px;
+    color: #333; 
+    transition: border-color 0.3s ease;
+}
+
+.new-question-input-area input:focus {
+    border-color: #007bff;
+    outline: none; 
+}
+
+.new-question-input-area input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.new-question-input-area button{
+  background-color: #f1f1f1;
+  color: #333; 
+  margin: 10px 10px 0px 10px;
+}
+
+
 @media (max-width: 900px) {
   .account-book-grid {
     grid-template-columns: 1fr;
