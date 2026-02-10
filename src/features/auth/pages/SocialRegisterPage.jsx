@@ -156,6 +156,38 @@ export default function SocialRegisterPage() {
 
   return (
     <div className={styles.wrap}>
+
+      <div style={{
+        backgroundColor: "#fffbe6",
+        border: "1px solid #ffe58f",
+        padding: "20px",
+        borderRadius: "12px",
+        marginBottom: "25px",
+        fontSize: "14px",
+        color: "#856404",
+        lineHeight: "1.7",
+        textAlign: "left",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+      }}>
+        <div style={{ fontWeight: "bold", fontSize: "16px", marginBottom: "10px", display: "flex", alignItems: "center" }}>
+          💡 기존 계정과 연결하고 싶으신가요?
+        </div>
+        {/* <p style={{ margin: "0 0 10px 0" }}>
+          현재 카카오 이메일(<b>{kakaoEmail}</b>)이 기존 가입 정보와 달라 자동으로 연결되지 않았습니다.
+        </p> */}
+        <ul style={{ margin: "0", paddingLeft: "18px", fontSize: "13.5px" }}>
+          <li style={{ marginBottom: "5px" }}>
+            <b>기존 계정을 쓰시려면:</b> 일반 로그인을 통해 접속한 후, 기존 계정을 <b>탈퇴</b>하고 현재 카카오 계정으로 다시 가입해 주세요.
+          </li>
+          <li style={{ marginBottom: "5px" }}>
+            <b>새로 가입하시려면:</b> 아래 양식을 작성하여 가입을 완료해 주시면 됩니다.
+          </li>
+          <li>
+            보안을 위해 가입 후에는 <b>이메일 변경이 불가능</b>하니 신중히 확인해 주세요.
+          </li>
+        </ul>
+      </div>
+
       <h1 className={styles.title}>소셜 회원가입</h1>
 
       <form className={styles.form} onSubmit={onSubmit}>
