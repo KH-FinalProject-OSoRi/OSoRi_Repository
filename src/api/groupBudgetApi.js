@@ -75,7 +75,10 @@ export const groupBudgetApi={
     addGroupChallList:async(chall)=>{
         const response = await api.post('/group/gbAddChall',chall);
         return response.data;
+    },
+    fetchGroupBudgetAll:async()=>{
+        const response = await api.get('/group/gbAll');
+        return response.data;
     }
-    
 
 }
