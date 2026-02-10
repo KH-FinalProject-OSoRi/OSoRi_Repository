@@ -6,13 +6,14 @@ import { useAuth } from "../../../context/AuthContext";
 import { useState,useRef } from "react";
 import { faqApi } from "../../../api/faqApi";
 
-
-const MyPageLayout = () => {
+const MyPageLayout = ({refreshGroupList}) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const scrollRef = useRef();
   const [isFaqModalOpen,setIsFaqModalOpen] =useState(false);
   const [faqList, setFaqList] = useState([]);
+  const [newQuestion,setNewQuestion] = useState('');
+  const [isInputVisible, setIsInputVisible] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
@@ -50,19 +51,33 @@ const MyPageLayout = () => {
 }, [isFaqModalOpen]);
 
   const handleQuestionClick = (faqId) => {
-  // 해당 질문과 답변 데이터
-  const selectedFaq = faqList.find(item => item.faqId === faqId);
-  
-  if (!selectedFaq) return;
+    // 해당 질문과 답변 데이터
+    const selectedFaq = faqList.find(item => item.faqId === faqId);
+    
+    if (!selectedFaq) return;
 
-  const userMsg = { id: Date.now(), type: 'user', message: selectedFaq.question };
-  setMessages(prev => [...prev, userMsg]);
+    const userMsg = { id: Date.now(), type: 'user', message: selectedFaq.question };
+    setMessages(prev => [...prev, userMsg]);
 
-  setTimeout(() => {
-    const botMsg = { id: Date.now() + 1, type: 'bot', message: selectedFaq.answer };
-    setMessages(prev => [...prev, botMsg]);
-  }, 600); // 0.6초 뒤에 답변 등장
-};
+    setTimeout(() => {
+      const botMsg = { id: Date.now() + 1, type: 'bot', message: selectedFaq.answer };
+      setMessages(prev => [...prev, botMsg]);
+    }, 600); // 0.6초 뒤에 답변 등장
+  };
+
+  const handleNewQuestioSubmit = async() => {
+    try{
+      const response = await faqApi.addNewQuestion(newQuestion);
+      console.log(response);
+
+      alert("질문이 성공적으로 저장되었습니다.");
+      setIsInputVisible(false);
+    }catch(error){
+      console.log("질문 등록 오류 발생",error);
+      alert("질문 등록중에 오류가 발생했습니다. 다시 시도해 주세요.");
+    }
+    setNewQuestion('');
+  };
 
 
   return (
@@ -141,6 +156,27 @@ const MyPageLayout = () => {
                           {faq.question}
                         </button>
                       ))
+                    )}
+                    {!isInputVisible ? (
+                      <button 
+                          className="faq-item-btn"
+                          onClick={() => setIsInputVisible(true)}
+                      >
+                          새로운 질문을 등록해주세요.
+                      </button>
+                    ) : (
+                        <div className="new-question-input-area">
+                            <input 
+                                type="text"
+                                id="question"
+                                name="question"
+                                value={newQuestion}
+                                onChange={(e) => setNewQuestion(e.target.value)}
+                                placeholder="질문을 입력하세요."
+                            />
+                            <button onClick={handleNewQuestioSubmit}>등록</button>
+                            <button onClick={() => setIsInputVisible(false)}>취소</button>
+                        </div>
                     )}
                   </div>
                 )}
