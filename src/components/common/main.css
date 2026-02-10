@@ -322,3 +322,74 @@ button:focus-visible {
 .mypage-btn:hover {
   background: rgba(0, 102, 255, 0.08);
 }
+
+/*에러 페이지*/
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-Color: #FFFFFF ;
+  color: #333 ;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.header {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0055FB;
+  letter-spacing: -0.5px;
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.iconBox {
+  width: 100px;
+  height: 100px;
+  background-color: #F9FAFB;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.iconBox span {
+  font-size: 6rem;
+}
+
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.highlight {
+  color: #0055FB;
+}
+
+.button {
+  display: inline-block;
+  background-color: #0055FB;
+  color: #FFFFFF;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
