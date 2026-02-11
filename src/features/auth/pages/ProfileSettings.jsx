@@ -278,12 +278,6 @@ function ProfileSettings() {
         updatedUserFromServer = { ...(user || {}), ...mePayload };
       }
 
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-        setPreviewUrl("");
-      }
-      setUploadFile(null);
-
       setUser(updatedUserFromServer);
       localStorage.setItem("user", JSON.stringify(updatedUserFromServer));
 
@@ -298,10 +292,7 @@ function ProfileSettings() {
       setCurrentPassword("");
       setNewPassword("");
       setNewPasswordConfirm("");
-
-      setUploadFile(null);
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      setPreviewUrl("");
+      
     } catch (err) {
       const message =
         err?.data?.message ||

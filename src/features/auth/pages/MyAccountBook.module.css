@@ -407,15 +407,32 @@ canvas {
 
 .add-btn {
   width: 100%;
-  background: var(--primary-color);
-  color: white;
-  padding: 18px;
+  background: #ffffff !important;
+  border: 2px solid var(--primary-color) !important; 
+  color: var(--primary-color) !important; 
+  
+  padding: 16px; 
   border-radius: 18px;
   font-weight: 800;
   font-size: 1.1rem;
-  border: none;
   cursor: pointer;
   margin-top: 15px;
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.add-btn:hover {
+  box-shadow: 0 8px 20px rgba(0, 102, 255, 0.15); 
+  transform: translateY(-2px); 
+}
+
+.add-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 102, 255, 0.1);
 }
 
 .item-actions {
