@@ -13,8 +13,7 @@ const GroupBookGuard = ({ groupList, children, isLoading }) => {
       const foundGroup = groupList.find(g=> String(g.groupbId) === String(groupId));
   
       if (!foundGroup || foundGroup.status === 'N') {
-        alert("삭제되었거나 존재하지 않는 가계부입니다.");
-        navigate("/mypage",{replace:true});
+        navigate("/not-found",{replace:true}); //true는 뒤로가기 했을때 오류 페이지로 안감
       }else{
         setTargetGroup(foundGroup);
       }
