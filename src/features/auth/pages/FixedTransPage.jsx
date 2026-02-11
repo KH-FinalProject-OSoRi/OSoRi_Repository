@@ -66,7 +66,7 @@ export default function FixedTransPage() {
     <main className="fade-in">
       <header className="content-header">
         <h2>고정지출</h2>
-        <p className="welcome-text">{displayName} 님 고정지출 관리하는 곳</p>
+        <p className="welcome-text">잊기 쉬운 고정지출, 오소리가 매달 꼼꼼하게 챙겨드려요.</p>
       </header>
 
       {/* 목록 */}

@@ -176,7 +176,11 @@ const AddGroupBudgetModal=({userId,onClose,onSuccess})=>{
                             <ul className="mem-list">
                                 {memList.map((mem)=>(
                                     <li key={mem.userId} style={{cursor:"pointer"}} onClick={()=>handleSelectMember(mem)}>
-                                        {mem.email} ({mem.nickName}) <span>[추가]</span>
+                                        <div className="mem-info">
+                                            <span>{mem.email}</span>
+                                            <strong>({mem.nickName})</strong>
+                                        </div>
+                                        <span className="add-badge">추가</span>
                                     </li>
                                 ))}
                             </ul>

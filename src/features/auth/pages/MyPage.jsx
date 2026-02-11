@@ -153,7 +153,7 @@ const MyPage = () => {
       <header className="content-header">
         <h2>마이페이지</h2>
 
-        <p className="welcome-text">{displayName} 님 환영합니다.</p>
+        <p className="welcome-text">내 지갑부터 공동 자산까지, 오소리가 소비 흐름을 한눈에 정리해 드릴게요.</p>
 
           <div className="content-header2">
             <div className="alarm-wrapper" onClick={() => setIsNotiOpen(!isNotiOpen)} style={{ cursor: 'pointer', position: 'relative' }}>
