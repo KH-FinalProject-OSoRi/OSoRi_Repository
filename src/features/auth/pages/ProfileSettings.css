@@ -1,5 +1,12 @@
-.ps-page {
+/* .ps-page {
   max-width: 1100px;
+} */
+
+.ps-page {
+  max-width: 1400px; /* 원본의 넓은 느낌을 위해 넉넉하게 설정 */
+  width: 95%;        /* 화면 양옆 여백 확보 */
+  margin: 0 auto;    /* 확대/축소 시 항상 중앙 정렬 */
+  box-sizing: border-box;
 }
 
 .ps-sub {
@@ -22,22 +29,38 @@
   gap: 100px; /* ✅ 여기서 확실히 끊김 */
 }
 
-.ps-grid {
+/* .ps-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 22px;
   align-items: stretch;
-  width:95%;
+  width: 95%;
+} */
+
+.ps-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 무조건 가로 2열 유지 */
+  gap: 22px;         /* 원본 간격 유지 */
+  width: 100%;
 }
 
-
-
-.ps-card {
+/* .ps-card {
   padding: 28px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  width: 760px;
+  width: 760px;  
+} */
+
+.ps-card {
+  padding: 28px;
+  height: 600px;    /* 원본 높이 유지 */
+  display: flex;
+  flex-direction: column;
+  
+  /* ✅ 수정: 고정 760px 삭제하고 아래 2줄 추가 */
+  width: 100%;      
+  box-sizing: border-box; /* 패딩이 너비에 포함되어 확대해도 안 짤림 */
 }
 
 .ps-card-title h3 {
@@ -73,10 +96,12 @@
   font-size: 0.95rem;
 }
 
+
 .ps-form {
   display: grid;
   gap: 14px;
 }
+
 
 .ps-field-error {
   color: #ff4d4f;
@@ -187,6 +212,7 @@
   gap: 12px;
 }
 
+
 .ps-actions-in-card {
   margin: 0;
   padding-top: 18px;
@@ -256,13 +282,25 @@
    - 배경을 연한 빨강으로 줘서 "다른 영역" 느낌 확실히 냄
    - 이러면 카드랑 더더욱 안 붙어 보임
    ========================================================= */
-.ps-danger {
+
+
+/* .ps-danger {
   border: 1px solid rgba(255, 77, 79, 0.35);
   padding: 26px;
   background: rgba(255, 77, 79, 0.04);
   height:180px;
   width: 1600px;
+} */
+
+.ps-danger {
+  padding: 26px;
+  height: 180px;    /* 원본 높이 유지 */
+  
+  /* ✅ 수정: 고정 1600px 삭제하고 아래 2줄 추가 */
+  width: 100%;      
+  box-sizing: border-box;
 }
+
 
 .ps-danger-title {
   font-size: 1.1rem;
@@ -388,6 +426,7 @@
   .ps-stack {
     gap: 60px; 
   }
+
 }
 
 /* =========================================================
@@ -418,3 +457,33 @@
   cursor: not-allowed;
 }
 
+/* 오른쪽 카드 내부만 스크롤 가능하게 설정 */
+.ps-scroll-area {
+  overflow-y: auto;   /* 내용이 많아지면 스크롤바 생성 */
+  max-height: 420px;  /* ✅ 이 높이를 넘어가면 스크롤 발생 (사용자 화면에 맞춰 조절 가능) */
+  padding-right: 12px; /* 스크롤바와 입력창 사이 여유 공간 */
+  margin-bottom: 10px;
+}
+
+/* 깔끔한 스크롤바 디자인 */
+.ps-scroll-area::-webkit-scrollbar {
+  width: 5px;
+}
+.ps-scroll-area::-webkit-scrollbar-thumb {
+  background: #eee;
+  border-radius: 10px;
+}
+
+/* 저장 버튼 위치 고정 및 상단 구분선 */
+.ps-actions-in-card {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #f2f2f2;
+}
+
+/* 오른쪽 카드 자체는 높이가 무한정 늘어나지 않도록 고정 */
+.ps-card {
+  display: flex;
+  flex-direction: column;
+  height: 600px; /* ✅ 왼쪽 카드와 높이를 맞추거나 적절히 고정하세요 */
+}

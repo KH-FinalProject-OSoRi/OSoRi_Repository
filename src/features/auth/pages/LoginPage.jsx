@@ -135,13 +135,7 @@ export default function LoginPage() {
           >
             <KakaoIcon />
           </button>
-          <button
-            className={`${styles.socialBtn} ${styles.naver}`}
-            type="button"
-            aria-label="네이버 로그인"
-          >
-            <NaverIcon />
-          </button>
+         
         </div>
       </div>
 
@@ -173,11 +167,5 @@ function KakaoIcon() {
   );
 }
 
-function NaverIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 7h4.2l5.8 8V7H21v10h-4.2L11 9v8H7V7z" />
-    </svg>
-  );
-}
+
 

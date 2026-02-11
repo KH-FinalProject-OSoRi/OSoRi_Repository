@@ -433,12 +433,41 @@
 }
 
 .group-date-badge {
-    display: inline-block;
-    background-color: transparent;
-    color: #aaa;
-    padding: 0;
-    font-size: 1rem;
-    font-weight: 400;
+  /*추가*/
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  width: 100%;
+  position: relative;
+   /*추가*/
+
+  background-color: transparent;
+  color: #aaa;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.editBtn {
+  position: absolute; 
+  right: 0; 
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0px; 
+}
+
+.modal-form input,
+.modal-form input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+
+.modal-form input:focus {
+  border-color: #f8bbd0;
 }
 
 .summary-section {
