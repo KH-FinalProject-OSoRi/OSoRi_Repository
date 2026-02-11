@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function NotFound(){
     return(
-        <div className="container">
+        <div className="container2">
             {/* 로고 영역 (이미지의 OSORI 로고 느낌) */}
             <div className="header">
                 <span className="logo">OSORI</span>

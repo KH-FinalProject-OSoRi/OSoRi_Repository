@@ -72,15 +72,6 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="*" element={<NotFound/>} />
 
-        {/* [BEFORE] 로그인/회원가입만 매핑 */}
-        {/*
-                <Route element={<AuthLayout />}>
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                </Route>
-        */}
-
-        {/* [CHANGED] /reset-password 라우트 추가 */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
