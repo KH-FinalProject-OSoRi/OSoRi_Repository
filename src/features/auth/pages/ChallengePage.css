@@ -3,24 +3,27 @@
   padding: 32px 40px;
 }
 
-/* 왼쪽 정렬된 헤더 */
-.challenge-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 32px;
+.challenge-head {
+  padding: 30px;
+  padding-top: 0px; 
+  margin-bottom: 10px;
 }
 
-.challenge-header h2 {
-  font-size: 24px;
-  font-weight: 800;
-  color: #1e293b;
+.challenge-head .challenge-title {
+  margin: 0 !important;          
+  margin-bottom: 1px !important; 
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;  
+  color: #000 !important;        
 }
 
-.challenge-header p {
-  font-size: 15px;
-  color: #475569;
-  margin-top: 6px;
+.challenge-head .challenge-sub {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+  font-size: 1rem !important;
+  color: #666 !important;    
+  font-weight: 600 !important;   
+  margin: 19px 0 0 !important;   
+  line-height: 1.5 !important;
 }
 
 /* 탭 버튼 */
@@ -381,7 +384,7 @@
 }
 
 .challenge-tabBtn.active {
-  background: #2563eb;
+  background: #7dd3fc;
   color: #fff;
 }
 
@@ -491,18 +494,29 @@
 }
 
 .cp-joinBtn {
-  border: 0;
-  border-radius: 12px;
-  padding: 12px 18px;
-  font-weight: 900;
-  background: #64748b;
-  color: #fff;
-  cursor: pointer;
+    border: 1px solid #cbd5e1 !important; 
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 900;
+    background: #ffffff !important;      
+    color: #475569 !important;          
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cp-joinBtn:hover:not(.disabled) {
+    background: #e0f2fe !important;      
+    border-color: #7dd3fc !important;    
+    color: #0369a1 !important;          
+    transform: translateY(-1px);        
 }
 
 .cp-joinBtn.disabled {
-  opacity: 0.9;
-  cursor: default;
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    opacity: 0.7;
+    cursor: default;
 }
 
 /* 참여 모달 */
@@ -700,6 +714,39 @@
 
 .fade-in {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.ch-modal--history .ch-btn.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;         
+  
+  padding: 10px 24px !important;       
+  border-radius: 8px !important;    
+  font-weight: 700 !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  line-height: 1;
+}
+
+.ch-modal--history .ch-btn.primary:hover {
+  background: #eef2ff !important;     
+  border-color: #a5b4fc !important;   
+  color: #4f46e5 !important;           
+  transform: translateY(-1px) !important; 
+}
+
+.ch-modal--history .ch-btn.primary:active {
+  transform: translateY(0) !important;
+}
+
+.ch-modal--history .ch-btn.primary:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.30) !important;
+  outline-offset: 2px;
 }
 
 

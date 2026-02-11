@@ -210,7 +210,7 @@ function CalendarView({ currentDate, setCurrentDate }) {
                           <div style={{ fontWeight: 'bold' }}>{item.title}</div>
                           <div style={{ fontSize: '12px', color: '#888' }}>{item.category} {item.nickname && `| ${item.nickname}`}</div>
                         </div>
-                        <div className={`item-amount ${item.type}`} style={{ color: item.type === 'IN' ? 'green' : 'red' }}>
+                        <div className={`item-amount ${item.type}`} style={{ color: item.type === 'IN' ? '#2ecc71' : 'red' }}>
                           {item.type === 'IN' ? '+' : '-'}{item.amount.toLocaleString()}원
                         </div>
                       </li>
