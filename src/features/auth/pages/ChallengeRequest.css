@@ -1,0 +1,30 @@
+/* ChallengeRequest.css */
+:root {
+  --osori-blue: #0066FF;
+  --osori-light-blue: #F0F6FF;
+  --text-dark: #2D3436;
+  --gray-100: #F8F9FA;
+  --gray-200: #F1F3F5;
+}
+
+/* 메인 컨테이너 */
+.challenge-container {
+  max-width: 1000px; 
+  margin: 60px auto;
+  padding: 40px 60px;
+  background: white;
+  border-radius: 32px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #adb5bd;
+  cursor: pointer;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+

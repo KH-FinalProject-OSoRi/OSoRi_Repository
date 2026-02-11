@@ -4,8 +4,7 @@ import "./MyPage.css";
 import { challengeApi } from "../../../api/challengeApi.js";
 import { useAuth } from "../../../context/AuthContext";
 import { useGroupBudgets } from "../../../hooks/useGroupBudgets";
-import { Navigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const getValue = (obj, ...keys) => {
   for (const key of keys) {
@@ -31,6 +30,7 @@ const getTimeLeft = (endDateStr) => {
 
 export default function ChallengePage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const displayName = useMemo(() => {
     return (
@@ -315,6 +315,10 @@ export default function ChallengePage() {
     return list; 
   }, [list, challengeMode, selectedGroupId]);
 
+  const goToChallengeRequest = () => {
+    navigate('/myPage/challengeRequest'); 
+  };
+
   useEffect(() => {
     loadList(challengeMode); 
     loadMyJoined(challengeMode);
@@ -473,6 +477,7 @@ export default function ChallengePage() {
           <button className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`} onClick={() => setChallengeMode("PERSONAL")}>개인 챌린지</button>
           <button className={`challenge-tabBtn ${challengeMode === "GROUP" ? "active" : ""}`} onClick={() => setChallengeMode("GROUP")}>그룹 챌린지</button>
           <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={openHistory}>지난 챌린지</button>
+          <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={goToChallengeRequest}>챌린지 요청하기</button>
         </div>
 
         <div className="challenge-body">

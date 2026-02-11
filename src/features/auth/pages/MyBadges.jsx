@@ -120,127 +120,48 @@ export default function MyBadges() {
   // }, [badges]);
 
   const renderBadgeCard = (b) => {
-    const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
-    const imgSrc = iconUrl ? `${API_BASE}${iconUrl}` : "";
+  const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
+  const imgSrc = iconUrl ? `${API_BASE}${iconUrl}` : "";
+  const isGroupBadge = (b.challengeMode || "").toUpperCase() === 'GROUP';
 
-    // ✅ 수정: challengeMode가 'GROUP'인 경우만 그룹 뱃지로 UI 표시
-    const isGroupBadge = (b.challengeMode || "").toUpperCase() === 'GROUP';
+  const title =
+    b.badgeId === 1
+      ? "아기 오소리(회원가입)"
+      : (b.challengeDesc || b.challenge_desc || b.badgeName || b.badge_name || "뱃지");
 
-    // ✅ 카드 제목: 1번 뱃지는 고정 명칭, 나머지는 챌린지 설명(challengeDesc) 우선 사용
-    const title =
-      b.badgeId === 1
-        ? "아기 오소리(회원가입)"
-        : (b.challengeDesc || b.challenge_desc || b.badgeName || b.badge_name || "뱃지");
+  const earnedRaw = b.earnedAt || b.earned_at;
+  const earnedText = earnedRaw ? new Date(earnedRaw).toLocaleDateString("ko-KR") : "0000.00.00";
 
-    // 발급일 처리
-    const earnedRaw = b.earnedAt || b.earned_at;
-    const earnedText = earnedRaw ? new Date(earnedRaw).toLocaleDateString("ko-KR") : "발급일 정보 없음";
-
-    // 그룹 가계부명
-    const groupTitle = b.groupBudgetTitle || b.group_budget_title;
-
-    return (
-      <div className="badgecard" key={`${b.badgeId || b.badge_id}-${earnedRaw || ""}`}>
-        <div className="badgecard-left">
-          <div className={`badge-imgwrap ${isGroupBadge ? "is-group" : "is-personal"}`}>
-            {imgSrc ? (
-              <img className="badge-img" src={imgSrc} alt={title} />
-            ) : (
-              <div className="badge-fallback">🏅</div>
-            )}
+  return (
+    <div className="badgecard" key={`${b.badgeId || b.badge_id}-${earnedRaw || ""}`}>
+      {isGroupBadge && (
+          <div style={{fontSize: '12px', color: '#111111', marginTop: '2px', fontWeight : 'bold'}}>
+            {b.groupBudgetTitle || b.group_budget_title}
           </div>
-        </div>
+        )}
 
-        <div className="badgecard-right">
-          <div className="badgecard-toprow">
-            <div className="badge-name">{title}</div>
-            <span className={`badge-pill ${isGroupBadge ? "pill-group" : "pill-personal"}`}>
-              {isGroupBadge ? "그룹" : "개인"}
-            </span>
-          </div>
-
-          <div className="badge-meta">
-            {/* 그룹일 때만 가계부 정보 표시 */}
-            {isGroupBadge && (
-              <div className="meta-line">
-                <span className="meta-label">가계부</span>
-                <span className="meta-value">{groupTitle || "가계부 정보 없음"}</span>
-              </div>
-            )}
-
-            <div className="meta-line">
-              <span className="meta-label">발급일</span>
-              <span className="meta-value">{earnedText}</span>
-            </div>
-          </div>
-        </div>
+      <div className="badge-imgwrap">
+        {imgSrc ? (
+          <img className="badge-img" src={imgSrc} alt={title} />
+        ) : (
+          <div className="badge-fallback">🏅</div>
+        )}
       </div>
-    );
-  };
 
-//   const renderBadgeCard = (b) => {
-//   const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
-//   const imgSrc = iconUrl ? `${API_BASE}${iconUrl}` : "";
 
-//   // ✅ 그룹/개인 분리 기준: BADGE.CHALLENGE_ID가 있으면 그룹
-//   const isGroupBadge = b.challengeId != null; // (백엔드에서 alias로 challengeId 내려준다는 가정)
-
-//   // ✅ 카드 제목: CHALLENGES.DESCRIPTION 우선, 없으면 badgeName (A_newbie 대비)
-//   const title =
-//     b.badgeId === 1
-//       ? "아기 오소리(회원가입)"
-//       : (b.challengeDesc || b.challenge_desc || b.badgeName || b.badge_name || "뱃지");
-
-//   //  발급일: USERBADGE.EARNED_AT
-//   const earnedRaw = b.earnedAt || b.earned_at;
-//   console.log("earnedRaw:", earnedRaw);
-
-//   const earnedText = earnedRaw ? new Date(earnedRaw).toLocaleDateString("ko-KR") : "발급일 정보 없음";
-
-//   // ✅ 그룹 가계부명: GROUPBUDGET.TITLE
-//   const groupTitle = b.groupBudgetTitle || b.group_budget_title;
-
-//   return (
-//     <div className="badgecard" key={`${b.badgeId || b.badge_id}-${earnedRaw || ""}`}>
-//       <div className="badgecard-left">
-//         <div className={`badge-imgwrap ${isGroupBadge ? "is-group" : "is-personal"}`}>
-//           {imgSrc ? (
-//             <img className="badge-img" src={imgSrc} alt={title} />
-//           ) : (
-//             <div className="badge-fallback">🏅</div>
-//           )}
-//         </div>
-//       </div>
-
-//       <div className="badgecard-right">
-//         <div className="badgecard-toprow">
-//           {/* ✅ 뱃지이름 자리: description */}
-//           <div className="badge-name">{title}</div>
-
-//           <span className={`badge-pill ${isGroupBadge ? "pill-group" : "pill-personal"}`}>
-//             {isGroupBadge ? "그룹" : "개인"}
-//           </span>
-//         </div>
-
-//         <div className="badge-meta">
-//           {/* ✅ 그룹일 때만 가계부 표시 */}
-//           {isGroupBadge && (
-//             <div className="meta-line">
-//               <span className="meta-label">가계부</span>
-//               <span className="meta-value">{groupTitle || "가계부 정보 없음"}</span>
-//             </div>
-//           )}
-
-//           <div className="meta-line">
-//             <span className="meta-label">발급일</span>
-//             <span className="meta-value">{earnedText}</span>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
+      <div className="badgecard-right">
+        <div className="badge-name">{title}</div>
+        
+        <div className="badge-meta">
+          <span className="meta-label">발급일</span>
+          <span className="meta-value">{earnedText}</span>
+        </div>
+        
+        
+      </div>
+    </div>
+  );
+};
 
   const renderSection = (title, subtitle, list, isGroup) => (
     <section className="badge-section">
