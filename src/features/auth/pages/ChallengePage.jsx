@@ -4,6 +4,8 @@ import "./MyPage.css";
 import { challengeApi } from "../../../api/challengeApi.js";
 import { useAuth } from "../../../context/AuthContext";
 import { useGroupBudgets } from "../../../hooks/useGroupBudgets";
+import { Navigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const getValue = (obj, ...keys) => {
   for (const key of keys) {
@@ -47,6 +49,8 @@ export default function ChallengePage() {
   const { groupBudgetList = [], isLoading: isGroupLoading } = useGroupBudgets(user?.userId);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [rankings, setRankings] = useState({});
+  const [searchParams] = useSearchParams();
+  const urlGroupId = searchParams.get("groupId");
 
   // 개인 챌린지의 실시간 진행 수치를 저장하는 상태
   const [progressMap, setProgressMap] = useState({});
@@ -98,16 +102,47 @@ export default function ChallengePage() {
     return d.toISOString().slice(0, 10);
   }, []);
 
-  const calcEndDate = (startDate, duration) => {
+  const calcEndDate = (startDate, duration, mode) => {
     const d = new Date(startDate);
-    d.setDate(d.getDate() + (Math.max(1, duration) - 1));
+    const rawDuration = Math.max(1, duration);
+    
+    //그룹 챌린지의 경우 -1 제거
+    if (mode === "GROUP") {
+      d.setDate(d.getDate() + rawDuration);
+    } else {
+      d.setDate(d.getDate() + (rawDuration - 1));
+    }
+    
     return d.toISOString().slice(0, 10);
   };
+
+  // const openJoin = (challenge) => {
+  //   setSelected(challenge);
+  //   const start = todayStr;
+  //   const end = calcEndDate(start, challenge?.duration || 1);
+  //   setJoinForm({ startDate: start, endDate: end });
+  //   setJoinMsg("");
+  //   setIsJoinOpen(true);
+  // };
 
   const openJoin = (challenge) => {
     setSelected(challenge);
     const start = todayStr;
-    const end = calcEndDate(start, challenge?.duration || 1);
+    let end = "";
+
+    if (challenge?.duration === 0 && challengeMode === "GROUP") {
+      const selectedGroup = groupBudgetList.find(
+        (g) => String(g.groupbId) === String(selectedGroupId)
+      );
+      
+      if (selectedGroup?.endDate) {
+        end = selectedGroup.endDate.slice(0, 10);
+      }
+    } 
+    else {
+      end = calcEndDate(start, challenge?.duration || 1, challengeMode);
+    }
+
     setJoinForm({ startDate: start, endDate: end });
     setJoinMsg("");
     setIsJoinOpen(true);
@@ -188,6 +223,41 @@ export default function ChallengePage() {
     }
   };
 
+  // const loadMyJoined = async (mode) => {
+  //   if (!user?.userId) return;
+  //   setJoinedMap({});
+  //   try {
+  //     let data;
+  //     if (mode === "GROUP") {
+  //       if (!selectedGroupId) return;
+  //       data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
+  //     } else {
+  //       data = await challengeApi.myJoinedList({
+  //         userId: user.userId,
+  //         challengeMode: mode,
+  //       });
+  //     }
+
+  //     const arr = normalizeList(data);
+  //     const map = {};
+  //     arr.forEach((row) => {
+  //       const id = row?.challengeId || row?.challenge_id;
+  //       if (!id) return;
+  //       map[String(id)] = {
+  //         status: row?.status,
+  //         startDate: parseDate(row?.startDate || row?.start_date),
+  //         endDate: parseDate(row?.endDate || row?.end_date),
+  //       };
+  //       if (mode === "PERSONAL" && row.status === "PROCEEDING") {
+  //         fetchProgress(id);
+  //       }
+  //     });
+  //     setJoinedMap(map);
+  //   } catch (e) {
+  //     console.error("참여 목록 로드 실패", e);
+  //   }
+  // };
+
   const loadMyJoined = async (mode) => {
     if (!user?.userId) return;
     setJoinedMap({});
@@ -197,23 +267,24 @@ export default function ChallengePage() {
         if (!selectedGroupId) return;
         data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
       } else {
-        data = await challengeApi.myJoinedList({
-          userId: user.userId,
-          challengeMode: mode,
-        });
+        data = await challengeApi.myJoinedList({ userId: user.userId, challengeMode: mode });
       }
 
       const arr = normalizeList(data);
       const map = {};
       arr.forEach((row) => {
-        const id = row?.challengeId || row?.challenge_id;
+        // id 추출 시 대소문자 모두 대응
+        const id = row?.challengeId || row?.challenge_id || row?.CHALLENGE_ID;
         if (!id) return;
+        
         map[String(id)] = {
-          status: row?.status,
-          startDate: parseDate(row?.startDate || row?.start_date),
-          endDate: parseDate(row?.endDate || row?.end_date),
+          status: row?.status || row?.STATUS,
+          // 원본 데이터를 그대로 들고 있어야 ChallengeGauge와 버튼 로직이 정확해집니다.
+          startDate: row?.startDate || row?.start_date || row?.START_DATE,
+          endDate: row?.endDate || row?.end_date || row?.END_DATE,
         };
-        if (mode === "PERSONAL" && row.status === "PROCEEDING") {
+        
+        if (mode === "PERSONAL" && (row.status === "PROCEEDING" || row.STATUS === "PROCEEDING")) {
           fetchProgress(id);
         }
       });
@@ -274,6 +345,22 @@ export default function ChallengePage() {
     }
   }, [joinedMap, challengeMode, selectedGroupId]);
 
+  useEffect(() => {
+    if (isGroupLoading) return;
+
+    if (challengeMode === "GROUP" && groupBudgetList.length === 0) {
+      alert("그룹 챌린지는 그룹 가계부 가입 후 이용 가능합니다.");
+      setChallengeMode("PERSONAL");
+    }
+  }, [challengeMode, groupBudgetList, isGroupLoading]);
+
+  useEffect(()=> {
+    if(urlGroupId) {
+      setChallengeMode("GROUP");
+      setSelectedGroupId(Number(urlGroupId));
+    }
+  }, [urlGroupId]);
+
   const pickMessage = (res) => {
     if (res == null) return "참여 완료";
     if (typeof res === "string") return res;
@@ -293,8 +380,9 @@ export default function ChallengePage() {
           userId: user.userId,
           challengeId: selected.challengeId,
           groupbId: selectedGroupId,
-          startDate: joinForm.startDate,
-          endDate: joinForm.endDate,
+          duration: selected.duration,
+          startDate: joinForm.startDate + " 00:00:00",
+          endDate: joinForm.endDate + " 23:59:59",
         });
       } else {
         res = await challengeApi.join({
@@ -328,6 +416,48 @@ export default function ChallengePage() {
     const j = joinedMap[challengeId];
     return j && (j.status === "PROCEEDING" || j.status === "RESERVED" || j.status === "SUCCESS");
   };
+
+  const ChallengeGauge = ({ startDate, endDate }) => {
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date().getTime();
+    return new Date(dateStr.replace(' ', 'T')).getTime();
+  };
+
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
+  const now = new Date().getTime();
+
+  const total = end - start;
+  const elapsed = now - start;
+  const progress = Math.min(Math.max((elapsed / total) * 100, 0), 100);
+  const safeProgress = isNaN(progress) ? 0 : progress;
+
+  return (
+    <div
+      style={{
+        height: "25px",
+        width: "100%",
+        backgroundColor: "#e5e7eb",
+        borderRadius: "20px",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          height: "100%",
+          width: `${safeProgress}%`,
+          backgroundColor: "#10b981",
+          borderRadius: "20px",
+          transition: "width 0.3s ease"
+        }}
+      />
+    </div>
+  );
+};
+
+
+
+
 
   return (
     <main className="fade-in">
@@ -365,7 +495,7 @@ export default function ChallengePage() {
                 ))}
               </div>
             </div>
-          )}
+          )} 
 
           {!isLoading && !errorMsg && filteredList?.length > 0 && (
             <div className="challenge-list">
@@ -376,14 +506,14 @@ export default function ChallengePage() {
                 const prog = progressMap[id];
 
                 return (
-                  <article key={id + desc} className="cp-card">
+                  <article key={id + desc} className={`cp-card ${challengeMode === "GROUP" ? "group-card" : ""}`}>
                     <div className="cp-cardTop">
                       <div className="cp-badge">{fmtMode(challengeMode)}</div>
                       {/* <div className="cp-id">{id}</div> */}
                     </div>
                     
                     {challengeMode === "GROUP" && selectedGroupId && (
-                      <p><span style={{ fontSize: "11px", color: "#4A90E2", fontWeight: "bold" }}>
+                      <p><span style={{ fontSize: "11px", color: "#10b981", fontWeight: "bold" }}>
                         {/* [ {groupBudgetList.find(g => String(g.groupbId) === String(selectedGroupId))?.title || "선택됨"} ] 대상 */}
                       </span></p>
                     )}
@@ -398,7 +528,7 @@ export default function ChallengePage() {
                     </div>
 
                     {j?.startDate && j?.endDate && (
-                      <div className="cp-dates"><div className="cp-date">시작날짜({j.startDate}) ~ 종료날짜({j.endDate})</div></div>
+                      <div className="cp-date">시작날짜({parseDate(j.startDate)}) ~ 종료날짜({parseDate(j.endDate)})</div>
                     )}
 
                     {challengeMode === "PERSONAL" && j?.status === "PROCEEDING" && (
@@ -466,6 +596,18 @@ export default function ChallengePage() {
                             <span style={{ fontSize: "13px", fontWeight: "bold" }}>{Number(rk.totalAmount).toLocaleString()}원</span>
                           </div>
                         ))}
+                      </div>
+                    )}
+
+                    {j?.status === "PROCEEDING" && id === "group_zero_challenge" && (
+                      <div style={{ marginTop: '10px' }}>
+                        {/* DB 데이터를 props로 전달 */}
+                        <ChallengeGauge startDate={j.startDate} endDate={j.endDate} />
+                        
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                          <span>시작일: {new Date(j.startDate).toLocaleString()}</span>
+                          <span>종료일: {new Date(j.endDate).toLocaleString()}</span>
+                        </div>
                       </div>
                     )}
                   </article>

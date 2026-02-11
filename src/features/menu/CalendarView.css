@@ -13,6 +13,13 @@
   align-items: center;
 }
 
+.calender-title {
+  display: flex;
+  justify-content: space-between; /* 양 끝으로 벌림 */
+  align-items: center;           /* 세로 중앙 정렬 */
+  width: 100%;
+}
+
 .calendar-header {
   margin: 0;
   margin-bottom: 1px !important;
@@ -142,30 +149,6 @@
   border-radius: 10px;
 }
 
-/* 오늘 날짜가 선택되었을 때는 파란색 배경이 우선하도록 설정 */
-.react-calendar__tile--now.react-calendar__tile--active {
-  background: #0066ff !important;
-  color: white !important;
-}
-
-.react-calendar__month-view__weekdays__weekday:nth-child(1) abbr {
-  color: #e74c3c !important;
-  text-decoration: none !important;
-}
-
-.react-calendar__month-view__weekdays__weekday:nth-child(7) abbr {
-  color: #3b82f6; 
-  text-decoration: none;
-}
-
-.react-calendar__month-view__days__day:nth-child(7n+1) {
-  color: #e74c3c !important;
-}
-
-.react-calendar__month-view__days__day:nth-child(7n) {
-  color: #3b82f6 !important;
-}
-
 .react-calendar__tile--now.react-calendar__tile--active abbr {
   color: white !important;
 }
@@ -248,6 +231,22 @@
 .item-memo { font-size: 15px; color: #888; }
 .item-amount { font-family: 'Pretendard', sans-serif; font-weight: bold; min-width: 85px; text-align: right; font-size: 15px; }
 
+/* 공휴일 */
+/* 1. 공휴일 및 일요일: 빨간색 (우선순위를 위해 !important 사용 가능) */
+.holiday-red abbr {
+  color: #e74c3c !important;
+}
+
+/* 2. 일반 토요일: 파란색 */
+.holiday-blue abbr {
+  color: #3b82f6 !important;
+}
+
+/* 3. 선택된 날짜: 글자색 흰색 유지 */
+.react-calendar__tile--active.holiday-red abbr,
+.react-calendar__tile--active.holiday-blue abbr {
+  color: white !important;
+}
 
 @media (max-width: 1200px) {
   .calendar-page-container {

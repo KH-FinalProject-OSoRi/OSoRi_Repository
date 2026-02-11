@@ -422,6 +422,10 @@
   background: #2563eb;
 }
 
+.cp-card.group-card::before {
+  background: #10b981; /* Green (기존 탭의 초록색과 맞춤) */
+}
+
 .cp-cardTop {
   display: flex;
   align-items: center;
@@ -435,6 +439,11 @@
   color: #0ea5e9;
   padding: 6px 10px;
   border-radius: 999px;
+}
+
+.group-card .cp-badge {
+  background: #dcfce7; /* 연한 초록 배경 */
+  color: #059669;      /* 진한 초록 글자 */
 }
 
 .cp-id {
@@ -701,6 +710,8 @@
 .fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
+
+
 
 
 

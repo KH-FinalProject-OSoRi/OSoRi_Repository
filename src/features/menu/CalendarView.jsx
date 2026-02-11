@@ -5,6 +5,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; 
 import './CalendarView.css'; 
 import { useNavigate } from 'react-router-dom';
+import { fetchHolidays } from '../../api/holidayApi';
 
 function CalendarView({ currentDate, setCurrentDate }) {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ function CalendarView({ currentDate, setCurrentDate }) {
   const [transactions, setTransactions] = useState([]); 
   const [activeLedgers, setActiveLedgers] = useState([]); 
   const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('en-CA'));
+  const [holidays, setHolidays] = useState({});
   const navigate = useNavigate();
 
   const userId = user?.userId || 3; 
@@ -83,6 +85,32 @@ function CalendarView({ currentDate, setCurrentDate }) {
     };
     if (ledgers.length > 0) fetchAllData();
   }, [ledgers, userId]);
+
+  //공휴일
+  useEffect(() => {
+    const getHolidays = async () => {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const data = await fetchHolidays(year, month);
+      setHolidays(data);
+    };
+    getHolidays();
+  }, [currentDate]);
+
+  const getTileClassName = ({ date, view }) => {
+    if (view === 'month') {
+      const dateStr = date.toLocaleDateString('en-CA');
+      
+      if (holidays[dateStr] || date.getDay() === 0) {
+        return 'holiday-red';
+      }
+      
+      if (date.getDay() === 6) {
+        return 'holiday-blue';
+      }
+    }
+    return null;
+  };
 
   const isAllActive = ledgers.length > 0 && activeLedgers.length === ledgers.length;
   const toggleAll = () => setActiveLedgers(isAllActive ? [] : ledgers.map(l => l.id));
@@ -187,6 +215,7 @@ function CalendarView({ currentDate, setCurrentDate }) {
               activeStartDate={currentDate}
               onActiveStartDateChange={({activeStartDate}) => setCurrentDate(activeStartDate)}
               calendarType="gregory"
+              tileClassName={getTileClassName}
               
               style={{ 
                 height: '100%', 
