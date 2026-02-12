@@ -5,6 +5,7 @@
 
 .challenge-head {
   padding: 30px;
+  padding-left: 0px;
   padding-top: 0px; 
   margin-bottom: 10px;
 }
@@ -46,14 +47,13 @@
 }
 
 .challenge-tab button.active {
-  background-color: #2563eb;
+  background-color: #354c7a;
   color: white;
   font-weight: bold;
 }
 
 .challenge-tab button:nth-child(2).active {
-  background-color: #10b981; /* 초록색 */
-  border-color: #28a745;
+  background-color: #25634f;
 }
 
 /* ✅ 챌린지 전체를 감싸는 큰 박스 */
