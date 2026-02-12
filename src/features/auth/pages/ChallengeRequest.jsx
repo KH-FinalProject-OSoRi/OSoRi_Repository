@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ChallengeRequest.css';
+import axios from 'axios';
+import { challengeApi } from '../../../api/challengeApi';
 
 const ChallengeRequest = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
-    targetAmount: '',
     duration: '3',
     category: '식비',
     mode: 'PERSONAL',
-    targetCount: '1',
-    status : 'N'
+    targetAmount: '',
+    targetCount: '1'
   });
 
   const handleChange = (e) => {
@@ -20,38 +20,127 @@ const ChallengeRequest = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // DB 구조에 맞춘 페이로드 생성
-    const dbPayload = {
-      CHALLENGE_ID: `${formData.title.replace(/\s+/g, '_')}_${Date.now()}`,
-      DESCRIPTION: formData.description || `${formData.title} 챌린지입니다.`,
-      TARGET: parseInt(formData.targetAmount) || 0,
-      DURATION: parseInt(formData.duration),
-      CATEGORY: formData.category,
-      TYPE: 'EXPENSE',
-      STATUS: 'N',
-      TARGET_COUNT: parseInt(formData.targetCount),
-      CHALLENGE_MODE: formData.mode
+  // src/features/auth/pages/ChallengeRequest.jsx
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    // 1. 타임스탬프 생성
+    const now = new Date();
+    const timestamp = now.getFullYear() +
+      String(now.getMonth() + 1).padStart(2, '0') +
+      String(now.getDate()).padStart(2, '0') +
+      String(now.getHours()).padStart(2, '0') +
+      String(now.getMinutes()).padStart(2, '0') +
+      String(now.getSeconds()).padStart(2, '0') +
+      String(now.getMilliseconds()).padStart(3, '0'); // 중복 방지용 밀리초 추가
+
+    // 2. 사용자 정보
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const userId = storedUser ? storedUser.loginId : "unknown";
+    const uniqueId = `request_${userId}_${timestamp}`;
+
+    // 3. 백엔드 VO 필드명에 맞춘 최종 데이터 구성
+    const payload = {
+      challengeId: uniqueId,
+      // formData.title이 정확히 매칭되도록 확인
+      description: `${formData.title}`,
+      target: parseInt(formData.targetAmount) || 0,
+      duration: parseInt(formData.duration),
+      category: formData.category,
+      type: 'EXPENSE',
+      status: 'N', // 바로 활성화
+      targetCount: parseInt(formData.targetCount) || 1,
+      challengeMode: formData.mode
     };
-    
-    console.log("서버로 전송될 데이터:", dbPayload);
-    alert("🚀 챌린지가 성공적으로 생성되었습니다!");
-    navigate(-1); // 생성 후 이전 페이지로 이동
-  };
 
-return (
-  <div className="challenge-container">
-    <button onClick={() => navigate(-1)} className="back-button">← 돌아가기</button>
-    <h2 className="challenge-title">새로운 도전 시작하기 🚀</h2>
+    // 4. API 호출 (수정된 api 함수 사용)
+    const response = await challengeApi.createChallenge(payload);
 
-    <div>
+    // axios 응답 객체(response)의 status 확인
+    if (response.status === 200 || response.status === 201) {
+      alert("🚀 새로운 도전이 요청되었습니다!");
+      navigate(-1); 
+    }
+  } catch (error) {
+    console.error("저장 실패:", error);
+    alert("❌ 저장에 실패했습니다.");
+    }
+};
+
+  return (
+    <div className="challenge-request-wrapper">
+      {/* 돌아가기 버튼 제거 후 제목 단독 배치 */}
+      <header className="page-header">
+        <h2 className="main-title">새로운 챌린지 신청하기</h2>
+      </header>
+
+      <form className="challenge-form" onSubmit={handleSubmit}>
+        {/* 설정 카드: 좌우 폭 대폭 확장됨 */}
+        <div className="setup-card">
+          <div className="setup-row">
+            <div className="setup-section">
+              <label className="field-label">누구와 함께하나요?</label>
+              <div className="mode-toggle">
+                <button 
+                  type="button" 
+                  className={formData.mode === 'PERSONAL' ? 'active' : ''} 
+                  onClick={() => setFormData({...formData, mode: 'PERSONAL'})}
+                >혼자하기</button>
+                <button 
+                  type="button" 
+                  className={formData.mode === 'GROUP' ? 'active' : ''} 
+                  onClick={() => setFormData({...formData, mode: 'GROUP'})}
+                >함께하기</button>
+              </div>
+            </div>
+            
+            <div className="setup-section">
+              <label className="field-label">챌린지 이름을 지어주세요</label>
+              <input 
+                type="text" 
+                name="title" 
+                placeholder="예: 커피값 아끼기 챌린지" 
+                className="full-input" 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 다짐 카드: 세로 병렬 배치 및 가로 폭 확장 */}
+        <div className="sentence-card">
+          <p className="sentence-text">
+            " <span style={{color: '#0066FF'}}>{formData.mode === 'PERSONAL' ? '나' : '우리'}</span>는 앞으로 
+            <select name="duration" className="inline-field" onChange={handleChange} value={formData.duration}>
+              <option value="3">3일</option>
+              <option value="7">1주</option>
+              <option value="30">한달</option>
+            </select> 동안, 
+            <select name="category" className="inline-field" onChange={handleChange} value={formData.category}>
+              <option>식비</option>
+              <option>생활/마트</option>
+              <option>쇼핑</option>
+              <option>의료/건강</option>
+              <option>교통</option>
+              <option>문화/여가</option>
+              <option>교육</option>
+              <option>기타</option>
+            </select>에서 
+            <input type="number" name="targetAmount" placeholder="금액" className="inline-field" style={{ width: '150px' }} onChange={handleChange} required /> 원을 
+            <input type="number" name="targetCount" placeholder="횟수" className="inline-field" style={{ width: '80px' }} onChange={handleChange} required /> 번 이하로 사용할게요. "
+          </p>
+        </div>
+
+        <div className="action-area">
+          <button type="submit" className="submit-btn">
+            챌린지 요청하기
+          </button>
+        </div>
+      </form>
     </div>
-
-    
-  </div>
-);
+  );
 };
 
 export default ChallengeRequest;

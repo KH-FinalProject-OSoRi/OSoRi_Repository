@@ -82,9 +82,11 @@ export const challengeApi = {
       params: { userId, challengeId }
     });
     return response.data;
-  }
+  },
 
-
+  createChallenge: async (formData) => {
+    return await api.post('/challenges', formData);
+  },
 
 };
 
