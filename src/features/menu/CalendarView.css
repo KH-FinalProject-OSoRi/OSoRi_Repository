@@ -171,7 +171,7 @@
 
 .saturday { color: #3b82f6 !important; }
 .react-calendar__month-view__days__day--weekend:nth-child(7n+1) { color: #e74c3c !important; }
-.income-tag { color: #2ecc71 !important; font-size: 13px; font-weight: bold; font-family: inherit;}
+.income-tag { color:#2ecc71 !important; font-size: 13px; font-weight: bold; font-family: inherit;}
 .expense-tag { color: #e74c3c !important; font-size: 13px; font-weight: bold; font-family: inherit;}
 
 .react-calendar__tile--active {

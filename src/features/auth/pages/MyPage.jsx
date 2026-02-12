@@ -106,19 +106,24 @@ const MyPage = ({refreshGroupList}) => {
 
   // badgeApi 불러오기
   useEffect(() => {
-        const fetchBadges = async () => {
-            if (user?.userId) {
-                try {
-                    // 기존 transApi 스타일과 동일하게 호출
-                    const data = await badgeApi.getUserBadges(user?.userId);
-                    setBadges(data);
-                } catch (error) {
-                    console.error("뱃지 로딩 에러:", error);
-                }
-            }
-        };
-        fetchBadges();
-    }, [user?.userId]);
+    const fetchBadges = async () => {
+      if (user?.userId) {
+        try {
+          const data = await badgeApi.getUserBadges(user?.userId);
+          
+          // 날짜순(최신순)으로 정렬하여 상태에 저장
+          const sortedBadges = [...data].sort((a, b) => 
+            new Date(b.earnedAt) - new Date(a.earnedAt)
+          );
+          
+          setBadges(sortedBadges);
+        } catch (error) {
+          console.error("뱃지 로딩 에러:", error);
+        }
+      }
+    };
+    fetchBadges();
+  }, [user?.userId]);
 
   // 수락/거절 처리 함수
   const handleInviteAction = async (noti, status) => {
@@ -172,7 +177,7 @@ const MyPage = ({refreshGroupList}) => {
       <header className="content-header">
         <h2>마이페이지</h2>
 
-        <p className="welcome-text">{displayName} 님 환영합니다.</p>
+        <p className="welcome-text">내 지갑부터 공동 자산까지, 오소리가 소비 흐름을 한눈에 정리해 드릴게요.</p>
 
           <div className="content-header2">
             <div className="alarm-wrapper" onClick={() => setIsNotiOpen(!isNotiOpen)} style={{ cursor: 'pointer', position: 'relative' }}>

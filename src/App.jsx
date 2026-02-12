@@ -26,6 +26,7 @@ import SocialRegisterPage from "./features/auth/pages/SocialRegisterPage";
 import { groupBudgetApi } from "./api/groupBudgetApi";
 import GroupBookGuard from "./features/group/GroupBookGuard";
 import ChallengeRequest from "./features/auth/pages/ChallengeRequest";
+import NotFound from "./components/common/NotFound";
 
 const SocketHandler = ({ userId,setNotifications,refreshGroupList }) => {
   const { notifications } = useAlarmSocket(userId,refreshGroupList); // 여기서 호출하면 에러 안 남
@@ -70,16 +71,8 @@ function App() {
                      refreshGroupList={fetchGroupBudgetAll} />
       <Routes>
         <Route path="/" element={<MainPage />} />
+        <Route path="*" element={<NotFound/>} />
 
-        {/* [BEFORE] 로그인/회원가입만 매핑 */}
-        {/*
-                <Route element={<AuthLayout />}>
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                </Route>
-        */}
-
-        {/* [CHANGED] /reset-password 라우트 추가 */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

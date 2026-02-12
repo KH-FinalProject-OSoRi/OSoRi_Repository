@@ -472,6 +472,7 @@ export default function ChallengePage() {
             <div className="challenge-sub">{displayName} 님, 목표를 정하고 재밌게 절약/관리하는 곳</div>
           </div>
         </div>
+      </div>
 
         <div className="challenge-tab">
           <button className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`} onClick={() => setChallengeMode("PERSONAL")}>개인 챌린지</button>
@@ -676,7 +677,7 @@ export default function ChallengePage() {
             </div>
           </div>
         )}
-      </div>
+      
     </main>
   );
 

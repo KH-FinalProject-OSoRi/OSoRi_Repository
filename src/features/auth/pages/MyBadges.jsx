@@ -120,48 +120,53 @@ export default function MyBadges() {
   // }, [badges]);
 
   const renderBadgeCard = (b) => {
-  const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
-  const imgSrc = iconUrl ? `${API_BASE}${iconUrl}` : "";
-  const isGroupBadge = (b.challengeMode || "").toUpperCase() === 'GROUP';
+    const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
+    const imgSrc = iconUrl ? `${API_BASE}${iconUrl}` : "";
+    
+    // 1. 그룹 뱃지 판별 로직 강화
+    // 모드가 GROUP이거나, groupBudgetTitle 값이 실제로 존재할 때 그룹 뱃지로 간주합니다.
+    const isGroupBadge = (b.challengeMode || "").toUpperCase() === 'GROUP' || !!(b.groupBudgetTitle || b.group_budget_title);
 
-  const title =
-    b.badgeId === 1
-      ? "아기 오소리(회원가입)"
-      : (b.challengeDesc || b.challenge_desc || b.badgeName || b.badge_name || "뱃지");
+    const title =
+      b.badgeId === 1
+        ? "아기 오소리(회원가입)"
+        : (b.challengeDesc || b.challenge_desc || b.badgeName || b.badge_name || "뱃지");
 
-  const earnedRaw = b.earnedAt || b.earned_at;
-  const earnedText = earnedRaw ? new Date(earnedRaw).toLocaleDateString("ko-KR") : "0000.00.00";
+    const earnedRaw = b.earnedAt || b.earned_at;
+    const earnedText = earnedRaw ? new Date(earnedRaw).toLocaleDateString("ko-KR") : "0000.00.00";
 
-  return (
-    <div className="badgecard" key={`${b.badgeId || b.badge_id}-${earnedRaw || ""}`}>
-      {isGroupBadge && (
-          <div style={{fontSize: '12px', color: '#111111', marginTop: '2px', fontWeight : 'bold'}}>
+    // 2. 고유 키(Key) 생성
+    // 동일 유저가 같은 날 여러 그룹에서 뱃지를 따더라도 중복되지 않도록 groupId를 조합합니다.
+    const gId = b.groupId || b.GROUPB_ID || (b.groupBudgetTitle ? 'group' : 'personal');
+    const uniqueKey = `${b.badgeId || b.badge_id}-${earnedRaw}-${gId}`;
+
+    return (
+      <div className="badgecard" key={uniqueKey}>
+        {/* 그룹 뱃지일 때만 상단에 가계부 이름 표시 */}
+        {isGroupBadge && (b.groupBudgetTitle || b.group_budget_title) && (
+          <div style={{ fontSize: '12px', color: '#0066ff', marginTop: '2px', fontWeight: 'bold' }}>
             {b.groupBudgetTitle || b.group_budget_title}
           </div>
         )}
 
-      <div className="badge-imgwrap">
-        {imgSrc ? (
-          <img className="badge-img" src={imgSrc} alt={title} />
-        ) : (
-          <div className="badge-fallback">🏅</div>
-        )}
-      </div>
-
-
-      <div className="badgecard-right">
-        <div className="badge-name">{title}</div>
-        
-        <div className="badge-meta">
-          <span className="meta-label">발급일</span>
-          <span className="meta-value">{earnedText}</span>
+        <div className="badge-imgwrap">
+          {imgSrc ? (
+            <img className="badge-img" src={imgSrc} alt={title} />
+          ) : (
+            <div className="badge-fallback">🏅</div>
+          )}
         </div>
-        
-        
+
+        <div className="badgecard-right">
+          <div className="badge-name">{title}</div>
+          <div className="badge-meta">
+            <span className="meta-label">발급일</span>
+            <span className="meta-value">{earnedText}</span>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
   const renderSection = (title, subtitle, list, isGroup) => (
     <section className="badge-section">
@@ -173,17 +178,19 @@ export default function MyBadges() {
         <div className="section-count">{list.length}개</div>
       </div>
 
-      {list.length === 0 ? (
-        <div className="empty-card">
-          <div className="empty-emoji">{isGroup ? "👥" : "👤"}</div>
-          <div className="empty-title">{isGroup ? "아직 그룹 뱃지가 없어요." : "아직 개인 뱃지가 없어요."}</div>
-          <div className="empty-sub">챌린지를 성공하면 뱃지가 여기에 쌓여요!</div>
-        </div>
-      ) : (
-        <div className="badge-list">
-          {list.map((b) => renderBadgeCard(b, isGroup))}
-        </div>
-      )}
+      <div className="section-content-card">
+        {list.length === 0 ? (
+          <div className="empty-card">
+            <div className="empty-emoji">{isGroup ? "👥" : "👤"}</div>
+            <div className="empty-title">{isGroup ? "아직 그룹 뱃지가 없어요." : "아직 개인 뱃지가 없어요."}</div>
+            <div className="empty-sub">챌린지를 성공하면 뱃지가 여기에 쌓여요!</div>
+          </div>
+        ) : (
+          <div className="badge-list">
+            {list.map((b) => renderBadgeCard(b, isGroup))}
+          </div>
+        )}
+      </div>
     </section>
   );
 
@@ -192,7 +199,7 @@ export default function MyBadges() {
         <div className="mybadges-page">
         <div className="mybadges-header">
             <div>
-            <h1 className="mybadges-title">내 뱃지</h1>
+            <h2 className="mybadges-title">내 뱃지</h2>
             <p className="mybadges-subtitle">
                 개인/그룹 챌린지에서 획득한 뱃지를 분리해서 보여드려요.
             </p>

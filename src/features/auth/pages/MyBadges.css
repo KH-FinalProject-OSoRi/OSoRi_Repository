@@ -11,24 +11,26 @@
 
 /* 페이지 헤더 */
 .mybadges-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
+  padding: 30px;
+  padding-top: 0px; 
+  margin-bottom: 10px;
 }
 
-.mybadges-title {
+.mybadges-header .mybadges-title {
   margin: 0;
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -0.6px;
+  margin-bottom: 1px !important;
+  font-size: 1.8rem;
+  font-weight: 800;             
+  color: #213547;                 
 }
 
-.mybadges-subtitle {
-  margin: 6px 0 0;
-  font-size: 13px;
-  color: #7a869a;
+.mybadges-header .mybadges-subtitle {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+  font-size: 1rem !important;
+  color: #666 !important;    
+  font-weight: 600 !important;
+  margin: 19px 0 0;             
+  line-height: 1.5;
 }
 
 /* 로딩/상태 */
@@ -63,6 +65,15 @@
 /* 섹션 */
 .badge-section {
   margin-top: 18px;
+}
+
+.section-content-card {
+  background: #ffffff;
+  border: 1px solid #eef1f6;
+  border-radius: 24px; /* 전체적으로 둥근 느낌 */
+  padding: 40px 40px 0px 40px;       /* 내부 여백 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03); /* 은은한 그림자 */
+  margin-top: 15px;
 }
 
 .section-head {

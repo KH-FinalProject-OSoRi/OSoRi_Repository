@@ -3,31 +3,30 @@
   padding: 32px 40px;
 }
 
-/* 왼쪽 정렬된 헤더 */
-.challenge-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 32px;
+.challenge-head {
+  padding-left: 0px;
+  padding-top: 0px; 
 }
 
-.challenge-header h2 {
-  font-size: 24px;
-  font-weight: 800;
-  color: #1e293b;
+.challenge-head .challenge-title {
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;  
+  color: #000 !important;        
 }
 
-.challenge-header p {
-  font-size: 15px;
-  color: #475569;
-  margin-top: 6px;
+.challenge-head .challenge-sub {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+  font-size: 1rem !important;
+  color: #666 !important;    
+  font-weight: 600 !important;   
+  margin: 19px 0 0 !important;   
+  line-height: 1.5 !important;
 }
 
 /* 탭 버튼 */
 .challenge-tab {
   display: flex;
   gap: 10px;
-  margin-top: 16px;
 }
 
 .challenge-tab button {
@@ -43,14 +42,13 @@
 }
 
 .challenge-tab button.active {
-  background-color: #2563eb;
+  background-color: #354c7a;
   color: white;
   font-weight: bold;
 }
 
 .challenge-tab button:nth-child(2).active {
-  background-color: #10b981; /* 초록색 */
-  border-color: #28a745;
+  background-color: #25634f;
 }
 
 /* ✅ 챌린지 전체를 감싸는 큰 박스 */
@@ -106,7 +104,6 @@
 
 .challenge-title {
   font-weight: 700;
-  margin-bottom: 8px;
   color: #111827;
 }
 
@@ -114,7 +111,6 @@
   font-size: 12px;
   font-weight: 700;
   color: #64748b;
-  margin-bottom: 6px;
 }
 
 .challenge-info {
@@ -228,7 +224,6 @@
 .ch-form {
   display: flex;
   gap: 12px;
-  margin-top: 14px;
 }
 
 .ch-label {
@@ -348,10 +343,6 @@
   padding: 0px;
 }
 
-.challenge-head {
-  margin-bottom: 18px;
-}
-
 .challenge-title {
   font-size: 26px;
   font-weight: 900;
@@ -381,7 +372,7 @@
 }
 
 .challenge-tabBtn.active {
-  background: #2563eb;
+  background: #7dd3fc;
   color: #fff;
 }
 
@@ -500,18 +491,29 @@
 }
 
 .cp-joinBtn {
-  border: 0;
-  border-radius: 12px;
-  padding: 12px 18px;
-  font-weight: 900;
-  background: #64748b;
-  color: #fff;
-  cursor: pointer;
+    border: 1px solid #cbd5e1 !important; 
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 900;
+    background: #ffffff !important;      
+    color: #475569 !important;          
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cp-joinBtn:hover:not(.disabled) {
+    background: #e0f2fe !important;      
+    border-color: #7dd3fc !important;    
+    color: #0369a1 !important;          
+    transform: translateY(-1px);        
 }
 
 .cp-joinBtn.disabled {
-  opacity: 0.9;
-  cursor: default;
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    opacity: 0.7;
+    cursor: default;
 }
 
 /* 참여 모달 */
@@ -709,6 +711,39 @@
 
 .fade-in {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.ch-modal--history .ch-btn.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;         
+  
+  padding: 10px 24px !important;       
+  border-radius: 8px !important;    
+  font-weight: 700 !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  line-height: 1;
+}
+
+.ch-modal--history .ch-btn.primary:hover {
+  background: #eef2ff !important;     
+  border-color: #a5b4fc !important;   
+  color: #4f46e5 !important;           
+  transform: translateY(-1px) !important; 
+}
+
+.ch-modal--history .ch-btn.primary:active {
+  transform: translateY(0) !important;
+}
+
+.ch-modal--history .ch-btn.primary:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.30) !important;
+  outline-offset: 2px;
 }
 
 
