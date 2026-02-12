@@ -391,7 +391,7 @@ function ProfileSettings() {
   const canWithdraw = withdrawChecked && withdrawPassword.trim().length > 0 && !isWithdrawing;
 
   return (
-    <main className="fade-in ps-page">
+    <main className="fade-in">
       <header className="content-header">
         <h2>프로필 설정</h2>
         <p className="ps-sub">프로필/계정 정보를 수정하고 저장할 수 있습니다.</p>
