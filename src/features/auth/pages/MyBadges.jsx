@@ -168,31 +168,57 @@ export default function MyBadges() {
     );
   };
 
-  const renderSection = (title, subtitle, list, isGroup) => (
-    <section className="badge-section">
-      <div className="section-head">
-        <div>
-          <h2 className="section-title">{title}</h2>
-          <p className="section-sub">{subtitle}</p>
-        </div>
-        <div className="section-count">{list.length}개</div>
-      </div>
+  const renderSection = (title, subtitle, list, isGroup) => {
+    // 개인 뱃지인 경우 총 3개가 되도록 모자란 개수를 계산
+    const TOTAL_PERSONAL_SLOTS = 3;
+    const displayList = [...list];
+    
+    // 개인 뱃지 섹션이고 리스트가 3개보다 적다면 실루엣 추가
+    if (!isGroup && displayList.length < TOTAL_PERSONAL_SLOTS) {
+      const missingCount = TOTAL_PERSONAL_SLOTS - displayList.length;
+      for (let i = 0; i < missingCount; i++) {
+        displayList.push({ isLocked: true, id: `locked-${i}` });
+      }
+    }
 
-      <div className="section-content-card">
-        {list.length === 0 ? (
-          <div className="empty-card">
-            <div className="empty-emoji">{isGroup ? "👥" : "👤"}</div>
-            <div className="empty-title">{isGroup ? "아직 그룹 뱃지가 없어요." : "아직 개인 뱃지가 없어요."}</div>
-            <div className="empty-sub">챌린지를 성공하면 뱃지가 여기에 쌓여요!</div>
+    return (
+      <section className="badge-section">
+        <div className="section-head">
+          <div>
+            <h2 className="section-title">{title}</h2>
+            <p className="section-sub">{subtitle}</p>
           </div>
-        ) : (
+          <div className="section-count">{list.length}개</div>
+        </div>
+
+        <div className="section-content-card">
           <div className="badge-list">
-            {list.map((b) => renderBadgeCard(b, isGroup))}
+            {displayList.map((b) => {
+              // 잠긴 뱃지인 경우 별도의 실루엣 카드 렌더링
+              if (b.isLocked) {
+                return (
+                  <div className="badgecard locked" key={b.id}>
+                    <div className="badge-imgwrap silhouette">
+                      {/* 오소리 실루엣 이미지 경로가 있다면 img 태그를 사용하세요 */}
+                      <img className="badge-img" src={`${API_BASE}/upload/badges/locked.png`} alt="잠긴 뱃지" />
+                    </div>
+                    <div className="badgecard-right">
+                      <div className="badge-name">??</div>
+                      <div className="badge-meta">
+                        <span className="meta-value">도전하여 획득하세요!</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              // 기존 획득한 뱃지 렌더링
+              return renderBadgeCard(b, isGroup);
+            })}
           </div>
-        )}
-      </div>
-    </section>
-  );
+        </div>
+      </section>
+    );
+  };
 
   return (
     <main className="fade-in">
