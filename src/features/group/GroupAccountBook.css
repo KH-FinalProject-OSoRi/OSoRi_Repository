@@ -259,23 +259,34 @@
 }
 
 .add-btn {
-  display: block;
   width: 100%;
-  max-width: 100%; 
-  margin: 0 auto;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 1rem;
+  background: #ffffff !important;
+  border: 2px solid var(--primary-color) !important; 
+  color: var(--primary-color) !important; 
+  
+  padding: 16px; 
+  border-radius: 18px;
+  font-weight: 800;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: opacity 0.2s;
-  flex-shrink: 0;
+  margin-top: 15px;
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.add-btn:hover { opacity: 0.9; }
+.add-btn:hover {
+  box-shadow: 0 8px 20px rgba(0, 102, 255, 0.15); 
+  transform: translateY(-2px); 
+}
+
+.add-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 102, 255, 0.1);
+}
 
 .modal-overlay {
   position: fixed;

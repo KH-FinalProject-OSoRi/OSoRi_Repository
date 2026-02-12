@@ -271,7 +271,7 @@ export default function MyBadges() {
         <div className="mybadges-page">
         <div className="mybadges-header">
             <div>
-            <h1 className="mybadges-title">내 뱃지</h1>
+            <h2 className="mybadges-title">내 뱃지</h2>
             <p className="mybadges-subtitle">
                 개인/그룹 챌린지에서 획득한 뱃지를 분리해서 보여드려요.
             </p>
