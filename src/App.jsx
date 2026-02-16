@@ -72,6 +72,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="*" element={<NotFound/>} />
 
+        {/* [CHANGED] /reset-password 라우트 추가 */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

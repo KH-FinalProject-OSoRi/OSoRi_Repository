@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"; // useRef 추가
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../../../api/http"; 
-import { useAuth } from "../../../context/AuthContext"; 
+import { useAuth } from "../../../context/AuthContext";
 
 export default function KakaoCallback() {
   const navigate = useNavigate();
@@ -28,7 +28,8 @@ export default function KakaoCallback() {
               alert(res.message);
             } else if(status==="N"){
               alert(res.message);
-              <Link to="/login"></Link> // 탈퇴한 회원이면 강제로 로그인 화면으로 이동 
+              navigate("/login", { replace: true }); 
+              return;  
             }
             
             login(res); // 일반 로그인 마냥 감
@@ -36,6 +37,7 @@ export default function KakaoCallback() {
           }
         })
         .catch((err) => {
+          alert(err.message || "로그인 처리 중 오류가 발생했습니다.");
           console.error(err);
           navigate("/login");
         });
