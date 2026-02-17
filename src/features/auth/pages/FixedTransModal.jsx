@@ -48,12 +48,12 @@ export default function FixedTransModal({
   };
 
   const validate = () => {
-    if (!form.name.trim()) return "고정지출 이름을 입력해야 함";
+    if (!form.name.trim()) return "고정지출 이름을 입력해주시기 바랍니다.";
     const amountNum = Number(form.amount);
-    if (!Number.isFinite(amountNum) || amountNum <= 0) return "금액은 0보다 큰 숫자여야 함";
-    if (!form.category?.toString().trim()) return "카테고리를 선택해야 함";
+    if (!Number.isFinite(amountNum) || amountNum <= 0) return "금액은 0원보다 커야합니다.";
+    if (!form.category?.toString().trim()) return "카테고리를 선택해주시기 바랍니다.";
     const payDayNum = Number(form.payDay);
-    if (!Number.isInteger(payDayNum) || payDayNum < 1 || payDayNum > 31) return "결제일은 1~31 사이여야 함";
+    if (!Number.isInteger(payDayNum) || payDayNum < 1 || payDayNum > 31) return "결제일은 1일~31일 사이어야합니다.";
     return "";
   };
 
@@ -77,17 +77,17 @@ export default function FixedTransModal({
       if (isEdit) {
         //await fixedTransApi.update(initialValue.fixedId, payload);
         await fixedTransApi.update({...payload, fixedId: initialValue.fixedId});
-        alert("고정지출 수정 완료");
+        alert("수정이 완료되었습니다.");
       } else {
         await fixedTransApi.create(payload);
-        alert("고정지출 등록 완료");
+        alert("고정지출이 등록되었습니다.");
       }
 
       onSuccess?.();
       onClose?.();
     } catch (err) {
       console.error(err);
-      alert("처리 실패. 콘솔 로그 확인 ㄱㄱ");
+      alert("고정지출 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }

@@ -238,7 +238,7 @@ const MyPage = ({refreshGroupList}) => {
             {badges.length > 0 ? (
               <img
                 key={badges[0].badgeId}
-                src={`http://localhost:8080/osori${badges[0].badgeIconUrl}`}
+                src={`http://localhost:8080${badges[0].badgeIconUrl}`}
                 alt={badges[0].badgeName}
                 title={badges[0].badgeName}
                 style={{ width: "90px", height: "90px", objectFit: "contain" }}

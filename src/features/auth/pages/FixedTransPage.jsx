@@ -49,16 +49,16 @@ export default function FixedTransPage() {
   };
 
   const removeOne = async (fixedId) => {
-    const ok = window.confirm("삭제함? (삭제하면 자동등록도 당연히 안 됨)");
+    const ok = window.confirm("삭제되면 되돌릴 수 없습니다. 정말 삭제하시겠습니까?");
     if (!ok) return;
 
     try {
       await fixedTransApi.remove(fixedId);
-      alert("삭제 완료");
+      alert("삭제가 완료되었습니다.");
       fetchList();
     } catch (err) {
       console.error(err);
-      alert("삭제 실패");
+      alert("삭제에 실패하였습니다.");
     }
   };
 
@@ -84,7 +84,7 @@ export default function FixedTransPage() {
           {isLoading ? (
             <p className="desc" style={{ marginTop: 16 }}>불러오는 중...</p>
           ) : list.length === 0 ? (
-            <p className="desc" style={{ marginTop: 16 }}>등록된 고정지출 없음. 우측 상단에서 추가하면 됨</p>
+            <p className="desc" style={{ marginTop: 16 }}>아직 등록된 고정지출이 없어요. 우측 상단 버튼을 눌러 추가해 보세요!</p>
           ) : (
             <div className="ftList">
               {list.map((item) => (

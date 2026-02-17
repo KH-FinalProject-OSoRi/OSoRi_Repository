@@ -44,46 +44,71 @@ export default function MyBadges() {
     }
   };
 
+//그룹뱃지 비어있을경우 애니메이션 추가
+  const renderEmptyGroupSection = () => {
+  return (
+    <section className="badge-section">
+      <div className="section-head">
+        <div>
+          <h2 className="section-title">그룹 뱃지</h2>
+          <p className="section-sub">
+            함께 도전해서 성공했을 때 받는 뱃지예요.
+          </p>
+        </div>
+        <div className="section-count">0개</div>
+      </div>
+
+      <div className="section-content-card group-empty">
+        <div className="belt">
+          {[...Array(20)].map((_, i) => (
+            <img
+              key={i}
+              src={`http://localhost:8080${badgeIconUrl}`}
+              alt="locked"
+              className="belt-item"
+            />
+          ))}
+        </div>
+
+        <div className="empty-overlay">
+          그룹 가계부를 생성하고 그룹 챌린지에 참가하세요!
+        </div>
+      </div>
+
+    </section>
+  );
+};
+
+
+
   useEffect(() => {
     if (!userId) return;
-    fetchBadges(userId);
-    }, [userId]);
-
-
-  useEffect(() => {
     fetchBadges();
-    // eslint-disable-next-line
-  }, [userId]);
+    }, [userId]);
 
   const { personalBadges, groupBadges } = useMemo(() => {
     const personal = [];
     const group = [];
 
     for (const b of badges) {
-      // 백엔드에서 받아온 challengeMode 값을 확인 (대문자로 비교)
-      // b.challengeMode(Mapper alias) 또는 b.CHALLENGE_MODE(DB raw) 대응
-      const mode = (b.challengeMode || b.CHALLENGE_MODE || "").toString().toUpperCase();
+      const challengeId =
+        b.challengeId || b.CHALLENGE_ID || "";
 
-      // 1. 뱃지 ID가 1(가입뱃지)이거나 모드가 PERSONAL이면 개인 뱃지로 분류
-      if (b.badgeId === 1 || mode === 'PERSONAL') {
-        personal.push(b);
-      } 
-      // 2. 모드가 GROUP이면 그룹 뱃지로 분류
-      else if (mode === 'GROUP') {
+      // 🔥 group_ 로 시작하면 그룹
+      if (challengeId.toLowerCase().startsWith("group_")) {
         group.push(b);
-      } 
-      // 3. 예외 케이스: 모드 정보가 없는데 challengeId가 있다면 그룹으로 간주 (기존 데이터 호환)
-      else if (b.challengeId || b.CHALLENGE_ID) {
-        group.push(b);
-      }
-      else {
+      } else {
         personal.push(b);
       }
     }
 
-    // 최근 발급일이 먼저 오게 정렬
     const getTime = (b) => {
-      const v = b.earnedAt || b.issuedAt || b.createdAt || b.earned_at || b.issued_at;
+      const v =
+        b.earnedAt ||
+        b.issuedAt ||
+        b.createdAt ||
+        b.earned_at ||
+        b.issued_at;
       return v ? new Date(v).getTime() : 0;
     };
 
@@ -92,6 +117,7 @@ export default function MyBadges() {
 
     return { personalBadges: personal, groupBadges: group };
   }, [badges]);
+
 
   // const { personalBadges, groupBadges } = useMemo(() => {
   //   const getMode = (b) =>
@@ -121,7 +147,10 @@ export default function MyBadges() {
 
   const renderBadgeCard = (b) => {
     const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
-    const imgSrc = iconUrl ? `${API_BASE}${iconUrl}` : "";
+    const imgSrc = iconUrl
+      ? `http://localhost:8080${iconUrl}`
+      : "";
+
     
     // 1. 그룹 뱃지 판별 로직 강화
     // 모드가 GROUP이거나, groupBudgetTitle 값이 실제로 존재할 때 그룹 뱃지로 간주합니다.
@@ -141,10 +170,11 @@ export default function MyBadges() {
     const uniqueKey = `${b.badgeId || b.badge_id}-${earnedRaw}-${gId}`;
 
     return (
-      <div className="badgecard" key={uniqueKey}>
-        {/* 그룹 뱃지일 때만 상단에 가계부 이름 표시 */}
+      <div className={`badgecard ${isGroupBadge ? "group-card" : ""}`} key={uniqueKey}>
+        
+        {/* 🔥 그룹 가계부 라벨 */}
         {isGroupBadge && (b.groupBudgetTitle || b.group_budget_title) && (
-          <div style={{ fontSize: '12px', color: '#0066ff', marginTop: '2px', fontWeight: 'bold' }}>
+          <div className="group-budget-pill">
             {b.groupBudgetTitle || b.group_budget_title}
           </div>
         )}
@@ -166,20 +196,28 @@ export default function MyBadges() {
         </div>
       </div>
     );
+
   };
 
   const renderSection = (title, subtitle, list, isGroup) => {
-    // 개인 뱃지인 경우 총 3개가 되도록 모자란 개수를 계산
-    const TOTAL_PERSONAL_SLOTS = 3;
-    const displayList = [...list];
-    
-    // 개인 뱃지 섹션이고 리스트가 3개보다 적다면 실루엣 추가
-    if (!isGroup && displayList.length < TOTAL_PERSONAL_SLOTS) {
-      const missingCount = TOTAL_PERSONAL_SLOTS - displayList.length;
-      for (let i = 0; i < missingCount; i++) {
-        displayList.push({ isLocked: true, id: `locked-${i}` });
+    const TOTAL_PERSONAL_SLOTS = 4;
+    let displayList = [...list];
+
+    if (!isGroup) {
+      if (displayList.length < TOTAL_PERSONAL_SLOTS) {
+        const lockedCount = TOTAL_PERSONAL_SLOTS - displayList.length - 1;
+
+        // 먼저 locked 채우기
+        for (let i = 0; i < lockedCount; i++) {
+          displayList.push({ isLocked: true, id: `locked-${i}` });
+        }
+
+        // 마지막에 Coming Soon 추가
+        displayList.push({ isComingSoon: true, id: "coming-soon" });
       }
     }
+
+
 
     return (
       <section className="badge-section">
@@ -194,26 +232,50 @@ export default function MyBadges() {
         <div className="section-content-card">
           <div className="badge-list">
             {displayList.map((b) => {
-              // 잠긴 뱃지인 경우 별도의 실루엣 카드 렌더링
-              if (b.isLocked) {
-                return (
-                  <div className="badgecard locked" key={b.id}>
-                    <div className="badge-imgwrap silhouette">
-                      {/* 오소리 실루엣 이미지 경로가 있다면 img 태그를 사용하세요 */}
-                      <img className="badge-img" src={`${API_BASE}/upload/badges/locked.png`} alt="잠긴 뱃지" />
-                    </div>
-                    <div className="badgecard-right">
-                      <div className="badge-name">??</div>
-                      <div className="badge-meta">
-                        <span className="meta-value">도전하여 획득하세요!</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-              // 기존 획득한 뱃지 렌더링
-              return renderBadgeCard(b, isGroup);
-            })}
+
+  if (b.isComingSoon) {
+      return (
+        <div className="badgecard coming-soon" key={b.id}>
+          <div className="badge-imgwrap blur">
+            <img
+              className="badge-img"
+              src={`${API_BASE}/upload/badges/locked.png`}
+              alt="coming soon"
+            />
+          </div>
+          <div className="badgecard-right">
+            <div className="badge-name">Coming Soon</div>
+            <div className="badge-meta">
+              <span className="meta-value">곧 업데이트됩니다</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (b.isLocked) {
+      return (
+        <div className="badgecard locked" key={b.id}>
+          <div className="badge-imgwrap blur">
+            <img
+              className="badge-img"
+              src={`${API_BASE}/upload/badges/locked.png`}
+              alt="잠긴 뱃지"
+            />
+          </div>
+          <div className="badgecard-right">
+            <div className="badge-name">??</div>
+            <div className="badge-meta">
+              <span className="meta-value">도전하여 획득하세요!</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return renderBadgeCard(b);
+  })}
+
           </div>
         </div>
       </section>
@@ -248,12 +310,15 @@ export default function MyBadges() {
             )}
 
             {/* ✅ 하단: 그룹 */}
-            {renderSection(
-                "그룹 뱃지",
-                "함께 도전해서 성공했을 때 받는 뱃지예요. 어떤 가계부에서 받았는지도 확인해요.",
-                groupBadges,
-                true
-            )}
+            {groupBadges.length === 0
+              ? renderEmptyGroupSection()
+              : renderSection(
+                  "그룹 뱃지",
+                  "함께 도전해서 성공했을 때 받는 뱃지예요. 어떤 가계부에서 받았는지도 확인해요.",
+                  groupBadges,
+                  true
+                )
+            }
             </>
         )}
         </div>
