@@ -127,14 +127,28 @@ export default function ChallengePage() {
 
   const openJoin = (challenge) => {
     setSelected(challenge);
-    const start = todayStr;
+
+    let start = todayStr;
     let end = "";
 
-    if (challenge?.duration === 0 && challengeMode === "GROUP") {
+    // ✅ 무지출 그룹 챌린지일 경우 → 다음날 하루로 고정
+    if (
+      challengeMode === "GROUP" &&
+      challenge?.challengeId === "group_zero_challenge"
+    ) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const formatted = tomorrow.toISOString().slice(0, 10);
+
+      start = formatted;
+      end = formatted;
+    }
+    else if (challenge?.duration === 0 && challengeMode === "GROUP") {
       const selectedGroup = groupBudgetList.find(
         (g) => String(g.groupbId) === String(selectedGroupId)
       );
-      
+
       if (selectedGroup?.endDate) {
         end = selectedGroup.endDate.slice(0, 10);
       }
@@ -147,6 +161,7 @@ export default function ChallengePage() {
     setJoinMsg("");
     setIsJoinOpen(true);
   };
+
 
   const closeJoin = () => {
     setIsJoinOpen(false);
@@ -469,17 +484,56 @@ export default function ChallengePage() {
         <div className="challenge-wrap">
           <div className="challenge-head">
             <h2 className="challenge-title">챌린지</h2>
-            <div className="challenge-sub">{displayName} 님, 목표를 정하고 재밌게 절약/관리하는 곳</div>
+            <div className="challenge-sub">절약도 즐겁게! 오소리와 함께 챌린지 시작해요.</div>
           </div>
         </div>
       </div>
 
-        <div className="challenge-tab">
+        {/* <div className="challenge-tab">
           <button className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`} onClick={() => setChallengeMode("PERSONAL")}>개인 챌린지</button>
           <button className={`challenge-tabBtn ${challengeMode === "GROUP" ? "active" : ""}`} onClick={() => setChallengeMode("GROUP")}>그룹 챌린지</button>
           <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={openHistory}>지난 챌린지</button>
           <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={goToChallengeRequest}>챌린지 요청하기</button>
+        </div> */}
+
+        {/* 탭 영역 */}
+        <div className="challenge-tab">
+          <div className="challenge-tab-left">
+            <button
+              className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`}
+              onClick={() => setChallengeMode("PERSONAL")}
+            >
+              개인 챌린지
+            </button>
+
+            <button
+              className={`challenge-tabBtn ${challengeMode === "GROUP" ? "active" : ""}`}
+              onClick={() => setChallengeMode("GROUP")}
+            >
+              그룹 챌린지
+            </button>
+          </div>
         </div>
+
+        {/* 보조 버튼 영역 */}
+        <div className="challenge-sub-actions">
+          <button
+            type="button"
+            className="challenge-ghost-btn"
+            onClick={openHistory}
+          >
+            지난 챌린지
+          </button>
+
+          <button
+            type="button"
+            className="challenge-primary-btn"
+            onClick={goToChallengeRequest}
+          >
+            + 챌린지 요청하기
+          </button>
+        </div>
+
 
         <div className="challenge-body">
           {isLoading && <div className="challenge-empty">불러오는 중...</div>}
@@ -616,6 +670,21 @@ export default function ChallengePage() {
                         </div>
                       </div>
                     )}
+
+                    {j?.status === "RESERVED" && id === "group_zero_challenge" && (
+                      <div style={{
+                        marginTop: "10px",
+                        padding: "8px",
+                        background: "#fff3cd",
+                        border: "1px solid #ffeeba",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        color: "#856404"
+                      }}>
+                        🕛 {new Date(j.startDate).toLocaleString()} 부터 시작됩니다.
+                      </div>
+                    )}
+
                   </article>
                 );
               })}

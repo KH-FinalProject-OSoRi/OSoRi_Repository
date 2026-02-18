@@ -24,12 +24,67 @@
 }
 
 /* 탭 버튼 */
+
+/* 탭 래퍼 */
 .challenge-tab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+}
+
+/* 왼쪽 탭 그룹 */
+.challenge-tab-left {
   display: flex;
   gap: 10px;
 }
 
-.challenge-tab button {
+/* 보조 버튼 줄 */
+.challenge-sub-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* 연한 버튼 */
+.challenge-ghost-btn {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.challenge-ghost-btn:hover {
+  background: #f1f5f9;
+}
+
+/* 강조 버튼 */
+.challenge-primary-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.challenge-primary-btn:hover {
+  background: #1e40af;
+}
+
+/* .challenge-tab {
+  display: flex;
+  gap: 10px;
+} */
+
+/* .challenge-tab button {
   padding: 8px 16px;
   border-radius: 20px;
   background-color: #e2e8f0;
@@ -39,7 +94,7 @@
   font-size: 14px;
   color: #1e293b;
   transition: all 0.2s ease;
-}
+} */
 
 .challenge-tab button.active {
   background-color: #354c7a;

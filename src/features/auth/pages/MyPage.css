@@ -243,11 +243,13 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 25px;
+  align-items: center;
 }
 
 .info-card {
   max-height: 400px;
-  height: 85%;
+  min-height: 180px;
+  height: auto;
   background: white;
   padding: 30px;
   border-radius: 24px;
@@ -261,7 +263,9 @@
 .profile-section {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
+  width: 100%;
 }
 
 .profile-img.ps-avatar {
@@ -284,6 +288,31 @@
   object-position: center;
   display: block;
 }
+
+.profile-section .badge-list {
+  /* width, height % 삭제 */
+  display: flex !important;
+  align-items: center !important;
+}
+
+.badge-list {
+  margin-top: 30px;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  margin-left: 0;
+  padding: 0;
+}
+
+.badgeImg {
+  align-items: center;
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+
+
 
 .stat-box {
   display: flex;
@@ -318,9 +347,19 @@
     margin-bottom: 20px;
 }
 
+/*세로선*/
+.vertical-divider {
+  width: 1px;
+  height: 80px;   /* 필요에 따라 조절 */
+  background-color: #ddd;
+  margin: 0 20px;
+}
+
 .profile-main {
+  max-height: 100px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  /* justify-content: space-between; */
   align-items: center;
   border: 1px solid #e0e6ed;
 }
