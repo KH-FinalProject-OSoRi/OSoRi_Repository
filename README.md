@@ -1,3 +1,4 @@
+# OSoRi_Repository_Back
 # OSoRi_Repository
 오(O)늘의 소(So)비 리(Ri)포트
 
@@ -49,7 +50,7 @@ $ npm start
 # 4. Tasks & Responsibilities (작업 및 역할 분담)
 |  |  |  |
 |-----------------|-----------------|-----------------|
-| 서채원    |  <img src="https://avatars.githubusercontent.com/u/250162373?s=400&u=59aa0a768a3383c0fdbf0a71b1e54e56bcff3ff5&v=4" alt="서채원" width="100"> | <ul><li>프로젝트 계획 및 관리</li><li>팀 리딩 및 커뮤니케이션</li><li>메인 페이지 구현</li><li>마이 페이지 - 진행중인 가계부 목록/이전 가계부 목록 조회 기능 구현</li><li>그룹 가계부 이메일로 회원 초대 기능 구현</li><li>실시간 그룹 가계부 초대 요청 알림 수락/거절 기능 구현</li><li>챌린지 목록 조회/참여 기능 구현</li><li>그룹 가계부 상세 페이지 구현</li><li>그룹 가계부 수입/지출 내역 목록 조회/삭제 기능 구현</li><li>가계부 관리자 기능 구현(예산 금액 수정, 멤버 추가/삭제, 가계부 삭제)</li><li>N분의 1 정산 로직</li><li>수입/지출 내역 추가시 실시간 알림 기능 구현</li></ul>     |
+| 서채원    |  <img src="https://avatars.githubusercontent.com/u/250162373?s=400&u=59aa0a768a3383c0fdbf0a71b1e54e56bcff3ff5&v=4" alt="서채원" width="100"> | <ul><li>프로젝트 계획 및 관리</li><li>팀 리딩 및 커뮤니케이션</li><li>메인 페이지 구현</li><li>마이 페이지 - 진행중인 가계부 목록/이전 가계부 목록 조회 기능 구현</li><li>그룹 가계부 이메일로 회원 초대 기능 구현</li><li>실시간 그룹 가계부 초대 요청 알림 수락/거절 기능 구현</li><li>이전 그룹 가계부 목록 조</li><li>그룹 가계부 상세 페이지 구현</li><li>그룹 가계부 수입/지출 내역 목록 조회/삭제 기능 구현</li><li>가계부 관리자 기능 구현(예산 금액 수정, 멤버 추가/삭제, 가계부 삭제)</li><li>질문봇 기능 구현</li><li>수입/지출 내역 추가시 실시간 알림 기능 구현</li></ul>     |
 | 전성중   |  <img src="https://avatars.githubusercontent.com/u/223277907?v=4" alt="전성중" width="100">| <ul><li>회원 가입 페이지 구현</li><li>회원가입 기능 구현</li><li>로그인 페이지/기능 구현(소셜 로그인(API) 포함)</li><li>회원 상태에 따른 서비스 제한 기능 구현</li><li>내 가계부 고정 지출 등록 기능 구현</li><li>회원정보 수정 페이지 구현</li><li>수정 기능(프로필 사진 변경, 비밀번호 수정, 회원 탈퇴) 구현</li></ul> |
 | 조수인   |  <img src="https://avatars.githubusercontent.com/u/250043719?v=4" alt="조수인" width="100">    |     <ul><li>가계부 종료까지 남은 기간/예산 계산 기능 구현 (예산 초과시 경고)</li><li>개인 소비 패턴(전월 대비, 카테고리별) 분석 기능 구현</li><li>개인/그룹 챌린지 달성시 뱃지 지급 기능 구현</li><li>마이 뱃지 페이지 구현</li><li>회원 별 보유중인 뱃지 목록 조회, 뱃지 분석 기능 구현</li><li>새로운 챌린지 신청 기능 구현</li><li>캘린더뷰 구현/금액, 내용, 카테고리 별 복합 검색 기능 구현</li></ul>  |
 | 강민채    |  <img src="https://avatars.githubusercontent.com/u/216668731?v=4" alt="강민채" width="100">    | <ul><li>(개인/그룹)새로운 가계부 추가 페이지 구현</li><li>가계부 정보 입력폼 구현</li><li>개인 가계부 상세페이지 구현</li><li>개인 가계부 수입/지출 내역 목록 조회 기능 구현</li><li>예산 금액 수정 기능 구현</li><li>수입/지출 내역 추가 기능 구현</li><li>최근 수입/지출 내역 목록 조회/선택시 자동 입력 기능 구현</li><li>영수증 분석하기 (네이버 클로바/카카오 검색 API) 기능 구현</li></ul>    |
@@ -57,33 +58,58 @@ $ npm start
 <br/>
 
 # 5. Technology Stack (기술 스택)
-## 5.1 Language
+## 5.1 Frontend
 |  |  |
 |-----------------|-----------------|
-| CSS    |  <img src="https://img.shields.io/badge/CSS-239120?&style=for-the-badge&logo=css3&logoColor=white" alt="CSS" width="100"> | ?    |
-| JavaScript    |  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white" alt="JavaScript" width="100"> | ?    |
+| CSS    |  <img src="https://img.shields.io/badge/CSS-239120?&style=for-the-badge&logo=css3&logoColor=white" alt="CSS" width="100"> |
+| JavaScript    |  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white" alt="JavaScript" width="100"> |
+| HTML    |  <img src="https://img.shields.io/badge/HTML-239120?style=for-the-badge&logo=html5&logoColor=white" alt="HTML" width="100"> |
+| React    |  <img src="https://github.com/user-attachments/assets/e3b49dbb-981b-4804-acf9-012c854a2fd2" alt="React" width="100"> |
+| React Router    |  <img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white" alt="React Router" width="100"> |
 
 https://github.com/envoy1084/awesome-badges
 <br/>
 
-## 5.2 Frotend
-|  |  |  |
-|-----------------|-----------------|-----------------|
-| React    |  <img src="https://github.com/user-attachments/assets/e3b49dbb-981b-4804-acf9-012c854a2fd2" alt="React" width="100"> | ?    |
+## 5.2 Backend
+|  |  |
+|-----------------|-----------------|
+| Java 17   |  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 17" width="100"> |
+| Spring Boot 3.x    |  <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="Spring Boot" width="100">    |
+| MyBatis    |  <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="MyBatis" width="100">    |
+| Oracle SQL    |  <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=black" alt="SqlDeveloper" width="100">    |
 
 <br/>
 
-## 5.3 Backend
-|  |  |  |
-|-----------------|-----------------|-----------------|
-| SqlDeveloper    |  <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=black" alt="SqlDeveloper" width="100">    | ?    |
+## 5.3 Framework / Library
+|  |  |
+|-----------------|-----------------|
+| Naver OCR API    |  <img src="https://velog.velcdn.com/images/cptbluebear/post/58558a5c-292a-41f9-8b1d-43eec5a8822b/image.png" alt="Naver OCR API" width="100">    |
+| Kakao API    |  <img src="https://blog.kakaocdn.net/dna/bcfkIw/btrQBLdRoMf/AAAAAAAAAAAAAAAAAAAAAMGfOHWzL0N8tChshpIQzKfPhrkMiOPf6jMQAmIzwLS0/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1772290799&allow_ip=&allow_referer=&signature=O5BpkPBaogA2aOrf2DliW8A6yHk%3D" alt="Kakao API" width="100">    |
+| Spring WebSocket    |  <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="Spring WebSocket" width="100">    |
+| STOMP    |  <img src="" alt="" width="100">    |
+| SocketJS    |  <img src="" alt="" width="100">    |
+| Spring Security Crypto    |  <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring-Security&logoColor=white" alt="Spring Security Crypto" width="100">    |
+| JWT    |  <img src="https://reynaldineo.com/images/blog/auth/jwt-logo.webp" alt="JWT" width="100">    |
+| GSON    |  <img src="https://www.appbrain.com/stats/libraries/square-icon/google_gson.png" alt="GSON" width="100">    |
+| Axios    |  <img src="https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fedgh3udmxvdi2g3oignq.png" alt="Axios" width="100">    |
+
+<br/>
+
+## 5.3 Tool
+|  |  |
+|-----------------|-----------------|
+| STS4    |  <img src="" alt="STS4" width="100">    |
+| Visual Studio    |  <img src="https://img.shields.io/badge/Visual_Studio-5C2D91?style=for-the-badge&logo=visual%20studio&logoColor=white" alt="Visual Studio" width="100">    |
+| Maven    |  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStoKKgJxrA7anfovuDqiRpj6R6k-LZbKugfg&s" alt="Maven" width="100">    |
+| Lombok    |  <img src="https://img1.daumcdn.net/thumb/R750x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2FbsCjBi%2FbtsIHcJ3Ani%2FAAAAAAAAAAAAAAAAAAAAAKatBIBqW8Nywf8wacqUt88CTgw9STmNSLgb7CBouZ68%2Fimg.png%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1772290799%26allow_ip%3D%26allow_referer%3D%26signature%3D5r0VTGdR1CPirPFswyUwR%252FFSh9Y%253D" alt="Lombok" width="100">    |
+| OJDBC    |  <img src="https://mblogthumb-phinf.pstatic.net/MjAxNzEyMjJfNjAg/MDAxNTEzOTQ2MzMyODcw.4ANHLh79PbWjz29Fr3xboLVhhqtyLro8i5zK-E7cdFYg.8WMdbziW2Vo6yxG3uEwsT85_tUPuEC3vt6ymo9S1nlog.PNG.scw0531/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2017-12-22_%EC%98%A4%ED%9B%84_9.37.02.png?type=w420" alt="OJDBC" width="100">    |
+| Node.js    |  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" width="100">    |
 <br/>
 
 ## 5.4 Cooperation
 |  |  |
 |-----------------|-----------------|
 | Git    |  <img src="https://github.com/user-attachments/assets/483abc38-ed4d-487c-b43a-3963b33430e6" alt="git" width="100">    |
-| Notion    |  <img src="https://github.com/user-attachments/assets/34141eb9-deca-416a-a83f-ff9543cc2f9a" alt="Notion" width="100">    |
 
 <br/>
 
@@ -91,19 +117,27 @@ https://github.com/envoy1084/awesome-badges
 ```plaintext
 project/
 ├── public/
-│   ├── index.html           # HTML 템플릿 파일
-│   └── favicon.ico          # 아이콘 파일
+│   └── vite.svg           # Vite 기본 로고 파일
 ├── src/
-│   ├── assets/              # 이미지, 폰트 등 정적 파일
-│   ├── components/          # 재사용 가능한 UI 컴포넌트
-│   ├── hooks/               # 커스텀 훅 모음
-│   ├── pages/               # 각 페이지별 컴포넌트
-│   ├── App.js               # 메인 애플리케이션 컴포넌트
-│   ├── index.js             # 엔트리 포인트 파일
+│   ├── Data/              # 급여일, 카테고리, 가계부 데이터 생성기
+│   ├── api/               # 각 api 모
+│   ├── assets/               # React 공식로고 파
+│   ├── components/common/          # 공통 컴포넌트
+│   ├── context/               # 로그인 상태 관리 
+│   ├── features/               # 각 페이지별 컴포넌트
+│   │   ├── Util/              # 소비 패턴 분석
+│   │   ├── alarm/              # 실시간 알림 커스텀 훅 
+│   │   ├── auth/pages/        # 챌린지, 소비/지출, 고정지출, 멤버 관련 컴포넌트 
+│   │   ├── group/            # 그룹 가계부 관련 컴포넌트 
+│   │   ├── menu/
+│   ├── hooks/               # 각 페이지별 컴포넌트
+│   ├── layouts/               # 각 페이지별 컴포넌트
+│   ├── routes/               # 각 페이지별 컴포넌트
+│   ├── App.jsx               # 라우팅 구조, 소켓 핸들, 컨트롤러 
 │   ├── index.css            # 전역 css 파일
-│   ├── firebaseConfig.js    # firebase 인스턴스 초기화 파일
-│   package-lock.json    # 정확한 종속성 버전이 기록된 파일로, 일관된 빌드를 보장
-│   package.json         # 프로젝트 종속성 및 스크립트 정의
+│   └── main.jsx    # React 엔트리 포인트, 컴포넌구 구조
+├── package-lock.json    # 정확한 종속성 버전이 기록된 파일로, 일관된 빌드를 보장
+├── package.json         # 프로젝트 종속성 및 스크립트 정의
 ├── .gitignore               # Git 무시 파일 목록
 └── README.md                # 프로젝트 개요 및 사용법
 ```
