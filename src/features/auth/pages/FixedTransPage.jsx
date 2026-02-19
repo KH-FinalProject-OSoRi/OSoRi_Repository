@@ -49,7 +49,7 @@ export default function FixedTransPage() {
   };
 
   const removeOne = async (fixedId) => {
-    const ok = window.confirm("삭제함? (삭제하면 자동등록도 당연히 안 됨)");
+    const ok = window.confirm("삭제하시겠습니까?");
     if (!ok) return;
 
     try {
