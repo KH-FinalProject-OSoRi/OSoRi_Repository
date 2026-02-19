@@ -443,8 +443,7 @@ function GroupAccountBook() {
             }
             const updateData = {
                 transId: updatedData.id,        
-                title: updatedData.text,        
-                transDate: dateTimeWithTime,     
+                title: updatedData.text,           
                 originalAmount: Number(updatedData.amount),
                 category: updatedData.category, 
                 type: updatedData.type,      

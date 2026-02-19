@@ -45,39 +45,42 @@ export default function MyBadges() {
   };
 
 //그룹뱃지 비어있을경우 애니메이션 추가
-  const renderEmptyGroupSection = () => {
-  return (
-    <section className="badge-section">
-      <div className="section-head">
-        <div>
-          <h2 className="section-title">그룹 뱃지</h2>
-          <p className="section-sub">
-            함께 도전해서 성공했을 때 받는 뱃지예요.
-          </p>
-        </div>
-        <div className="section-count">0개</div>
-      </div>
+ const renderEmptyGroupSection = () => {
+    // 잠긴 뱃지용 고정 이미지 경로 (프로젝트 설정에 맞게 수정하세요)
+    const lockedBadgePath = "/upload/badges/locked.png"; 
 
-      <div className="section-content-card group-empty">
-        <div className="belt">
-          {[...Array(20)].map((_, i) => (
-            <img
-              key={i}
-              src={`http://localhost:8080${badgeIconUrl}`}
-              alt="locked"
-              className="belt-item"
-            />
-          ))}
+    return (
+      <section className="badge-section">
+        <div className="section-head">
+          <div>
+            <h2 className="section-title">그룹 뱃지</h2>
+            <p className="section-sub">
+              함께 도전해서 성공했을 때 받는 뱃지예요.
+            </p>
+          </div>
+          <div className="section-count">0개</div>
         </div>
 
-        <div className="empty-overlay">
-          그룹 가계부를 생성하고 그룹 챌린지에 참가하세요!
-        </div>
-      </div>
+        <div className="section-content-card group-empty">
+          <div className="belt">
+            {[...Array(20)].map((_, i) => (
+              <img
+                key={i}
+                // ✅ badgeIconUrl 대신 서버의 고정된 잠금 아이콘 경로 사용
+                src={`${API_BASE}${lockedBadgePath}`} 
+                alt="locked"
+                className="belt-item"
+              />
+            ))}
+          </div>
 
-    </section>
-  );
-};
+          <div className="empty-overlay">
+            그룹 가계부를 생성하고 그룹 챌린지에 참가하세요!
+          </div>
+        </div>
+      </section>
+    );
+  };
 
 
 
