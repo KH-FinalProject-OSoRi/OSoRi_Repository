@@ -20,12 +20,10 @@ const ChallengeRequest = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // src/features/auth/pages/ChallengeRequest.jsx
 const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    // 1. 타임스탬프 생성
     const now = new Date();
     const timestamp = now.getFullYear() +
       String(now.getMonth() + 1).padStart(2, '0') +
@@ -35,15 +33,12 @@ const handleSubmit = async (e) => {
       String(now.getSeconds()).padStart(2, '0') +
       String(now.getMilliseconds()).padStart(3, '0'); // 중복 방지용 밀리초 추가
 
-    // 2. 사용자 정보
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const userId = storedUser ? storedUser.loginId : "unknown";
     const uniqueId = `request_${userId}_${timestamp}`;
 
-    // 3. 백엔드 VO 필드명에 맞춘 최종 데이터 구성
     const payload = {
       challengeId: uniqueId,
-      // formData.title이 정확히 매칭되도록 확인
       description: `${formData.title}`,
       target: parseInt(formData.targetAmount) || 0,
       duration: parseInt(formData.duration),
@@ -54,10 +49,8 @@ const handleSubmit = async (e) => {
       challengeMode: formData.mode
     };
 
-    // 4. API 호출 (수정된 api 함수 사용)
     const response = await challengeApi.createChallenge(payload);
 
-    // axios 응답 객체(response)의 status 확인
     if (response.status === 200 || response.status === 201) {
       alert("🚀 새로운 도전이 요청되었습니다!");
       navigate(-1); 
@@ -70,13 +63,12 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="challenge-request-wrapper">
-      {/* 돌아가기 버튼 제거 후 제목 단독 배치 */}
-      <header className="page-header">
+      <header className="content-header">
         <h2 className="main-title">새로운 챌린지 신청하기</h2>
+        <p className="welcome-text">내 지갑부터 공동 자산까지, 오소리가 소비 흐름을 한눈에 정리해 드릴게요.</p>
       </header>
 
       <form className="challenge-form" onSubmit={handleSubmit}>
-        {/* 설정 카드: 좌우 폭 대폭 확장됨 */}
         <div className="setup-card">
           <div className="setup-row">
             <div className="setup-section">
@@ -109,7 +101,6 @@ const handleSubmit = async (e) => {
           </div>
         </div>
 
-        {/* 다짐 카드: 세로 병렬 배치 및 가로 폭 확장 */}
         <div className="sentence-card">
           <p className="sentence-text">
             " <span style={{color: '#0066FF'}}>{formData.mode === 'PERSONAL' ? '나' : '우리'}</span>는 앞으로 

@@ -704,10 +704,24 @@ export default function ChallengePage() {
               <div className="ch-form">
                 <div className="ch-field">
                   <label>시작일</label>
-                  <input type="date" name="startDate" value={joinForm.startDate} onChange={(e) => {
-                    const v = e.target.value;
-                    setJoinForm(prev => ({ ...prev, startDate: v, endDate: calcEndDate(v, selected?.duration || 1) }));
-                  }} />
+                  <input 
+                    type="date" 
+                    name="startDate" 
+                    value={joinForm.startDate} 
+                    // challengeMode가 GROUP이면 읽기 전용으로 설정
+                    readOnly={challengeMode === "GROUP"}
+                    onChange={(e) => {
+                      // GROUP 모드일 때는 변경 로직이 실행되지 않도록 방어
+                      if (challengeMode === "GROUP") return;
+
+                      const v = e.target.value;
+                      setJoinForm(prev => ({ 
+                        ...prev, 
+                        startDate: v, 
+                        endDate: calcEndDate(v, selected?.duration || 1, challengeMode) 
+                      }));
+                    }} 
+                  />
                 </div>
                 <div className="ch-field"><label>종료일</label><input type="date" value={joinForm.endDate} readOnly /></div>
               </div>

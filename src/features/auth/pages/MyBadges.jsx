@@ -5,20 +5,8 @@ import { useAuth } from "../../../context/AuthContext";
 
 const API_BASE = "http://localhost:8080/osori";
 
-/**
- * 기대 응답(예시)
- * [
- *  {
- *    badgeId, badgeName, badgeIconUrl,
- *    challengeMode: "PERSONAL" | "GROUP",
- *    challengeName,
- *    earnedAt,
- *    groupbName // 그룹일 때만
- *  }
- * ]
- */
 export default function MyBadges() {
-  const { user } = useAuth();      // user.userId 존재
+  const { user } = useAuth(); 
   const userId = user?.userId;
 
   const [badges, setBadges] = useState([]);
@@ -27,12 +15,9 @@ export default function MyBadges() {
   const fetchBadges = async () => {
     setLoading(true);
     try {
-      // ✅ 너 프로젝트의 뱃지 전체 조회 엔드포인트에 맞춰서 수정
-      // 예: /api/badges/{userId} 가 "전체(개인+그룹)"를 내려준다는 가정
       const res = await axios.get(`${API_BASE}/api/badges/${userId}`);
       setBadges(Array.isArray(res.data) ? res.data : []);
 
-    // api 호출 콘솔주석
       console.log("badges raw:", res.data);
 
 
@@ -46,7 +31,6 @@ export default function MyBadges() {
 
 //그룹뱃지 비어있을경우 애니메이션 추가
  const renderEmptyGroupSection = () => {
-    // 잠긴 뱃지용 고정 이미지 경로 (프로젝트 설정에 맞게 수정하세요)
     const lockedBadgePath = "/upload/badges/locked.png"; 
 
     return (
@@ -66,7 +50,6 @@ export default function MyBadges() {
             {[...Array(20)].map((_, i) => (
               <img
                 key={i}
-                // ✅ badgeIconUrl 대신 서버의 고정된 잠금 아이콘 경로 사용
                 src={`${API_BASE}${lockedBadgePath}`} 
                 alt="locked"
                 className="belt-item"
@@ -96,8 +79,6 @@ export default function MyBadges() {
     for (const b of badges) {
       const challengeId =
         b.challengeId || b.CHALLENGE_ID || "";
-
-      // 🔥 group_ 로 시작하면 그룹
       if (challengeId.toLowerCase().startsWith("group_")) {
         group.push(b);
       } else {
@@ -121,42 +102,12 @@ export default function MyBadges() {
     return { personalBadges: personal, groupBadges: group };
   }, [badges]);
 
-
-  // const { personalBadges, groupBadges } = useMemo(() => {
-  //   const getMode = (b) =>
-  //     (b.challengeMode || b.challenge_mode || b.mode || "").toString().toUpperCase();
-
-  //   const personal = [];
-  //   const group = [];
-
-  //   for (const b of badges) {
-  //   const challengeId = b.challengeId ?? b.CHALLENGE_ID ?? b.challenge_id;
-  //   if (challengeId) group.push(b);
-  //   else personal.push(b);
-  //   }
-
-
-  //   // 최근 발급일이 먼저 오게 정렬 (있을 때만)
-  //   const getTime = (b) => {
-  //     const v = b.earnedAt || b.issuedAt || b.createdAt || b.earned_at || b.issued_at;
-  //     return v ? new Date(v).getTime() : 0;
-  //   };
-
-  //   personal.sort((a, b) => getTime(b) - getTime(a));
-  //   group.sort((a, b) => getTime(b) - getTime(a));
-
-  //   return { personalBadges: personal, groupBadges: group };
-  // }, [badges]);
-
   const renderBadgeCard = (b) => {
     const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
     const imgSrc = iconUrl
       ? `http://localhost:8080${iconUrl}`
       : "";
 
-    
-    // 1. 그룹 뱃지 판별 로직 강화
-    // 모드가 GROUP이거나, groupBudgetTitle 값이 실제로 존재할 때 그룹 뱃지로 간주합니다.
     const isGroupBadge = (b.challengeMode || "").toUpperCase() === 'GROUP' || !!(b.groupBudgetTitle || b.group_budget_title);
 
     const title =
@@ -166,16 +117,12 @@ export default function MyBadges() {
 
     const earnedRaw = b.earnedAt || b.earned_at;
     const earnedText = earnedRaw ? new Date(earnedRaw).toLocaleDateString("ko-KR") : "0000.00.00";
-
-    // 2. 고유 키(Key) 생성
-    // 동일 유저가 같은 날 여러 그룹에서 뱃지를 따더라도 중복되지 않도록 groupId를 조합합니다.
     const gId = b.groupId || b.GROUPB_ID || (b.groupBudgetTitle ? 'group' : 'personal');
     const uniqueKey = `${b.badgeId || b.badge_id}-${earnedRaw}-${gId}`;
 
     return (
       <div className={`badgecard ${isGroupBadge ? "group-card" : ""}`} key={uniqueKey}>
         
-        {/* 🔥 그룹 가계부 라벨 */}
         {isGroupBadge && (b.groupBudgetTitle || b.group_budget_title) && (
           <div className="group-budget-pill">
             {b.groupBudgetTitle || b.group_budget_title}
@@ -210,12 +157,10 @@ export default function MyBadges() {
       if (displayList.length < TOTAL_PERSONAL_SLOTS) {
         const lockedCount = TOTAL_PERSONAL_SLOTS - displayList.length - 1;
 
-        // 먼저 locked 채우기
         for (let i = 0; i < lockedCount; i++) {
           displayList.push({ isLocked: true, id: `locked-${i}` });
         }
 
-        // 마지막에 Coming Soon 추가
         displayList.push({ isComingSoon: true, id: "coming-soon" });
       }
     }
@@ -304,7 +249,6 @@ export default function MyBadges() {
             </div>
         ) : (
             <>
-            {/* ✅ 상단: 개인 */}
             {renderSection(
                 "개인 뱃지",
                 "혼자서 꾸준히 챌린지 달성! 기록이 쌓일수록 뱃지도 늘어나요.",
@@ -312,7 +256,6 @@ export default function MyBadges() {
                 false
             )}
 
-            {/* ✅ 하단: 그룹 */}
             {groupBadges.length === 0
               ? renderEmptyGroupSection()
               : renderSection(
