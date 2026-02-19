@@ -530,7 +530,7 @@ export default function ChallengePage() {
             className="challenge-primary-btn"
             onClick={goToChallengeRequest}
           >
-            + 챌린지 요청하기
+            + 새 챌린지 요청하기
           </button>
         </div>
 
