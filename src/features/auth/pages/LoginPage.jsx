@@ -135,7 +135,6 @@ export default function LoginPage() {
           >
             <KakaoIcon />
           </button>
-         
         </div>
       </div>
 
