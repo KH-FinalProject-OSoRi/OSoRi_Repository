@@ -4,6 +4,7 @@ import "./MyPage.css";
 import { challengeApi } from "../../../api/challengeApi.js";
 import { useAuth } from "../../../context/AuthContext";
 import { useGroupBudgets } from "../../../hooks/useGroupBudgets";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const getValue = (obj, ...keys) => {
   for (const key of keys) {
@@ -29,6 +30,7 @@ const getTimeLeft = (endDateStr) => {
 
 export default function ChallengePage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const displayName = useMemo(() => {
     return (
@@ -47,6 +49,8 @@ export default function ChallengePage() {
   const { groupBudgetList = [], isLoading: isGroupLoading } = useGroupBudgets(user?.userId);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [rankings, setRankings] = useState({});
+  const [searchParams] = useSearchParams();
+  const urlGroupId = searchParams.get("groupId");
 
   // 개인 챌린지의 실시간 진행 수치를 저장하는 상태
   const [progressMap, setProgressMap] = useState({});
@@ -98,20 +102,66 @@ export default function ChallengePage() {
     return d.toISOString().slice(0, 10);
   }, []);
 
-  const calcEndDate = (startDate, duration) => {
+  const calcEndDate = (startDate, duration, mode) => {
     const d = new Date(startDate);
-    d.setDate(d.getDate() + (Math.max(1, duration) - 1));
+    const rawDuration = Math.max(1, duration);
+    
+    //그룹 챌린지의 경우 -1 제거
+    if (mode === "GROUP") {
+      d.setDate(d.getDate() + rawDuration);
+    } else {
+      d.setDate(d.getDate() + (rawDuration - 1));
+    }
+    
     return d.toISOString().slice(0, 10);
   };
 
+  // const openJoin = (challenge) => {
+  //   setSelected(challenge);
+  //   const start = todayStr;
+  //   const end = calcEndDate(start, challenge?.duration || 1);
+  //   setJoinForm({ startDate: start, endDate: end });
+  //   setJoinMsg("");
+  //   setIsJoinOpen(true);
+  // };
+
   const openJoin = (challenge) => {
     setSelected(challenge);
-    const start = todayStr;
-    const end = calcEndDate(start, challenge?.duration || 1);
+
+    let start = todayStr;
+    let end = "";
+
+    // ✅ 무지출 그룹 챌린지일 경우 → 다음날 하루로 고정
+    if (
+      challengeMode === "GROUP" &&
+      challenge?.challengeId === "group_zero_challenge"
+    ) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const formatted = tomorrow.toISOString().slice(0, 10);
+
+      start = formatted;
+      end = formatted;
+    }
+    else if (challenge?.duration === 0 && challengeMode === "GROUP") {
+      const selectedGroup = groupBudgetList.find(
+        (g) => String(g.groupbId) === String(selectedGroupId)
+      );
+
+      if (selectedGroup?.endDate) {
+        end = selectedGroup.endDate.slice(0, 10);
+      }
+    } 
+    else {
+      end = calcEndDate(start, challenge?.duration || 1, challengeMode);
+    }
+
     setJoinForm({ startDate: start, endDate: end });
     setJoinMsg("");
     setIsJoinOpen(true);
   };
+
 
   const closeJoin = () => {
     setIsJoinOpen(false);
@@ -188,6 +238,41 @@ export default function ChallengePage() {
     }
   };
 
+  // const loadMyJoined = async (mode) => {
+  //   if (!user?.userId) return;
+  //   setJoinedMap({});
+  //   try {
+  //     let data;
+  //     if (mode === "GROUP") {
+  //       if (!selectedGroupId) return;
+  //       data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
+  //     } else {
+  //       data = await challengeApi.myJoinedList({
+  //         userId: user.userId,
+  //         challengeMode: mode,
+  //       });
+  //     }
+
+  //     const arr = normalizeList(data);
+  //     const map = {};
+  //     arr.forEach((row) => {
+  //       const id = row?.challengeId || row?.challenge_id;
+  //       if (!id) return;
+  //       map[String(id)] = {
+  //         status: row?.status,
+  //         startDate: parseDate(row?.startDate || row?.start_date),
+  //         endDate: parseDate(row?.endDate || row?.end_date),
+  //       };
+  //       if (mode === "PERSONAL" && row.status === "PROCEEDING") {
+  //         fetchProgress(id);
+  //       }
+  //     });
+  //     setJoinedMap(map);
+  //   } catch (e) {
+  //     console.error("참여 목록 로드 실패", e);
+  //   }
+  // };
+
   const loadMyJoined = async (mode) => {
     if (!user?.userId) return;
     setJoinedMap({});
@@ -197,23 +282,24 @@ export default function ChallengePage() {
         if (!selectedGroupId) return;
         data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
       } else {
-        data = await challengeApi.myJoinedList({
-          userId: user.userId,
-          challengeMode: mode,
-        });
+        data = await challengeApi.myJoinedList({ userId: user.userId, challengeMode: mode });
       }
 
       const arr = normalizeList(data);
       const map = {};
       arr.forEach((row) => {
-        const id = row?.challengeId || row?.challenge_id;
+        // id 추출 시 대소문자 모두 대응
+        const id = row?.challengeId || row?.challenge_id || row?.CHALLENGE_ID;
         if (!id) return;
+        
         map[String(id)] = {
-          status: row?.status,
-          startDate: parseDate(row?.startDate || row?.start_date),
-          endDate: parseDate(row?.endDate || row?.end_date),
+          status: row?.status || row?.STATUS,
+          // 원본 데이터를 그대로 들고 있어야 ChallengeGauge와 버튼 로직이 정확해집니다.
+          startDate: row?.startDate || row?.start_date || row?.START_DATE,
+          endDate: row?.endDate || row?.end_date || row?.END_DATE,
         };
-        if (mode === "PERSONAL" && row.status === "PROCEEDING") {
+        
+        if (mode === "PERSONAL" && (row.status === "PROCEEDING" || row.STATUS === "PROCEEDING")) {
           fetchProgress(id);
         }
       });
@@ -243,6 +329,10 @@ export default function ChallengePage() {
     }
     return list; 
   }, [list, challengeMode, selectedGroupId]);
+
+  const goToChallengeRequest = () => {
+    navigate('/myPage/challengeRequest'); 
+  };
 
   useEffect(() => {
     loadList(challengeMode); 
@@ -274,6 +364,22 @@ export default function ChallengePage() {
     }
   }, [joinedMap, challengeMode, selectedGroupId]);
 
+  useEffect(() => {
+    if (isGroupLoading) return;
+
+    if (challengeMode === "GROUP" && groupBudgetList.length === 0) {
+      alert("그룹 챌린지는 그룹 가계부 가입 후 이용 가능합니다.");
+      setChallengeMode("PERSONAL");
+    }
+  }, [challengeMode, groupBudgetList, isGroupLoading]);
+
+  useEffect(()=> {
+    if(urlGroupId) {
+      setChallengeMode("GROUP");
+      setSelectedGroupId(Number(urlGroupId));
+    }
+  }, [urlGroupId]);
+
   const pickMessage = (res) => {
     if (res == null) return "참여 완료";
     if (typeof res === "string") return res;
@@ -293,8 +399,9 @@ export default function ChallengePage() {
           userId: user.userId,
           challengeId: selected.challengeId,
           groupbId: selectedGroupId,
-          startDate: joinForm.startDate,
-          endDate: joinForm.endDate,
+          duration: selected.duration,
+          startDate: joinForm.startDate + " 00:00:00",
+          endDate: joinForm.endDate + " 23:59:59",
         });
       } else {
         res = await challengeApi.join({
@@ -329,21 +436,104 @@ export default function ChallengePage() {
     return j && (j.status === "PROCEEDING" || j.status === "RESERVED" || j.status === "SUCCESS");
   };
 
+  const ChallengeGauge = ({ startDate, endDate }) => {
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date().getTime();
+    return new Date(dateStr.replace(' ', 'T')).getTime();
+  };
+
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
+  const now = new Date().getTime();
+
+  const total = end - start;
+  const elapsed = now - start;
+  const progress = Math.min(Math.max((elapsed / total) * 100, 0), 100);
+  const safeProgress = isNaN(progress) ? 0 : progress;
+
+  return (
+    <div
+      style={{
+        height: "25px",
+        width: "100%",
+        backgroundColor: "#e5e7eb",
+        borderRadius: "20px",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          height: "100%",
+          width: `${safeProgress}%`,
+          backgroundColor: "#10b981",
+          borderRadius: "20px",
+          transition: "width 0.3s ease"
+        }}
+      />
+    </div>
+  );
+};
+
+
+
+
+
   return (
     <main className="fade-in">
       <div className="content-header">
         <div className="challenge-wrap">
           <div className="challenge-head">
             <h2 className="challenge-title">챌린지</h2>
-            <div className="challenge-sub">{displayName} 님, 목표를 정하고 재밌게 절약/관리하는 곳</div>
+            <div className="challenge-sub">절약도 즐겁게! 오소리와 함께 챌린지 시작해요.</div>
           </div>
         </div>
+      </div>
 
-        <div className="challenge-tab">
+        {/* <div className="challenge-tab">
           <button className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`} onClick={() => setChallengeMode("PERSONAL")}>개인 챌린지</button>
           <button className={`challenge-tabBtn ${challengeMode === "GROUP" ? "active" : ""}`} onClick={() => setChallengeMode("GROUP")}>그룹 챌린지</button>
           <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={openHistory}>지난 챌린지</button>
+          <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={goToChallengeRequest}>챌린지 요청하기</button>
+        </div> */}
+
+        {/* 탭 영역 */}
+        <div className="challenge-tab">
+          <div className="challenge-tab-left">
+            <button
+              className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`}
+              onClick={() => setChallengeMode("PERSONAL")}
+            >
+              개인 챌린지
+            </button>
+
+            <button
+              className={`challenge-tabBtn ${challengeMode === "GROUP" ? "active" : ""}`}
+              onClick={() => setChallengeMode("GROUP")}
+            >
+              그룹 챌린지
+            </button>
+          </div>
         </div>
+
+        {/* 보조 버튼 영역 */}
+        <div className="challenge-sub-actions">
+          <button
+            type="button"
+            className="challenge-ghost-btn"
+            onClick={openHistory}
+          >
+            지난 챌린지
+          </button>
+
+          <button
+            type="button"
+            className="challenge-primary-btn"
+            onClick={goToChallengeRequest}
+          >
+            + 챌린지 요청하기
+          </button>
+        </div>
+
 
         <div className="challenge-body">
           {isLoading && <div className="challenge-empty">불러오는 중...</div>}
@@ -365,7 +555,7 @@ export default function ChallengePage() {
                 ))}
               </div>
             </div>
-          )}
+          )} 
 
           {!isLoading && !errorMsg && filteredList?.length > 0 && (
             <div className="challenge-list">
@@ -376,14 +566,14 @@ export default function ChallengePage() {
                 const prog = progressMap[id];
 
                 return (
-                  <article key={id + desc} className="cp-card">
+                  <article key={id + desc} className={`cp-card ${challengeMode === "GROUP" ? "group-card" : ""}`}>
                     <div className="cp-cardTop">
                       <div className="cp-badge">{fmtMode(challengeMode)}</div>
                       {/* <div className="cp-id">{id}</div> */}
                     </div>
                     
                     {challengeMode === "GROUP" && selectedGroupId && (
-                      <p><span style={{ fontSize: "11px", color: "#4A90E2", fontWeight: "bold" }}>
+                      <p><span style={{ fontSize: "11px", color: "#10b981", fontWeight: "bold" }}>
                         {/* [ {groupBudgetList.find(g => String(g.groupbId) === String(selectedGroupId))?.title || "선택됨"} ] 대상 */}
                       </span></p>
                     )}
@@ -398,7 +588,7 @@ export default function ChallengePage() {
                     </div>
 
                     {j?.startDate && j?.endDate && (
-                      <div className="cp-dates"><div className="cp-date">시작날짜({j.startDate}) ~ 종료날짜({j.endDate})</div></div>
+                      <div className="cp-date">시작날짜({parseDate(j.startDate)}) ~ 종료날짜({parseDate(j.endDate)})</div>
                     )}
 
                     {challengeMode === "PERSONAL" && j?.status === "PROCEEDING" && (
@@ -468,6 +658,33 @@ export default function ChallengePage() {
                         ))}
                       </div>
                     )}
+
+                    {j?.status === "PROCEEDING" && id === "group_zero_challenge" && (
+                      <div style={{ marginTop: '10px' }}>
+                        {/* DB 데이터를 props로 전달 */}
+                        <ChallengeGauge startDate={j.startDate} endDate={j.endDate} />
+                        
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                          <span>시작일: {new Date(j.startDate).toLocaleString()}</span>
+                          <span>종료일: {new Date(j.endDate).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {j?.status === "RESERVED" && id === "group_zero_challenge" && (
+                      <div style={{
+                        marginTop: "10px",
+                        padding: "8px",
+                        background: "#fff3cd",
+                        border: "1px solid #ffeeba",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        color: "#856404"
+                      }}>
+                        🕛 {new Date(j.startDate).toLocaleString()} 부터 시작됩니다.
+                      </div>
+                    )}
+
                   </article>
                 );
               })}
@@ -487,10 +704,24 @@ export default function ChallengePage() {
               <div className="ch-form">
                 <div className="ch-field">
                   <label>시작일</label>
-                  <input type="date" name="startDate" value={joinForm.startDate} onChange={(e) => {
-                    const v = e.target.value;
-                    setJoinForm(prev => ({ ...prev, startDate: v, endDate: calcEndDate(v, selected?.duration || 1) }));
-                  }} />
+                  <input 
+                    type="date" 
+                    name="startDate" 
+                    value={joinForm.startDate} 
+                    // challengeMode가 GROUP이면 읽기 전용으로 설정
+                    readOnly={challengeMode === "GROUP"}
+                    onChange={(e) => {
+                      // GROUP 모드일 때는 변경 로직이 실행되지 않도록 방어
+                      if (challengeMode === "GROUP") return;
+
+                      const v = e.target.value;
+                      setJoinForm(prev => ({ 
+                        ...prev, 
+                        startDate: v, 
+                        endDate: calcEndDate(v, selected?.duration || 1, challengeMode) 
+                      }));
+                    }} 
+                  />
                 </div>
                 <div className="ch-field"><label>종료일</label><input type="date" value={joinForm.endDate} readOnly /></div>
               </div>
@@ -529,7 +760,7 @@ export default function ChallengePage() {
             </div>
           </div>
         )}
-      </div>
+      
     </main>
   );
 

@@ -25,6 +25,7 @@ import KakaoCallback from "./features/auth/pages/KakaoCallback";
 import SocialRegisterPage from "./features/auth/pages/SocialRegisterPage";
 import { groupBudgetApi } from "./api/groupBudgetApi";
 import GroupBookGuard from "./features/group/GroupBookGuard";
+import ChallengeRequest from "./features/auth/pages/ChallengeRequest";
 import NotFound from "./components/common/NotFound";
 
 const SocketHandler = ({ userId,setNotifications,refreshGroupList }) => {
@@ -119,7 +120,8 @@ function App() {
           <Route path='expenseForm' element={<ExpensePage/>}/>
           <Route path='group/:groupId/expenseForm' element={<ExpensePage/>}/>
           <Route path="fixedTrans" element={<FixedTransPage />} />
-          <Route path="challenge" element={<ChallengePage />} />  
+          <Route path="challenge" element={<ChallengePage />} />
+          <Route path="challengeRequest" element={<ChallengeRequest />} />  
         </Route>
       </Routes>
     </Router>

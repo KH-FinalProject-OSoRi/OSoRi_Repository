@@ -145,7 +145,7 @@ const TransactionModal = ({ isOpen, type, transaction, onClose, onSave, onDelete
                 <div className="modal-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '40px' }}>
                     <button className="modal-btn cancel" onClick={onClose} style={{ padding: '12px 24px', borderRadius: '12px', background: '#f1f3f5', fontWeight: '700', border: 'none' }}>취소</button>
                     {isDetailMode ? (
-                        !isViewMode && <button className="modal-btn confirm" onClick={() => onSave({ ...transaction, ...formData })} style={{ padding: '12px 24px', borderRadius: '12px', background: 'var(--primary-color)', color: '#fff', fontWeight: '700', border: 'none' }}>수정</button>
+                        !isViewMode && <button className="modal-btn confirm" onClick={() => {onSave({ ...transaction, ...formData })}} style={{ padding: '12px 24px', borderRadius: '12px', background: 'var(--primary-color)', color: '#fff', fontWeight: '700', border: 'none' }}>수정</button>
                     ) : (
                         <button className="modal-btn delete" onClick={() => onDelete(transaction.id)} style={{ padding: '12px 24px', borderRadius: '12px', background: '#ff4d4f', color: '#fff', fontWeight: '700', border: 'none' }}>삭제</button>
                     )}
@@ -443,8 +443,7 @@ function GroupAccountBook() {
             }
             const updateData = {
                 transId: updatedData.id,        
-                title: updatedData.text,        
-                transDate: updatedData.date,     
+                title: updatedData.text,           
                 originalAmount: Number(updatedData.amount),
                 category: updatedData.category, 
                 type: updatedData.type,      
@@ -608,15 +607,25 @@ function GroupAccountBook() {
                                     </div>
                                 </div>
                                 <div className="group-date-badge">
-                                    🗓️ {groupInfo.startDate} ~ {groupInfo.endDate}
-                                    {/*그룹가계부 관리자만 수정가능 */}
-                                    {isAdmin && (
-                                        <div className="editBtn">
-                                            <button onClick={() => setIsUpdateModalOpen(true)}>
-                                                수정
+                                    <div className="date-info-center">
+                                        🗓️ {groupInfo.startDate} ~ {groupInfo.endDate}
+                                    </div>
+                                    <div className="badge-button-wrap">
+                                        {/*그룹가계부 관리자만 수정가능 */}
+                                        {isAdmin && (
+                                            <div className="editBtn">
+                                                <button onClick={() => setIsUpdateModalOpen(true)}>
+                                                    수정
+                                                </button>
+                                            </div>
+                                        )}
+                                        <div className='challengeBtn'>
+                                            <button className="btn-challenge"
+                                                    onClick={() => navigate(`/mypage/challenge?groupId=${currentGroupId}`)}>
+                                                챌린지 가기
                                             </button>
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
                             </header>
 

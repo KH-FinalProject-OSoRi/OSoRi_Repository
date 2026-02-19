@@ -106,19 +106,24 @@ const MyPage = ({refreshGroupList}) => {
 
   // badgeApi 불러오기
   useEffect(() => {
-        const fetchBadges = async () => {
-            if (user?.userId) {
-                try {
-                    // 기존 transApi 스타일과 동일하게 호출
-                    const data = await badgeApi.getUserBadges(user?.userId);
-                    setBadges(data);
-                } catch (error) {
-                    console.error("뱃지 로딩 에러:", error);
-                }
-            }
-        };
-        fetchBadges();
-    }, [user?.userId]);
+    const fetchBadges = async () => {
+      if (user?.userId) {
+        try {
+          const data = await badgeApi.getUserBadges(user?.userId);
+          
+          // 날짜순(최신순)으로 정렬하여 상태에 저장
+          const sortedBadges = [...data].sort((a, b) => 
+            new Date(b.earnedAt) - new Date(a.earnedAt)
+          );
+          
+          setBadges(sortedBadges);
+        } catch (error) {
+          console.error("뱃지 로딩 에러:", error);
+        }
+      }
+    };
+    fetchBadges();
+  }, [user?.userId]);
 
   // 수락/거절 처리 함수
   const handleInviteAction = async (noti, status) => {
@@ -214,40 +219,41 @@ const MyPage = ({refreshGroupList}) => {
 
       <section className="profile-fixed-card">
         <div className="info-card profile-main">
+          
           <div className="profile-section">
-              <div className="profile-img ps-avatar">
-                {serverAvatarUrl ? (
-                  <img src={serverAvatarUrl} alt="프로필" />
-                ) : (
-                  <span aria-hidden>👤</span>
-                )}
-              </div>
+            <div className="profile-img ps-avatar">
+              {serverAvatarUrl ? (
+                <img src={serverAvatarUrl} alt="프로필" />
+              ) : (
+                <span aria-hidden>👤</span>
+              )}
+            </div>
+
             <div className="profile-details">
               <h3>{displayName}</h3>
               <p>{email}</p>
             </div>
-          <div className="v-line" />
-          {/* 뱃지 */}
-          {/* 뱃지 (최근 1개만) */}
-          <div className="badge-list">
-            {badges.length > 0 ? (
-              <img
-                key={badges[0].badgeId}
-                src={`http://localhost:8080/osori${badges[0].badgeIconUrl}`}
-                alt={badges[0].badgeName}
-                title={badges[0].badgeName}
-                style={{ width: "90px", height: "90px", objectFit: "contain" }}
-              />
-            ) : (
-              <p>아직 획득한 뱃지가 없습니다.</p>
-            )}
+
+            <div className="vertical-divider"></div>
+
+            <div className="badge-list">
+              {badges.length > 0 ? (
+                <img
+                  src={`http://localhost:8080${badges[0].badgeIconUrl}`}
+                  alt={badges[0].badgeName}
+                  title={badges[0].badgeName}
+                  className="badgeImg"
+                />
+              ) : (
+                <p>아직 획득한 뱃지가 없습니다.</p>
+              )}
+            </div>
           </div>
 
-          
 
-          </div>
         </div>
       </section>
+
 
       <div className="account-book-grid">
         <div className="info-card"
