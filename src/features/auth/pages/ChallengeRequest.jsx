@@ -65,7 +65,7 @@ const handleSubmit = async (e) => {
     <div className="challenge-request-wrapper">
       <header className="content-header">
         <h2 className="main-title">새로운 챌린지 신청하기</h2>
-        <p className="welcome-text">내 지갑부터 공동 자산까지, 오소리가 소비 흐름을 한눈에 정리해 드릴게요.</p>
+        <p className="welcome-text">원하는 챌린지를 직접 만들어 신청해주세요! 저희가 검토 후 업데이트 할게요.</p>
       </header>
 
       <form className="challenge-form" onSubmit={handleSubmit}>

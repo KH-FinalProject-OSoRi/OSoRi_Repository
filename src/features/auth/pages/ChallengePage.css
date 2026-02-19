@@ -10,8 +10,8 @@
 
 .challenge-head .challenge-title {
   font-size: 1.8rem !important;
-  font-weight: 800 !important;  
-  color: #000 !important;        
+  font-weight: 700 !important;  
+  color: #253347 !important;        
 }
 
 .challenge-head .challenge-sub {
@@ -396,12 +396,6 @@
 
 .challenge-wrap {
   padding: 0px;
-}
-
-.challenge-title {
-  font-size: 26px;
-  font-weight: 900;
-  margin: 23px 0 23px 0;
 }
 
 .challenge-sub {
