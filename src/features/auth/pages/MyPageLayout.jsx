@@ -99,17 +99,6 @@ const MyPageLayout = ({refreshGroupList}) => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/mypage/myBadges" className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}>
-              <span>🏆</span> 내 뱃지
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/mypage/profileSettings" className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}>
-              <span>⚙️</span> 프로필 설정
-            </NavLink>
-          </li>
-
-          <li>
             <NavLink
               to="/mypage/fixedTrans"
               className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
@@ -117,10 +106,19 @@ const MyPageLayout = ({refreshGroupList}) => {
               <span>📌</span> 고정지출
             </NavLink>
           </li>
-
           <li>
             <NavLink to="/mypage/challenge" className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}>
               <span>🎯</span> 챌린지
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/mypage/myBadges" className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}>
+              <span>🏆</span> 내 뱃지
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/mypage/profileSettings" className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}>
+              <span>⚙️</span> 프로필 설정
             </NavLink>
           </li>
 
