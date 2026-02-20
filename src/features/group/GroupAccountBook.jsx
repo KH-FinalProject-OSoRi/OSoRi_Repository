@@ -708,14 +708,7 @@ function GroupAccountBook() {
                     </div>
                 </div>
                 <div className='right-side'>
-                    {/* <div className={styles['month-selector-container']}>
-                        <div className={styles['month-nav-group']}>
-                            <button onClick={handlePrevMonth} className={styles['nav-btn']}>◀</button>
-                            <span style={{ fontWeight: '800', fontSize: '1.2rem' }}>{currentYear}년 {currentMonth}월 분석</span>
-                            <button onClick={handleNextMonth} className={styles['nav-btn']}>▶</button>
-                        </div>
-                    </div> */}
-                    <div className='chart-card'>
+                   <div className='chart-card'>
                         <div className='chart-main-container'>
                             <GroupBudgetGauge
                                 transactions={transactions} 

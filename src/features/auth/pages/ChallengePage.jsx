@@ -116,15 +116,6 @@ export default function ChallengePage() {
     return d.toISOString().slice(0, 10);
   };
 
-  // const openJoin = (challenge) => {
-  //   setSelected(challenge);
-  //   const start = todayStr;
-  //   const end = calcEndDate(start, challenge?.duration || 1);
-  //   setJoinForm({ startDate: start, endDate: end });
-  //   setJoinMsg("");
-  //   setIsJoinOpen(true);
-  // };
-
   const openJoin = (challenge) => {
     setSelected(challenge);
 
@@ -238,41 +229,6 @@ export default function ChallengePage() {
     }
   };
 
-  // const loadMyJoined = async (mode) => {
-  //   if (!user?.userId) return;
-  //   setJoinedMap({});
-  //   try {
-  //     let data;
-  //     if (mode === "GROUP") {
-  //       if (!selectedGroupId) return;
-  //       data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
-  //     } else {
-  //       data = await challengeApi.myJoinedList({
-  //         userId: user.userId,
-  //         challengeMode: mode,
-  //       });
-  //     }
-
-  //     const arr = normalizeList(data);
-  //     const map = {};
-  //     arr.forEach((row) => {
-  //       const id = row?.challengeId || row?.challenge_id;
-  //       if (!id) return;
-  //       map[String(id)] = {
-  //         status: row?.status,
-  //         startDate: parseDate(row?.startDate || row?.start_date),
-  //         endDate: parseDate(row?.endDate || row?.end_date),
-  //       };
-  //       if (mode === "PERSONAL" && row.status === "PROCEEDING") {
-  //         fetchProgress(id);
-  //       }
-  //     });
-  //     setJoinedMap(map);
-  //   } catch (e) {
-  //     console.error("참여 목록 로드 실패", e);
-  //   }
-  // };
-
   const loadMyJoined = async (mode) => {
     if (!user?.userId) return;
     setJoinedMap({});
@@ -373,12 +329,24 @@ export default function ChallengePage() {
     }
   }, [challengeMode, groupBudgetList, isGroupLoading]);
 
-  useEffect(()=> {
-    if(urlGroupId) {
-      setChallengeMode("GROUP");
-      setSelectedGroupId(Number(urlGroupId));
+  //가입하지도 않은 그룹가계부 직접 들어가려 할 경우 에러페이지 이동
+  useEffect(() => {
+    if (isGroupLoading || groupBudgetList.length === 0) return;
+
+    if (urlGroupId) {
+      const isMember = groupBudgetList.some(
+        (gb) => String(gb.groupbId) === String(urlGroupId)
+      );
+
+      if (isMember) {
+        setChallengeMode("GROUP");
+        setSelectedGroupId(Number(urlGroupId));
+      } else {
+        alert("해당 그룹에 접근할 권한이 없거나 존재하지 않는 그룹입니다.");
+        navigate("/error", { replace: true });
+      }
     }
-  }, [urlGroupId]);
+  }, [urlGroupId, groupBudgetList, isGroupLoading, navigate]);
 
   const pickMessage = (res) => {
     if (res == null) return "참여 완료";
@@ -488,13 +456,6 @@ export default function ChallengePage() {
           </div>
         </div>
       </div>
-
-        {/* <div className="challenge-tab">
-          <button className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`} onClick={() => setChallengeMode("PERSONAL")}>개인 챌린지</button>
-          <button className={`challenge-tabBtn ${challengeMode === "GROUP" ? "active" : ""}`} onClick={() => setChallengeMode("GROUP")}>그룹 챌린지</button>
-          <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={openHistory}>지난 챌린지</button>
-          <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={goToChallengeRequest}>챌린지 요청하기</button>
-        </div> */}
 
         {/* 탭 영역 */}
         <div className="challenge-tab">

@@ -27,6 +27,7 @@ import { groupBudgetApi } from "./api/groupBudgetApi";
 import GroupBookGuard from "./features/group/GroupBookGuard";
 import ChallengeRequest from "./features/auth/pages/ChallengeRequest";
 import NotFound from "./components/common/NotFound";
+import { useAuth } from "./context/AuthContext";
 
 const SocketHandler = ({ userId,setNotifications,refreshGroupList }) => {
   const { notifications } = useAlarmSocket(userId,refreshGroupList); // 여기서 호출하면 에러 안 남
@@ -46,12 +47,13 @@ function App() {
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [groupBudgetList, setGroupBudgetList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
   const fetchGroupBudgetAll = async() => {
     try {
       setIsLoading(true); 
 
-      const response = await groupBudgetApi.fetchGroupBudgetAll();
+      const response = await groupBudgetApi.groupBudgetList(user.userId);
       setGroupBudgetList(response);
     } catch (error) {
       console.error(error);
@@ -73,7 +75,6 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="*" element={<NotFound/>} />
 
-        {/* [CHANGED] /reset-password 라우트 추가 */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

@@ -49,15 +49,13 @@ function ProfileSettings() {
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
 
-  // [ADDED] ✅ 현재 비밀번호 입력란 === 새 비밀번호 입력란이면 경고 문구 노출
+  // 현재 비밀번호 입력란 === 새 비밀번호 입력란이면 경고 문구 노출
   const isSamePw =
     (currentPassword || "").trim() !== "" &&
     (newPassword || "").trim() !== "" &&
     (currentPassword || "").trim() === (newPassword || "").trim();
 
-  // ============================
-  // [ADDED] ✅ 여기 추가함 (새 비밀번호 일치/불일치 메시지)
-  // ============================
+  // 새 비밀번호 일치/불일치 메시지
   const [pwMatchMsg, setPwMatchMsg] = useState("");
   const [pwMatchOk, setPwMatchOk] = useState(null); // null | true | false
 
@@ -67,7 +65,7 @@ function ProfileSettings() {
   const [withdrawConfirmText, setWithdrawConfirmText] = useState("");
   const [withdrawChecked, setWithdrawChecked] = useState(false);
 
-  // [ADDED][CHANGED] 탈퇴 중 중복 클릭 방지(디자인 영향 없음)
+  // 탈퇴 중 중복 클릭 방지(디자인 영향 없음)
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
@@ -94,16 +92,10 @@ function ProfileSettings() {
 
   const hasFieldErrors = Boolean(fieldErrors.nickName || fieldErrors.email || fieldErrors.userName);
 
-  // ============================================================
-  // [ADDED] ✅ 휴면(H) 여부
-  // ============================================================
+  // 휴면(H) 여부
   const isDormant = user?.status === "H";
-
-  // ------------------------------------------------------------
-  // [BEFORE] 기존 로직 (그대로 보관)
-  // const canSubmit = canSave && !isSaving && !hasFieldErrors;
-  // ------------------------------------------------------------
-  // [CHANGED] ✅ 휴면(H)이면 변경사항 없어도 버튼 활성화
+  
+  // 휴면(H)이면 변경사항 없어도 버튼 활성화
   const canSubmit = (canSave || isDormant) && !isSaving && !hasFieldErrors;
 
   const validate = () => {
@@ -285,7 +277,7 @@ function ProfileSettings() {
         await userApi.changePassword({ currentPassword, newPassword });
       }
 
-      // [CHANGED] 서버 메시지 우선
+      //서버 메시지 우선
       alert(serverMessage || "저장 완료");
 
       setIsPasswordEditing(false);
@@ -333,7 +325,7 @@ function ProfileSettings() {
     setWithdrawConfirmText("");
     setWithdrawChecked(false);
 
-    // [ADDED][CHANGED] 모달 열릴 때 탈퇴 진행 상태 초기화(디자인 영향 없음)
+    // 모달 열릴 때 탈퇴 진행 상태 초기화(디자인 영향 없음)
     setIsWithdrawing(false);
 
     setIsWithdrawOpen(true);
@@ -342,26 +334,15 @@ function ProfileSettings() {
   const closeWithdraw = () => setIsWithdrawOpen(false);
 
   const handleWithdraw = async () => {
-    // ------------------------------------------------------------
-    // [BEFORE] 확인문구까지 강제 (근데 input이 주석 처리돼서 실제로는 탈퇴 막힘)
-    // if (!withdrawChecked) return alert("탈퇴 안내를 확인하고 체크해야 함");
-    // if (withdrawConfirmText.trim() !== "탈퇴합니다")
-    //   return alert('확인 문구로 "탈퇴합니다" 를 정확히 입력해야 함');
-    // if (!withdrawPassword.trim()) return alert("비밀번호를 입력해야 함");
-    // ------------------------------------------------------------
-
-    // ------------------------------------------------------------
-    // [CHANGED] 요구사항: 체크박스 체크 + 비밀번호 입력 시에만 진행
-    // ------------------------------------------------------------
+    // 체크박스 체크 + 비밀번호 입력 시에만 진행
     if (!withdrawChecked) return alert("탈퇴 안내를 확인하고 체크해야 함");
     if (!withdrawPassword.trim()) return alert("비밀번호를 입력해야 함");
 
-    // [ADDED][CHANGED] 중복 클릭 방지
     if (isWithdrawing) return;
     setIsWithdrawing(true);
 
     try {
-      // CHANGED 서버 ResponseEntity message 표시
+      // 서버 ResponseEntity message 표시
       const res = await userApi.withdraw({ password: withdrawPassword });
       const serverMessage =
         res?.message || (typeof res === "string" ? res : "회원탈퇴 완료");

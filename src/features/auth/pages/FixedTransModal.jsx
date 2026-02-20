@@ -95,7 +95,6 @@ export default function FixedTransModal({
 
   return (
     <div className="ftmOverlay" onMouseDown={onClose}>
-      {/* [ADDED] 내부 클릭은 닫힘 방지 */}
       <div className="ftmModal" onMouseDown={(e) => e.stopPropagation()}>
         <h3 className="ftmTitle">{isEdit ? "고정지출 수정" : "고정지출 추가"}</h3>
 
@@ -126,7 +125,6 @@ export default function FixedTransModal({
             onChange={onChange}
           />
 
-          {/* [CHANGED] 카테고리: input -> select */}
           <label className="ftmLabel" htmlFor="category">
             카테고리
           </label>

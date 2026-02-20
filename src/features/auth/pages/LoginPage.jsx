@@ -9,7 +9,6 @@ export default function LoginPage() {
   const location = useLocation();
   const { login } = useAuth();
 
-  // [추가] 카카오 로그인 설정값
   const REST_API_KEY = "fbeeefb1ab0d16e849dfdfdd01f9222b";
   const REDIRECT_URI = "http://localhost:5173/auth/kakao/callback";
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&prompt=login`;
@@ -81,7 +80,6 @@ export default function LoginPage() {
     }
   };
 
-  // [추가] 카카오 로그인 실행 함수
   const handleKakaoLogin = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
@@ -131,14 +129,13 @@ export default function LoginPage() {
             className={`${styles.socialBtn} ${styles.kakao}`}
             type="button"
             aria-label="카카오 로그인"
-            onClick={handleKakaoLogin} // [추가] 함수 연결
+            onClick={handleKakaoLogin} // 함수 연결
           >
             <KakaoIcon />
           </button>
         </div>
       </div>
 
-      {/* [CHANGED] 하단 버튼 3개: 아이디 찾기 / 비밀번호 찾기 / 회원가입 */}
       <div className={styles.bottomRow}>
         <button className={styles.subBtn} type="button" onClick={() => navigate("/find-id")}>
           아이디 찾기
