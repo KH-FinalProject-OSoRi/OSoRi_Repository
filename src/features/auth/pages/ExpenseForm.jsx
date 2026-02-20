@@ -143,7 +143,7 @@ const handleAmountInput = (userId, value) => {
       type: typeLabel,
       title: item.title,
       originalAmount: item.originalAmount,
-      
+
       category: categories.includes(item.category) ? item.category : categories[0],
     });
   };
@@ -393,6 +393,10 @@ const handleAmountInput = (userId, value) => {
             : defaultSplitAmount;
 
           totalOthersAmount += finalAmount;
+
+          if(finalAmount <= 0){
+            return null;
+          }
 
             return transApi.myTransSave({
               ...formData,
