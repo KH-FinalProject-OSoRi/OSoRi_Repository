@@ -143,7 +143,7 @@ const handleAmountInput = (userId, value) => {
       type: typeLabel,
       title: item.title,
       originalAmount: item.originalAmount,
-      
+
       category: categories.includes(item.category) ? item.category : categories[0],
     });
   };
@@ -387,27 +387,34 @@ const handleAmountInput = (userId, value) => {
   
          let totalOthersAmount = 0; 
 
-        const splitPromises = selectedMemList.map(mem => {
-          const finalAmount = individualAmounts[mem.userId] 
-            ? Number(individualAmounts[mem.userId]) 
-            : defaultSplitAmount;
+        const splitPromises = selectedMemList
+          .map(mem => {
+            const finalAmount = individualAmounts[mem.userId] 
+              ? Number(individualAmounts[mem.userId]) 
+              : defaultSplitAmount;
 
-          totalOthersAmount += finalAmount;
+            totalOthersAmount += finalAmount;
 
-            return transApi.myTransSave({
-              ...formData,
-              title: `[👨‍👩‍👧‍👦그룹분할] ${formData.title}`,
-              originalAmount: finalAmount, 
-              userId: mem.userId,
-              type: transType,
-              isShared: 'Y',
-              groupTransId: Number(groupId),
-              memo: `[${user?.nickName}]님이 [${groupName}]에 등록한 지출 분할`
-            });
-          });
+            // 0원 초과일 때만 Promise 반환 (0원이면 DB 저장 안 됨)
+            if (finalAmount > 0) {
+              return transApi.myTransSave({
+                ...formData,
+                title: `[👨‍👩‍👧‍👦그룹분할] ${formData.title}`,
+                originalAmount: finalAmount, 
+                userId: mem.userId,
+                type: transType,
+                isShared: 'Y',
+                groupTransId: Number(groupId),
+                memo: `[${user?.nickName}]님이 [${groupName}]에 등록한 지출 분할`
+              });
+            }
+            return null; // 0원이면 null 반환
+          })
+          .filter(promise => promise !== null); // null 제거 - Promise만 남음
 
           const myFinalAmount = Number(formData.originalAmount) - totalOthersAmount;
 
+          // 본인 부담금도 0원 초과일 때만 Promise 추가 (0원이면 DB 저장 안 됨)
           if (myFinalAmount > 0) {
             splitPromises.push(transApi.myTransSave({
               ...formData,
@@ -421,7 +428,10 @@ const handleAmountInput = (userId, value) => {
             }));
           }
 
-          await Promise.all(splitPromises);
+          // Promise가 있을 때만 실행 (빈 배열이면 실행 안 됨)
+          if (splitPromises.length > 0) {
+            await Promise.all(splitPromises);
+          }
         }
       } else {
         await transApi.myTransSave({ ...formData, userId: user?.userId, type: transType });
