@@ -51,7 +51,53 @@ $ npm start
 |  |  |  |
 |-----------------|-----------------|-----------------|
 | 서채원    |  <img src="https://avatars.githubusercontent.com/u/250162373?s=400&u=59aa0a768a3383c0fdbf0a71b1e54e56bcff3ff5&v=4" alt="서채원" width="100"> | <ul><li>프로젝트 계획 및 관리</li><li>팀 리딩 및 커뮤니케이션</li><li>메인 페이지 구현</li><li>마이 페이지 - 진행중인 가계부 목록/이전 가계부 목록 조회 기능 구현</li><li>그룹 가계부 이메일로 회원 초대 기능 구현</li><li>실시간 그룹 가계부 초대 요청 알림 수락/거절 기능 구현</li><li>이전 그룹 가계부 목록 조</li><li>그룹 가계부 상세 페이지 구현</li><li>그룹 가계부 수입/지출 내역 목록 조회/삭제 기능 구현</li><li>가계부 관리자 기능 구현(예산 금액 수정, 멤버 추가/삭제, 가계부 삭제)</li><li>질문봇 기능 구현</li><li>수입/지출 내역 추가시 실시간 알림 기능 구현</li></ul>     |
-| 전성중   |  <img src="https://avatars.githubusercontent.com/u/223277907?v=4" alt="전성중" width="100">| <ul><li>회원 가입 페이지 구현</li><li>회원가입 기능 구현</li><li>로그인 페이지/기능 구현(소셜 로그인(API) 포함)</li><li>회원 상태에 따른 서비스 제한 기능 구현</li><li>내 가계부 고정 지출 등록 기능 구현</li><li>회원정보 수정 페이지 구현</li><li>수정 기능(프로필 사진 변경, 비밀번호 수정, 회원 탈퇴) 구현</li></ul> |
+| 전성중   |  <img src="https://avatars.githubusercontent.com/u/223277907?v=4" alt="전성중" width="100">| <ul><li>회원 가입 페이지 구현</li><li>회원가입 기능 구현</li><li>로그인 페이지/기능 구현(소셜 로그인(API) 포함)</li><li>회원 상태에 따른 서비스 제한 기능 구현</li><li>내 가계부 고정 지출 등록 기능 구현</li><li>회원정보 수정 페이지 구현</li><li>수정 기능(사용자 정보 변경, 비밀번호 수정, 회원 탈퇴) 구현</li><li>계정 잠금 처리(로그인 5회 이상 실패시 10분 잠금)</li><li>개인 챌린지 성공/실패 판정 여부 로직``
+[서비스 링크]
+
+<br/>
+<br/>
+
+# 1. Project Overview (프로젝트 개요)
+- 프로젝트 이름: 오소리
+- 프로젝트 설명: 쉽고 편리하게 오늘의 소비를 기록하자!!
+
+<br/>
+<br/>
+
+# 2. Team Members (팀원 및 팀 소개)
+| 서채원 | 전성중 | 조수인 | 강민채 |
+|:------:|:------:|:------:|:------:|
+| <img src="https://avatars.githubusercontent.com/u/250162373?s=400&u=59aa0a768a3383c0fdbf0a71b1e54e56bcff3ff5&v=4" alt="서채원" width="150"> | <img src="https://avatars.githubusercontent.com/u/223277907?v=4" alt="전성중" width="150"> | <img src="https://avatars.githubusercontent.com/u/250043719?v=4" alt="조수인" width="150"> | <img src="https://avatars.githubusercontent.com/u/216668731?v=4" alt="강민채" width="150"> |
+| Team Leader | Team Member | Team Member | Team Member |
+| [GitHub](https://github.com/annnerss) | [GitHub](https://github.com/jsj0345) | [GitHub](https://github.com/jsi4770) | [GitHub](https://github.com/minchaeee514) |
+
+<br/>
+<br/>
+
+# 3. Key Features (주요 기능)
+- **회원가입**:
+  - 회원가입 시 DB에 유저정보가 등록됩니다.
+
+- **로그인**:
+  - 사용자 인증 정보를 통해 로그인합니다.
+ 
+- **개인 가계부**:
+  - 개인 가계부 관리와 수입/지출 내역을 통해 소비패턴 분석과 뱃지 획득이 가능합니다.
+
+- **그룹 가계부**:
+  - 가족/연인과 함께 수입/지출을 관리하며 챌린지를 통해 뱃지 획득을 하실 수 있습니다.
+
+- **실시간 알림**:
+  - 그룹 가계부에서 초대와 수입/지출 내역 추가시 실시간 알림을 보내드립니다.
+
+<br/>
+<br/>
+
+# 4. Tasks & Responsibilities (작업 및 역할 분담)
+|  |  |  |
+|-----------------|-----------------|-----------------|
+| 서채원    |  <img src="https://avatars.githubusercontent.com/u/250162373?s=400&u=59aa0a768a3383c0fdbf0a71b1e54e56bcff3ff5&v=4" alt="서채원" width="100"> | <ul><li>프로젝트 계획 및 관리</li><li>팀 리딩 및 커뮤니케이션</li><li>메인 페이지 구현</li><li>마이 페이지 - 진행중인 가계부 목록/이전 가계부 목록 조회 기능 구현</li><li>그룹 가계부 이메일로 회원 초대 기능 구현</li><li>실시간 그룹 가계부 초대 요청 알림 수락/거절 기능 구현</li><li>이전 그룹 가계부 목록 조</li><li>그룹 가계부 상세 페이지 구현</li><li>그룹 가계부 수입/지출 내역 목록 조회/삭제 기능 구현</li><li>가계부 관리자 기능 구현(예산 금액 수정, 멤버 추가/삭제, 가계부 삭제)</li><li>질문봇 기능 구현</li><li>수입/지출 내역 추가시 실시간 알림 기능 구현</li></ul>     |
+| 전성중   |  <img src="https://avatars.githubusercontent.com/u/223277907?v=4" alt="전성중" width="100">| <ul><li>회원 가입 페이지 구현</li><li>회원가입 기능 구현</li><li>로그인 페이지/기능 구현(소셜 로그인(API) 포함)</li><li>회원 상태에 따른 서비스 제한 기능 구현</li><li>내 가계부 고정 지출 등록 기능 구현</li><li>회원정보 수정 페이지 구현</li><li>수정 기능(사용자 정보 변경, 비밀번호 수정, 회원 탈퇴) 구현</li><li>계정 잠금 처리(로그인 5회 이상 실패시 10분 잠금)</li><li>개인 챌린지 성공/실패 판정 여부 로직</li><li>개인 챌린지 성공 했을 경우 뱃지 지급</li></ul> |
 | 조수인   |  <img src="https://avatars.githubusercontent.com/u/250043719?v=4" alt="조수인" width="100">    |     <ul><li>가계부 종료까지 남은 기간/예산 계산 기능 구현 (예산 초과시 경고)</li><li>개인 소비 패턴(전월 대비, 카테고리별) 분석 기능 구현</li><li>개인/그룹 챌린지 달성시 뱃지 지급 기능 구현</li><li>마이 뱃지 페이지 구현</li><li>회원 별 보유중인 뱃지 목록 조회, 뱃지 분석 기능 구현</li><li>새로운 챌린지 신청 기능 구현</li><li>캘린더뷰 구현/금액, 내용, 카테고리 별 복합 검색 기능 구현</li></ul>  |
 | 강민채    |  <img src="https://avatars.githubusercontent.com/u/216668731?v=4" alt="강민채" width="100">    | <ul><li>(개인/그룹)새로운 가계부 추가 페이지 구현</li><li>가계부 정보 입력폼 구현</li><li>개인 가계부 상세페이지 구현</li><li>개인 가계부 수입/지출 내역 목록 조회 기능 구현</li><li>예산 금액 수정 기능 구현</li><li>수입/지출 내역 추가 기능 구현</li><li>최근 수입/지출 내역 목록 조회/선택시 자동 입력 기능 구현</li><li>영수증 분석하기 (네이버 클로바/카카오 검색 API) 기능 구현</li></ul>    |
 <br/>
