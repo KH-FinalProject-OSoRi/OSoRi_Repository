@@ -38,21 +38,3 @@ export const useGroupBudgets = (userId) => {
     fetchGroupBudgetList 
   };
 };
-
-
-// //그룹 가계부 리스트 호출
-//   const fetchGroupBudgetList = async()=>{
-//       if (!user?.userId) return;
-//       setIsLoading(true);
-//       try{
-//         const data = await groupBudgetApi.groupBudgetList(user?.userId);
-
-//         setGroupBudgetList(data);
-//       }catch(error){
-//         console.error('그룹가계부 목록 조회 실패',error);
-//         alert('그룹가계부 목록을 조회할 수 없습니다.');
-//         navigate('/mypage');    
-//       }finally{
-//         setIsLoading(false);
-//       }
-//   }

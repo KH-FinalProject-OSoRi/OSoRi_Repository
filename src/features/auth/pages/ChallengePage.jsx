@@ -116,15 +116,6 @@ export default function ChallengePage() {
     return d.toISOString().slice(0, 10);
   };
 
-  // const openJoin = (challenge) => {
-  //   setSelected(challenge);
-  //   const start = todayStr;
-  //   const end = calcEndDate(start, challenge?.duration || 1);
-  //   setJoinForm({ startDate: start, endDate: end });
-  //   setJoinMsg("");
-  //   setIsJoinOpen(true);
-  // };
-
   const openJoin = (challenge) => {
     setSelected(challenge);
 
@@ -237,41 +228,6 @@ export default function ChallengePage() {
       console.error(`진행도 로드 실패 (${id}):`, e);
     }
   };
-
-  // const loadMyJoined = async (mode) => {
-  //   if (!user?.userId) return;
-  //   setJoinedMap({});
-  //   try {
-  //     let data;
-  //     if (mode === "GROUP") {
-  //       if (!selectedGroupId) return;
-  //       data = await challengeApi.getGroupJoinedList(selectedGroupId, user.userId); 
-  //     } else {
-  //       data = await challengeApi.myJoinedList({
-  //         userId: user.userId,
-  //         challengeMode: mode,
-  //       });
-  //     }
-
-  //     const arr = normalizeList(data);
-  //     const map = {};
-  //     arr.forEach((row) => {
-  //       const id = row?.challengeId || row?.challenge_id;
-  //       if (!id) return;
-  //       map[String(id)] = {
-  //         status: row?.status,
-  //         startDate: parseDate(row?.startDate || row?.start_date),
-  //         endDate: parseDate(row?.endDate || row?.end_date),
-  //       };
-  //       if (mode === "PERSONAL" && row.status === "PROCEEDING") {
-  //         fetchProgress(id);
-  //       }
-  //     });
-  //     setJoinedMap(map);
-  //   } catch (e) {
-  //     console.error("참여 목록 로드 실패", e);
-  //   }
-  // };
 
   const loadMyJoined = async (mode) => {
     if (!user?.userId) return;
@@ -500,13 +456,6 @@ export default function ChallengePage() {
           </div>
         </div>
       </div>
-
-        {/* <div className="challenge-tab">
-          <button className={`challenge-tabBtn ${challengeMode === "PERSONAL" ? "active" : ""}`} onClick={() => setChallengeMode("PERSONAL")}>개인 챌린지</button>
-          <button className={`challenge-tabBtn ${challengeMode === "GROUP" ? "active" : ""}`} onClick={() => setChallengeMode("GROUP")}>그룹 챌린지</button>
-          <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={openHistory}>지난 챌린지</button>
-          <button type="button" className="challenge-tabBtn challenge-history-btn" onClick={goToChallengeRequest}>챌린지 요청하기</button>
-        </div> */}
 
         {/* 탭 영역 */}
         <div className="challenge-tab">

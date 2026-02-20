@@ -408,7 +408,7 @@ const handleAmountInput = (userId, value) => {
 
           const myFinalAmount = Number(formData.originalAmount) - totalOthersAmount;
 
-          if (myFinalAmount >= 0) {
+          if (myFinalAmount > 0) {
             splitPromises.push(transApi.myTransSave({
               ...formData,
               title: `[👨‍👩‍👧‍👦그룹분할] ${formData.title}`,

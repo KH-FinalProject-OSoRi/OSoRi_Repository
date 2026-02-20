@@ -29,7 +29,6 @@ export default function FindPasswordPage() {
     // TODO: 여기서 원래는 서버로 "비밀번호 재설정 요청" API를 호출하는 게 정석
     // 지금은 2단계 화면 이동만 처리
    
-    // [ADDED] 서버에 먼저 아이디 존재 여부 확인 -> 있으면 재설정 페이지로 이동
     // - 매핑 주소는 authApi.checkLoginIdForReset 안에서 맞춰서 바꾸면 됨
     (async () => {
       try {
