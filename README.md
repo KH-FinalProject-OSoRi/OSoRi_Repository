@@ -117,29 +117,29 @@ https://github.com/envoy1084/awesome-badges
 ```plaintext
 project/
 ├── public/
-│   └── vite.svg           # Vite 기본 로고 파일
+│   └── vite.svg                    # Vite 기본 로고 파일
 ├── src/
-│   ├── Data/              # 급여일, 카테고리, 가계부 데이터 생성기
-│   ├── api/               # 각 api 모
-│   ├── assets/               # React 공식로고 파
+│   ├── Data/                       # 급여일, 카테고리, 가계부 데이터 생성기
+│   ├── api/                        # 각 api 모
+│   ├── assets/                     # React 공식로고 파
 │   ├── components/common/          # 공통 컴포넌트
-│   ├── context/               # 로그인 상태 관리 
-│   ├── features/               # 각 페이지별 컴포넌트
-│   │   ├── Util/              # 소비 패턴 분석
-│   │   ├── alarm/              # 실시간 알림 커스텀 훅 
-│   │   ├── auth/pages/        # 챌린지, 소비/지출, 고정지출, 멤버 관련 컴포넌트 
-│   │   ├── group/            # 그룹 가계부 관련 컴포넌트 
-│   │   ├── menu/
-│   ├── hooks/               # 각 페이지별 컴포넌트
-│   ├── layouts/               # 각 페이지별 컴포넌트
-│   ├── routes/               # 각 페이지별 컴포넌트
-│   ├── App.jsx               # 라우팅 구조, 소켓 핸들, 컨트롤러 
-│   ├── index.css            # 전역 css 파일
-│   └── main.jsx    # React 엔트리 포인트, 컴포넌구 구조
-├── package-lock.json    # 정확한 종속성 버전이 기록된 파일로, 일관된 빌드를 보장
-├── package.json         # 프로젝트 종속성 및 스크립트 정의
-├── .gitignore               # Git 무시 파일 목록
-└── README.md                # 프로젝트 개요 및 사용법
+│   ├── context/                    # 로그인 상태 관리 
+│   ├── features/                   # 각 페이지별 컴포넌트
+│   │   ├── Util/                   # 소비 패턴 분석
+│   │   ├── alarm/                  # 실시간 알림 커스텀 훅 
+│   │   ├── auth/pages/             # 챌린지, 소비/지출, 고정지출, 멤버 관련 컴포넌트 
+│   │   ├── group/                  # 그룹 가계부 관련 컴포넌트 
+│   │   ├── menu/                   # 캘린더뷰 컴포넌
+│   ├── hooks/                      # 그룹 가계부 훅
+│   ├── layouts/                    # 인증 관련 레이아 컴포넌트
+│   ├── routes/                     # 보안 라우트 컴포넌트
+│   ├── App.jsx                     # 라우팅 구조, 소켓 핸들, 컨트롤러 
+│   ├── index.css                   # 전역 css 파일
+│   └── main.jsx                    # React 엔트리 포인트, 컴포넌구 구조
+├── package-lock.json               # 정확한 종속성 버전이 기록된 파일로, 일관된 빌드를 보장
+├── package.json                    # 프로젝트 종속성 및 스크립트 정의
+├── .gitignore                      # Git 무시 파일 목록
+└── README.md                       # 프로젝트 개요 및 사용법
 ```
 
 <br/>
