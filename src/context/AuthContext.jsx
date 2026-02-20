@@ -21,9 +21,6 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!token;
 
   const login = ({ token: nextToken, user: nextUser }) => {
-
-    //2월 2일 추가 
-
     // 값이 존재할 때만 저장하도록 방어
     if (nextToken) {
         localStorage.setItem("token", nextToken);
@@ -33,12 +30,6 @@ export function AuthProvider({ children }) {
         localStorage.setItem("user", JSON.stringify(nextUser));
         setUser(nextUser);
     }
-
-
-    // localStorage.setItem("token", nextToken);
-    // localStorage.setItem("user", JSON.stringify(nextUser));
-    // setToken(nextToken);
-    // setUser(nextUser);
   };
 
   const logout = async () => {

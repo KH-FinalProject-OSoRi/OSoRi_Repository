@@ -99,7 +99,6 @@ function MonthlyTrendChart({ transactions = [], currentDate }) {
     summaryContent = (
       <div className={styles['chart-summary']} style={{textAlign : 'center'}}>
         이번 달 총 <strong>{projectedCurrent.toLocaleString()}원</strong> 지출 예상 &nbsp;&nbsp;|&nbsp;&nbsp;
-        {/*<p><span>({Math.round((currentMonthSpent / projectedCurrent) * 100)}% 진행 중)</span></p>*/}
    
          다음 달 예상 지출: 약 <strong>{predictedAmount.toLocaleString()}원</strong>
         

@@ -29,7 +29,6 @@ export async function apiFetch(path, { method = "GET", body, headers = {}, auth 
   const data = isJson ? await res.json().catch(() => null) : await res.text().catch(() => null);
 
   if (!res.ok) {
-    // ✅ [ADDED] 서버가 내려준 message를 에러 메시지로 쓰기
     const serverMsg =
       (isJson && data && (data.message || data.error)) ||
       (typeof data === "string" && data) ||

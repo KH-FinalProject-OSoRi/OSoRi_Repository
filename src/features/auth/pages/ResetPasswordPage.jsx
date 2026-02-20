@@ -14,14 +14,14 @@ export default function ResetPasswordPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [error, setError] = useState("");
 
-  // [ADDED] 서버 응답 메시지/로딩
+  // 서버 응답 메시지/로딩
   const [serverMessage, setServerMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const onSubmit = (e) => {
     e.preventDefault();
     setError("");
-    // [ADDED] 이전 서버 메시지 초기화
+    // 이전 서버 메시지 초기화
     setServerMessage("");
 
     const pw1 = newPassword.trim();
@@ -101,7 +101,6 @@ export default function ResetPasswordPage() {
 
         {error && <div className={styles.error}>{error}</div>}
 
-        {/* [ADDED] 서버 응답 메시지 */}
         {serverMessage && <div className={styles.ok}>{serverMessage}</div>}
 
         <button className={styles.submitBtn} type="submit" disabled={loading}>

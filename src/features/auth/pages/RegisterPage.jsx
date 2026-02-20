@@ -204,17 +204,6 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
-
-
-      // await authApi.register({
-      //   loginId: form.loginId.trim(),
-      //   password: form.password,
-      //   userName: form.userName.trim(),
-      //   nickName: form.nickName.trim(),
-      //   email: form.email.trim(),
-      //   loginType: "LOCAL"
-      // });
-
       const requestData = {
         user : {
           loginId : form.loginId.trim(),

@@ -38,7 +38,6 @@ export default function FindIdPage() {
       return;
     }
 
-    // [ADDED] 이메일 -> 서버로 전송해서 아이디 찾기
     // - 서버에서 { message, loginId } 같은 형태로 내려준다고 가정
     // - 매핑 주소는 authApi.findLoginIdByEmail 안에서 맞춰서 바꾸면 됨
     (async () => {
@@ -67,7 +66,6 @@ export default function FindIdPage() {
 
       <form className={styles.form} onSubmit={onSubmit}>
         
-        {/* [CHANGED] 이메일 */}
         <div className={styles.label}>이메일</div>
         <input
           className={styles.input}
@@ -81,7 +79,6 @@ export default function FindIdPage() {
 
         {error && <div className={styles.error}>{error}</div>}
 
-        {/* [ADDED] 서버 응답 메시지 */}
         {serverMessage && <div className={styles.ok}>{serverMessage}</div>}
 
         <button className={styles.submitBtn} type="submit" disabled={loading}>
