@@ -125,7 +125,7 @@ const handleSubmit = async (e) => {
         </div>
 
         <div className="action-area">
-          <button type="submit" className="submit-btn">
+          <button type="submit" className="submitRequest-btn">
             챌린지 요청하기
           </button>
         </div>
