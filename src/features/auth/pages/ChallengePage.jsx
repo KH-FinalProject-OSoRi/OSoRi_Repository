@@ -373,12 +373,24 @@ export default function ChallengePage() {
     }
   }, [challengeMode, groupBudgetList, isGroupLoading]);
 
-  useEffect(()=> {
-    if(urlGroupId) {
-      setChallengeMode("GROUP");
-      setSelectedGroupId(Number(urlGroupId));
+  //가입하지도 않은 그룹가계부 직접 들어가려 할 경우 에러페이지 이동
+  useEffect(() => {
+    if (isGroupLoading || groupBudgetList.length === 0) return;
+
+    if (urlGroupId) {
+      const isMember = groupBudgetList.some(
+        (gb) => String(gb.groupbId) === String(urlGroupId)
+      );
+
+      if (isMember) {
+        setChallengeMode("GROUP");
+        setSelectedGroupId(Number(urlGroupId));
+      } else {
+        alert("해당 그룹에 접근할 권한이 없거나 존재하지 않는 그룹입니다.");
+        navigate("/error", { replace: true });
+      }
     }
-  }, [urlGroupId]);
+  }, [urlGroupId, groupBudgetList, isGroupLoading, navigate]);
 
   const pickMessage = (res) => {
     if (res == null) return "참여 완료";
@@ -530,7 +542,7 @@ export default function ChallengePage() {
             className="challenge-primary-btn"
             onClick={goToChallengeRequest}
           >
-            + 챌린지 요청하기
+            + 새 챌린지 요청하기
           </button>
         </div>
 
