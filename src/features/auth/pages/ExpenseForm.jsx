@@ -143,6 +143,7 @@ const handleAmountInput = (userId, value) => {
       type: typeLabel,
       title: item.title,
       originalAmount: item.originalAmount,
+      
       category: categories.includes(item.category) ? item.category : categories[0],
     });
   };
