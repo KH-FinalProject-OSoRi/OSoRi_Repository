@@ -39,33 +39,33 @@ const OldGroupBudgetModal=({userId,onClose,onSuccess})=>{
 
     return(
         <div className="modalOverlayStyle" ref={overlayRef}>
-            <div className="modalContentStyle">
+            <div className="modalContentStyle" style={{height: 'auto', overflow: 'hidden', flexDirection: 'column', display: 'flex'}}>
                 <h3>이전 그룹가계부 목록</h3>
-                <div className="account-detail">
-                <ul className="sidebar-menu">
-                    {groupOldBudgetList.length === 0 &&
-                        <li style={{paddingBottom:'20px'}}>
-                        이전 가계부가 없습니다.
-                        </li>
-                    }
+                <div className="account-detail2">
+                    <ul className="sidebar-menu">
+                        {groupOldBudgetList.length === 0 &&
+                            <li style={{paddingBottom:'20px'}}>
+                            이전 가계부가 없습니다.
+                            </li>
+                        }
 
-                    {groupOldBudgetList &&
-                        groupOldBudgetList.map((gb)=>(
-                        <li key={gb.groupbId}>
-                            <NavLink
-                            to={{
-                                    pathname: "/mypage/groupAccountBook",
-                                    search: `?groupId=${gb?.groupbId}`,
-                                }}
-                            className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
-                            >
-                            <span>🪙</span> {gb.title} 가계부
-                            ({gb.startDate}~{gb.endDate})
-                            </NavLink>
-                        </li>
-                        ))
-                    }
-                </ul>
+                        {groupOldBudgetList &&
+                            groupOldBudgetList.map((gb)=>(
+                            <li key={gb.groupbId}>
+                                <NavLink
+                                to={{
+                                        pathname: "/mypage/groupAccountBook",
+                                        search: `?groupId=${gb?.groupbId}`,
+                                    }}
+                                className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
+                                >
+                                <span>🪙</span> {gb.title} 가계부
+                                ({gb.startDate}~{gb.endDate})
+                                </NavLink>
+                            </li>
+                            ))
+                        }
+                    </ul>
                 </div>
 
                 <div className="buttonGroup formStyle">
