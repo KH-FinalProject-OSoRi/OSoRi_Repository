@@ -39,7 +39,70 @@ const ExpenseForm = ({ mode = 'personal', groupId, groupStart, groupEnd }) => {
 
 const [individualAmounts, setIndividualAmounts] = useState({}); 
 
+// 각 멤버가 입력 가능한 최대 금액 계산 함수
+const getMaxAmountForMember = (userId) => {
+  const totalAmount = Number(formData.originalAmount);
+  if (!totalAmount || totalAmount <= 0) return totalAmount;
+
+  // 현재 멤버를 제외한 다른 멤버들 중 실제로 입력한 금액만 합계 계산
+  // 입력하지 않은 멤버는 합계에서 제외 (기본 분할액 사용 안 함)
+  const otherMembersTotal = selectedMemList
+    .filter(mem => mem.userId !== userId)
+    .reduce((acc, mem) => {
+      // 실제로 입력한 금액만 사용 (입력 안 했으면 0)
+      const memAmount = individualAmounts[mem.userId] 
+        ? Number(individualAmounts[mem.userId]) 
+        : 0;
+      return acc + memAmount;
+    }, 0);
+
+  // 남은 금액 = 총액 - 다른 멤버들이 실제로 입력한 합계
+  const maxAllowed = totalAmount - otherMembersTotal;
+  return maxAllowed > 0 ? maxAllowed : 0;
+};
+
 const handleAmountInput = (userId, value) => {
+  // 빈 값이면 그냥 저장
+  if (!value || value === '') {
+    setIndividualAmounts(prev => ({
+      ...prev,
+      [userId]: value
+    }));
+    return;
+  }
+
+  const inputAmount = Number(value);
+  
+  // 음수 입력 방지
+  if (inputAmount < 0) {
+    alert("금액은 0 이상이어야 합니다.");
+    return;
+  }
+
+  // 총액 확인
+  const totalAmount = Number(formData.originalAmount);
+  if (!totalAmount || totalAmount <= 0) {
+    setIndividualAmounts(prev => ({
+      ...prev,
+      [userId]: value
+    }));
+    return;
+  }
+
+  // 이 멤버가 입력 가능한 최대 금액 계산
+  const maxAllowed = getMaxAmountForMember(userId);
+
+  // 입력 금액이 최대 허용 금액을 초과하면 최대값으로 제한
+  if (inputAmount > maxAllowed) {
+    alert(`총 금액(${totalAmount.toLocaleString()}원)을 초과할 수 없습니다.\n이 멤버의 최대 입력 가능 금액: ${maxAllowed.toLocaleString()}원`);
+    setIndividualAmounts(prev => ({
+      ...prev,
+      [userId]: maxAllowed
+    }));
+    return;
+  }
+
+  // 검증 통과 시 저장
   setIndividualAmounts(prev => ({
     ...prev,
     [userId]: value
@@ -80,6 +143,7 @@ const handleAmountInput = (userId, value) => {
       type: typeLabel,
       title: item.title,
       originalAmount: item.originalAmount,
+      
       category: categories.includes(item.category) ? item.category : categories[0],
     });
   };
@@ -465,8 +529,15 @@ const handleAmountInput = (userId, value) => {
                                 className="input-field small"
                                 value={individualAmounts[mem.userId] || ''} 
                                 onChange={(e) => handleAmountInput(mem.userId, e.target.value)}
+                                min="0"
+                                max={getMaxAmountForMember(mem.userId)}
                               />
                               <span style={{ fontSize: '0.9rem' }}>원</span>
+                              {formData.originalAmount > 0 && (
+                                <span style={{ fontSize: '0.75rem', color: '#666', marginLeft: '4px' }}>
+                                  (최대: {getMaxAmountForMember(mem.userId).toLocaleString()}원)
+                                </span>
+                              )}
                             </div>
                           )}
                         </div>
@@ -484,7 +555,7 @@ const handleAmountInput = (userId, value) => {
                         <span>멤버 합계</span>
                         <span>
                           {selectedMemList.reduce((acc, mem) => 
-                            acc + (individualAmounts[mem.userId] ? Number(individualAmounts[mem.userId]) : splitResult.amount), 0
+                            acc + (individualAmounts[mem.userId] ? Number(individualAmounts[mem.userId]) : 0), 0
                           ).toLocaleString()} 원
                         </span>
                       </div>
@@ -493,7 +564,7 @@ const handleAmountInput = (userId, value) => {
                         <span className="my-final-label">본인 부담금 (잔액)</span>
                         <span className="my-final-price">
                           {(Number(formData.originalAmount) - selectedMemList.reduce((acc, mem) => 
-                            acc + (individualAmounts[mem.userId] ? Number(individualAmounts[mem.userId]) : splitResult.amount), 0
+                            acc + (individualAmounts[mem.userId] ? Number(individualAmounts[mem.userId]) : 0), 0
                           )).toLocaleString()}원
                         </span>
                       </div>
