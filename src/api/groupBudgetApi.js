@@ -27,9 +27,22 @@ export const groupBudgetApi={
         });
         return response.data;
     },
+    //현재 그룹 가계부 회원 목록 불러오기
+    currentMem:async(groupId)=>{
+        const response = await api.get('/group/currentMem',{
+            params:{groupId}
+        });
+        return response.data;
+    },
     //그룹 가계부 멤버 추가
     addMemList:async(user)=>{
         const response = await api.post('/group/gbAddMem',user);
+        return response.data;
+    },
+    //그룹 가계부 멤버 삭제
+    deleteMemList:async(user)=>{
+        const response = await api.post('/group/deleteMemList',user);
+        console.log(response.data);
         return response.data;
     },
     //초대 상태 변경
@@ -76,8 +89,10 @@ export const groupBudgetApi={
         const response = await api.post('/group/gbAddChall',chall);
         return response.data;
     },
-    fetchGroupBudgetAll:async()=>{
-        const response = await api.get('/group/gbAll');
+    fetchGroupBudgetAll:async(userId)=>{
+        const response = await api.get(`/group/gbAll`,{
+            params:{userId}
+        });
         return response.data;
     }
 

@@ -163,10 +163,13 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
     });
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [memList, setMemList] = useState([]);
+    const [memDeleteList, setMemDeleteList] = useState([]);
     const [selectedMemList, setSelectedMemList] = useState([]);
+    const [selectedMemList2, setSelectedMemList2] = useState([]);
     const overlayRef = useRef(null);
     const [searchKeyword,setSearchKeyword] = useState('');
     const { user } = useAuth();
+    
     
 
     window.addEventListener('click',(e)=>{
@@ -184,6 +187,17 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
         }
     };
 
+    const fetchCurrentMemList = async()=>{
+        try{
+            const data = await groupBudgetApi.currentMem(groupId);
+
+            setMemDeleteList(Array.isArray(data) ? data : []);
+            setMemDeleteList(prev=>prev.filter(mem=>mem.userId !== user?.userId));
+        }catch(error){
+            console.error('회원 리스트 목록 조회 실패',error);
+        }
+    }
+
     useEffect(()=>{
         const timer = setTimeout(() => {
             if (searchKeyword.trim().length >= 2) { // 2글자 이상일 때만 호출
@@ -195,6 +209,10 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
 
         return () => clearTimeout(timer);
     },[searchKeyword]);
+
+    useEffect(()=>{
+        fetchCurrentMemList();
+    },[]);
 
     //추가 멤버들 핸들러
     const handleSelectMember=(user)=>{
@@ -212,9 +230,26 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
         setMemList([]); 
     }
 
-    //선택 취소 핸들러
+    //삭제 멤버들 핸들러
+    const handleDeleteMember=(user)=>{
+        const isAlreadySelected = selectedMemList2.some(mem=>mem.userId === user?.userId);
+
+        if(isAlreadySelected){
+            alert("이미 추가된 회원입니다.");
+            return;
+        }
+
+        setSelectedMemList2(prev => [...prev, user]);
+    }
+
+    //선택된 추가 멤버 취소 핸들러
     const handleDeleteSelectMem=(delMemId)=>{
         setSelectedMemList(prev=>prev.filter(mem=>mem.userId !== delMemId));
+    }
+
+    //선택된 삭제 멤버 취소 핸들러
+    const handleDeleteSelectMem2=(delMemId)=>{
+        setSelectedMemList2(prev=>prev.filter(mem=>mem.userId !== delMemId));
     }
 
     useEffect(() => {
@@ -246,7 +281,9 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
             alert("예산은 0보다 커야 합니다.");
             return;
         }
-        onUpdate(formData,selectedMemList); 
+        onUpdate(formData,selectedMemList, selectedMemList2); 
+        setSelectedMemList2([]);
+        setSelectedMemList([]);
     };
 
     return (
@@ -300,6 +337,26 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
                             <span key={mem.userId} className="member-badge">
                                 {mem.nickName} 
                                 <button onClick={() => handleDeleteSelectMem(mem.userId)}>x</button>
+                            </span>
+                        ))}
+                    </div>
+
+                    <label htmlFor="memList">회원 삭제</label>
+                    현재 멤버: {memDeleteList.length > 0 && (
+                        <ul className="mem-list">
+                            {memDeleteList.map((mem)=>(
+                                <li key={mem.userId} style={{cursor:"pointer"}} onClick={()=>handleDeleteMember(mem)}>
+                                    {mem.email} ({mem.nickName}) <span>[삭제]</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    <div className="selected-members">
+                        <label>삭제할 멤버:</label>
+                        {selectedMemList2.map((mem) => (
+                            <span key={mem.userId} className="member-badge">
+                                {mem.nickName} 
+                                <button onClick={() => handleDeleteSelectMem2(mem.userId)}>x</button>
                             </span>
                         ))}
                     </div>
@@ -525,7 +582,7 @@ function GroupAccountBook() {
     }, [currentGroupId, user?.userId]);
 
     //수정 실행 함수
-    const handleGbUpdate = async (updateData,selectedMemList) => {
+    const handleGbUpdate = async (updateData,selectedMemList, selectedMemList2) => {
         try {
             const response = await groupBudgetApi.updateGroupB({
                 groupbId: updateData.groupbId,
@@ -543,6 +600,15 @@ function GroupAccountBook() {
                 });
 
                 await Promise.all(addMemPromise);
+
+                const deleteMemPromise = selectedMemList2.map(mem=>{
+                    return groupBudgetApi.deleteMemList({
+                        groupbId: response.groupbId,
+                        userId: mem.userId
+                    });
+                });
+
+                await Promise.all(deleteMemPromise);
 
                 alert("그룹 가계부 정보가 성공적으로 수정되었습니다!");
 

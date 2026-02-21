@@ -134,22 +134,22 @@ const MyPage = ({refreshGroupList}) => {
         receiver: user?.userId    // 현재 사용자 ID
       };
 
+      //초대 상태 변경
       const response = await groupBudgetApi.updateNotiStatus(params);
-      if (response === 200) {
-        alert(status === "ACCEPTED" ? "초대를 수락했습니다." : "초대를 거절했습니다.");
+
+      if (response === 200 || response.status === 200) {
         
-        // 3. 처리가 완료된 알림을 화면에서 제거
-        setNotifications(prev => {
-          if (!prev) return []; // 방어 코드
-          return prev.filter(n => n.notiId !== noti.notiId);
-        });
-        
+        //읽음처리 기다림
         await groupBudgetApi.updateNotiIsRead(noti.notiId);
         
         // 수락했을 경우 그룹 가계부 목록을 새로고침
         if (status === "ACCEPTED") {
-          fetchGroupBudgetList();
+          await refreshGroupList(); 
+          await fetchGroupBudgetList();
+          alert("초대를 수락했습니다");
         }
+        
+        setNotifications(prev => prev.filter(n => n.notiId !== noti.notiId));
       }
     } catch (error) {
       console.error("초대 상태 변경 실패", error);

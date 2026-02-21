@@ -17,18 +17,20 @@ const useAlarmSocket = (userId,refreshGroupList) => {
                 client.subscribe(`/single/notifications/${userId}`, (message) => {
                     const newNoti = JSON.parse(message.body);
                     console.log(newNoti);
+
+                    // 1. 공통: 어떤 알림이 오든 목록을 즉시 갱신 (비동기 동기화)
+                    if (refreshGroupList) refreshGroupList();
+
                     if (newNoti.ntype === "GROUP_DELETED") {
                         // 현재 내가 보고 있는 페이지가 삭제된 그룹 페이지인지 확인
                         const queryParams = new URLSearchParams(window.location.search);
                         const currentGroupId = queryParams.get("groupId");
 
-                        if (Number(currentGroupId) === newNoti.inviteNum) {
+                        if (currentGroupId && Number(currentGroupId) === newNoti.inviteNum) {
                             alert(`참여중인 가계부 [${newNoti.message}]가 삭제되었습니다.`);
                             navigate("/mypage", { replace: true });
                         }
                     } else if (newNoti.ntype === "INVITE") {
-                        if (refreshGroupList) refreshGroupList();
-
                         //일반 알림
                         setNotifications((prev) => [newNoti, ...prev]); 
                     } else{

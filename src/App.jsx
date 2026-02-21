@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useCallback } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainPage from "./components/common/MainPage";
 import MyPageLayout from "./features/auth/pages/MyPageLayout";
@@ -34,7 +34,7 @@ const SocketHandler = ({ userId,setNotifications,refreshGroupList }) => {
   
   useEffect(() => {
     setNotifications(notifications);
-  }, [notifications, setNotifications]);
+  }, [notifications, setNotifications, refreshGroupList]);
 
   return null;
 };
@@ -49,22 +49,24 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
-  const fetchGroupBudgetAll = async() => {
+  const fetchGroupBudgetAll = useCallback(async() => {
+    if (!user?.userId) return; // 유저 정보가 없으면 실행 안 함
+
     try {
       setIsLoading(true); 
 
-      const response = await groupBudgetApi.groupBudgetList(user.userId);
+      const response = await groupBudgetApi.fetchGroupBudgetAll(user.userId);
       setGroupBudgetList(response);
     } catch (error) {
-      console.error(error);
+      console.error("그룹 목록 로딩 실패:", error);
     } finally {
       setIsLoading(false);
     }
-  }
+  },[user?.userId]);
 
   useEffect(()=>{
     fetchGroupBudgetAll();
-  },[]);
+  },[fetchGroupBudgetAll]);
 
   return (
     <Router>
@@ -73,7 +75,6 @@ function App() {
                      refreshGroupList={fetchGroupBudgetAll} />
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="*" element={<NotFound/>} />
 
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
@@ -124,6 +125,7 @@ function App() {
           <Route path="challenge" element={<ChallengePage />} />
           <Route path="challengeRequest" element={<ChallengeRequest />} />  
         </Route>
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
   );
