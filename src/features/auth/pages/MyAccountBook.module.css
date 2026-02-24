@@ -7,6 +7,7 @@
   --bg-color: #f8f9fa;
   --text-main: #2d3436;
   --text-sub: #636e72;
+  --shared-color: #9b59b6;
 }
 
 .fade-in {
@@ -93,6 +94,7 @@ body {
 
 .label-text.income { color: #2ecc71; }
 .label-text.expense { color: #e74c3c; }
+.label-text.shared { color: var(--shared-color); }
 
 .search-input {
   border: none !important;
