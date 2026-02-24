@@ -277,8 +277,8 @@ const GroupBudgetUpdateModal = ({ isOpen, onClose, onDelete, groupData, groupId,
             alert("가계부 제목을 입력해주세요.");
             return;
         }
-        if (formData.bAmount <= 0) {
-            alert("예산은 0보다 커야 합니다.");
+        if (formData.bAmount < 0) {
+            alert("예산은 0이거나 0보다 커야 합니다.");
             return;
         }
         onUpdate(formData,selectedMemList, selectedMemList2); 
