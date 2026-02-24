@@ -1,10 +1,20 @@
 import { useEffect,useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { PulseLoader } from 'react-spinners';
 
 const GroupBookGuard = ({ groupList, children, isLoading }) => {
   const [searchParams] = useSearchParams();
   const groupId = searchParams.get('groupId');
   const navigate = useNavigate();
+  const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 700);
+
+    return () => clearTimeout(timer); // 언마운트 시 타이머 정리
+  }, []);
 
   useEffect(()=>{
     //그룹 리스트가 존재할 때 검증
@@ -17,7 +27,23 @@ const GroupBookGuard = ({ groupList, children, isLoading }) => {
     }
   },[isLoading,groupList,groupId,navigate]);
 
-  if (isLoading || !groupList) return <div>권한 확인 중...</div>; 
+  if (isLoading || showLoader || !groupList) {
+    return (
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}>
+        <PulseLoader
+          color="#0066ff"
+          loading={true}
+          margin={20}
+          size={15}
+        />
+      </div>
+    );
+  }
 
   const hasAccess = groupList.some(g => String(g.groupbId) === String(groupId));
   

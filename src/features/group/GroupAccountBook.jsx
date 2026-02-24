@@ -502,6 +502,7 @@ function GroupAccountBook() {
                 transId: updatedData.id,        
                 title: updatedData.text,           
                 originalAmount: Number(updatedData.amount),
+                transDate: updatedData.date,
                 category: updatedData.category, 
                 type: updatedData.type,      
                 memo: updatedData.memo || '',     
