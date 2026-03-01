@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/osori": {
-        target: "http://localhost:8080",
+        target: "http://13.239.33.140:8080",
         changeOrigin: true,
       },
     },

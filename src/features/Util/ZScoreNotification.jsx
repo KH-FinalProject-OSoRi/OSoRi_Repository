@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { zScore } from './zScore';
-import './zScoreNotification.css'; 
+import './ZScoreNotification.css'; 
 
 const ZScoreNotification = ({ transactions, currentDate }) => {
   const analysisMessages = useMemo(() => {
