@@ -105,7 +105,7 @@ export default function MyBadges() {
   const renderBadgeCard = (b) => {
     const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
     const imgSrc = iconUrl
-      ? `http://localhost:8080${iconUrl}`
+      ? `http://13.239.33.140:8080${iconUrl}`
       : "";
 
     const isGroupBadge = (b.challengeMode || "").toUpperCase() === 'GROUP' || !!(b.groupBudgetTitle || b.group_budget_title);
