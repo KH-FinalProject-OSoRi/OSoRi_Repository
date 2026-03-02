@@ -239,7 +239,7 @@ const MyPage = ({refreshGroupList}) => {
             <div className="badge-list">
               {badges.length > 0 ? (
                 <img
-                  src={`http://localhost:8080${badges[0].badgeIconUrl}`}
+                  src={`http://13.239.33.140:8080${badges[0].badgeIconUrl}`}
                   alt={badges[0].badgeName}
                   title={badges[0].badgeName}
                   className="badgeImg"
