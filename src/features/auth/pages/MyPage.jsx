@@ -28,7 +28,7 @@ const MyPage = ({refreshGroupList}) => {
   const { groupBudgetList = [], isLoading: isGroupLoading, fetchGroupBudgetList } = useGroupBudgets(user?.userId);
 
   const serverAvatarUrl = user?.changeName 
-    ? `http://localhost:8080/osori/upload/profiles/${user.changeName}` 
+    ? `http://13.239.33.140:8080/osori/upload/profiles/${user.changeName}` 
     : "";
 
   //안읽은 알림 목록 조회
