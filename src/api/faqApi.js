@@ -12,6 +12,9 @@ export const faqApi = {
             }
         });
         return response.data;
-    }
-    
+    },
+    askAi:async(question) =>{
+        const response = await api.post('/faq/ask-ai', {question});
+        return response.data;
+    }    
 };

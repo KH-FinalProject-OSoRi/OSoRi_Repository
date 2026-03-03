@@ -65,18 +65,47 @@ const MyPageLayout = ({refreshGroupList}) => {
     }, 600); // 0.6초 뒤에 답변 등장
   };
 
-  const handleNewQuestioSubmit = async() => {
-    try{
-      const response = await faqApi.addNewQuestion(newQuestion);
-      console.log(response);
+  // const handleNewQuestioSubmit = async() => {
+  //   try{
+  //     const response = await faqApi.addNewQuestion(newQuestion);
+  //     console.log(response);
 
-      alert("질문이 성공적으로 저장되었습니다.");
-      setIsInputVisible(false);
-    }catch(error){
-      console.log("질문 등록 오류 발생",error);
-      alert("질문 등록중에 오류가 발생했습니다. 다시 시도해 주세요.");
-    }
+  //     alert("질문이 성공적으로 저장되었습니다.");
+  //     setIsInputVisible(false);
+  //   }catch(error){
+  //     console.log("질문 등록 오류 발생",error);
+  //     alert("질문 등록중에 오류가 발생했습니다. 다시 시도해 주세요.");
+  //   }
+  //   setNewQuestion('');
+  // };
+
+  const handleChatSubmit = async() =>{
+    if(!newQuestion.trim()) return;
+
+    //회원 메시지 추가
+    const userMsg = {id: Date.now(), type:'user', message: newQuestion};
+    setMessages(prev => [...prev,userMsg]);
+
+    const currentQuestion = newQuestion;
     setNewQuestion('');
+    setIsInputVisible(false);
+
+    //로딩중
+    const botId= Date.now() + 1;
+    setMessages(prev => [...prev, {id:botId, type:'bot',message:'OSORI가 답변을 생성중입니다...'}]);
+
+    try{
+      const response = await faqApi.askAi(currentQuestion);
+
+      setMessages(prev => prev.map(msg =>
+        msg.id === botId ? {...msg, message: response.answer} : msg
+      ));
+    } catch(error){
+      console.error("AI 응답 에러:", error);
+      setMessages(prev => prev.map(msg =>
+        msg.id === botId ? {...msg,message:"다음에 시도 해주세요"} : msg
+      ));
+    }
   };
 
 
@@ -172,7 +201,7 @@ const MyPageLayout = ({refreshGroupList}) => {
                                 onChange={(e) => setNewQuestion(e.target.value)}
                                 placeholder="질문을 입력하세요."
                             />
-                            <button onClick={handleNewQuestioSubmit}>등록</button>
+                            <button onClick={handleChatSubmit}>등록</button>
                             <button onClick={() => setIsInputVisible(false)}>취소</button>
                         </div>
                     )}
