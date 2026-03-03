@@ -18,7 +18,7 @@ const ExpenseForm = ({ mode = 'personal', groupId, groupStart, groupEnd }) => {
   const [selectedMemList, setSelectedMemList] = useState([]);
   const [splitResult, setSplitResult] = useState({ amount: 0, count: 1 });
   const [groupName, setGroupName] = useState('');
-  
+
   //날짜 관련 
   const [groupPeriod, setGroupPeriod] = useState({ start: '', end: '' });
 
@@ -37,77 +37,76 @@ const ExpenseForm = ({ mode = 'personal', groupId, groupStart, groupEnd }) => {
     return `${year}-${month}-${day}`;
   };
 
-const [individualAmounts, setIndividualAmounts] = useState({}); 
+  const [individualAmounts, setIndividualAmounts] = useState({});
 
-// 각 멤버가 입력 가능한 최대 금액 계산 함수
-const getMaxAmountForMember = (userId) => {
-  const totalAmount = Number(formData.originalAmount);
-  if (!totalAmount || totalAmount <= 0) return totalAmount;
+  // 각 멤버가 입력 가능한 최대 금액 계산 함수
+  const getMaxAmountForMember = (userId) => {
+    const totalAmount = Number(formData.originalAmount);
+    if (!totalAmount || totalAmount <= 0) return totalAmount;
 
-  // 현재 멤버를 제외한 다른 멤버들 중 실제로 입력한 금액만 합계 계산
-  // 입력하지 않은 멤버는 합계에서 제외 (기본 분할액 사용 안 함)
-  const otherMembersTotal = selectedMemList
-    .filter(mem => mem.userId !== userId)
-    .reduce((acc, mem) => {
-      // 실제로 입력한 금액만 사용 (입력 안 했으면 0)
-      const memAmount = individualAmounts[mem.userId] 
-        ? Number(individualAmounts[mem.userId]) 
-        : 0;
-      return acc + memAmount;
-    }, 0);
+    // 현재 멤버를 제외한 다른 멤버들 중 실제로 입력한 금액만 합계 계산
+    const otherMembersTotal = selectedMemList
+      .filter(mem => mem.userId !== userId)
+      .reduce((acc, mem) => {
+        // 실제로 입력한 금액만 사용 (입력 안 했으면 0)
+        let memAmount = individualAmounts[mem.userId] !== undefined && individualAmounts[mem.userId] !== ''
+          ? Number(individualAmounts[mem.userId])
+          : 0;
+        return acc + memAmount;
+      }, 0);
 
-  // 남은 금액 = 총액 - 다른 멤버들이 실제로 입력한 합계
-  const maxAllowed = totalAmount - otherMembersTotal;
-  return maxAllowed > 0 ? maxAllowed : 0;
-};
+    // 남은 금액 = 총액 - 다른 멤버들이 실제로 명시한 합계
+    const maxAllowed = totalAmount - otherMembersTotal;
+    return maxAllowed > 0 ? maxAllowed : 0;
+  };
 
-const handleAmountInput = (userId, value) => {
-  // 빈 값이면 그냥 저장
-  if (!value || value === '') {
+  const handleAmountInput = (userId, value) => {
+    // 빈 값이면 그냥 저장
+    if (!value || value === '') {
+      setIndividualAmounts(prev => ({
+        ...prev,
+        [userId]: value
+      }));
+      return;
+    }
+
+    const inputAmount = Number(value);
+
+    // 음수 입력 방지
+    if (inputAmount < 0) {
+      alert("금액은 0 이상이어야 합니다.");
+      return;
+    }
+
+    // 총액 확인
+    const totalAmount = Number(formData.originalAmount);
+    if (!totalAmount || totalAmount <= 0) {
+      setIndividualAmounts(prev => ({
+        ...prev,
+        [userId]: value
+      }));
+      return;
+    }
+
+    // 이 멤버가 입력 가능한 최대 금액 계산
+    const maxAllowed = getMaxAmountForMember(userId);
+
+    // 입력 금액이 최대 허용 금액을 초과하면 최대값으로 제한
+    if (inputAmount > maxAllowed) {
+      alert(`총 금액(${totalAmount.toLocaleString()}원)을 초과할 수 없습니다.\n이 멤버의 최대 입력 가능 금액: ${maxAllowed.toLocaleString()}원`);
+      setIndividualAmounts(prev => ({
+        ...prev,
+        [userId]: maxAllowed
+      }));
+      return;
+    }
+
+    // 검증 통과 시 저장
     setIndividualAmounts(prev => ({
       ...prev,
       [userId]: value
     }));
-    return;
-  }
-
-  const inputAmount = Number(value);
-  
-  // 음수 입력 방지
-  if (inputAmount < 0) {
-    alert("금액은 0 이상이어야 합니다.");
-    return;
-  }
-
-  // 총액 확인
-  const totalAmount = Number(formData.originalAmount);
-  if (!totalAmount || totalAmount <= 0) {
-    setIndividualAmounts(prev => ({
-      ...prev,
-      [userId]: value
-    }));
-    return;
-  }
-
-  // 이 멤버가 입력 가능한 최대 금액 계산
-  const maxAllowed = getMaxAmountForMember(userId);
-
-  // 입력 금액이 최대 허용 금액을 초과하면 최대값으로 제한
-  if (inputAmount > maxAllowed) {
-    alert(`총 금액(${totalAmount.toLocaleString()}원)을 초과할 수 없습니다.\n이 멤버의 최대 입력 가능 금액: ${maxAllowed.toLocaleString()}원`);
-    setIndividualAmounts(prev => ({
-      ...prev,
-      [userId]: maxAllowed
-    }));
-    return;
-  }
-
-  // 검증 통과 시 저장
-  setIndividualAmounts(prev => ({
-    ...prev,
-    [userId]: value
-  }));
-};
+  };
 
   const [formData, setFormData] = useState({
     type: '지출',
@@ -155,8 +154,8 @@ const handleAmountInput = (userId, value) => {
       const memData = await groupBudgetMemApi.searchGroupMem(groupId);
       setMemList(Array.isArray(memData) ? memData.filter(mem => mem.userId !== user?.userId) : []);
 
-      const groupInfoResponse = await transApi.groupInfo(groupId); 
-      
+      const groupInfoResponse = await transApi.groupInfo(groupId);
+
 
       if (groupInfoResponse) {
         setGroupName(groupInfoResponse.title || groupInfoResponse.TITLE);
@@ -167,7 +166,7 @@ const handleAmountInput = (userId, value) => {
           start: sDate,
           end: eDate
         });
-        
+
       }
     } catch (error) {
       console.error('데이터 로드 실패', error);
@@ -224,10 +223,10 @@ const handleAmountInput = (userId, value) => {
     const { name, value } = e.target;
 
     if (name === 'originalAmount' && value < 0) {
-        alert("금액은 음수를 입력할 수 없습니다.");
-        setFormData(prev => ({ ...prev, [name]: '' }));
-        return;
-      }
+      alert("금액은 음수를 입력할 수 없습니다.");
+      setFormData(prev => ({ ...prev, [name]: '' }));
+      return;
+    }
 
     if (name === 'transDate' && value) {
       const today = getToday();
@@ -373,48 +372,57 @@ const handleAmountInput = (userId, value) => {
 
       if (mode === 'group') {
         if (!groupId) return;
-        
-        await transApi.groupTransSave({ 
-          ...formData, 
-          userId: user?.userId, 
-          groupBId: Number(groupId), 
-          type: transType, 
-          nickName: user?.nickName || user?.nickname || "" 
+
+        await transApi.groupTransSave({
+          ...formData,
+          userId: user?.userId,
+          groupBId: Number(groupId),
+          type: transType,
+          nickName: user?.nickName || user?.nickname || ""
         });
-        
+
         if (isSplitActive && selectedMemList.length > 0) {
-        const defaultSplitAmount = Math.floor(Number(formData.originalAmount) / (selectedMemList.length + 1));
-  
-         let totalOthersAmount = 0; 
+          const defaultSplitAmount = Math.floor(Number(formData.originalAmount) / (selectedMemList.length + 1));
 
-        const splitPromises = selectedMemList
-          .map(mem => {
-            const finalAmount = individualAmounts[mem.userId] 
-              ? Number(individualAmounts[mem.userId]) 
-              : defaultSplitAmount;
+          let totalOthersAmount = 0;
 
-            totalOthersAmount += finalAmount;
+          // 수동 입력자가 한 명이라도 있는지 확인
+          const hasManualInput = selectedMemList.some(mem =>
+            individualAmounts[mem.userId] !== undefined && individualAmounts[mem.userId] !== ''
+          );
 
-            // 0원 초과일 때만 Promise 반환 (0원이면 DB 저장 안 됨)
-            if (finalAmount > 0) {
-              return transApi.myTransSave({
-                ...formData,
-                title: `[👨‍👩‍👧‍👦그룹분할] ${formData.title}`,
-                originalAmount: finalAmount, 
-                userId: mem.userId,
-                type: transType,
-                isShared: 'Y',
-                groupTransId: Number(groupId),
-                memo: `[${user?.nickName}]님이 [${groupName}]에 등록한 지출 분할`
-              });
-            }
-            return null; // 0원이면 null 반환
-          })
-          .filter(promise => promise !== null); // null 제거 - Promise만 남음
+          const splitPromises = selectedMemList
+            .map(mem => {
+              let finalAmount = 0;
+              if (individualAmounts[mem.userId] !== undefined && individualAmounts[mem.userId] !== '') {
+                finalAmount = Number(individualAmounts[mem.userId]);
+              } else if (!hasManualInput) {
+                // 아무도 수동 입력하지 않았다면 N빵
+                finalAmount = defaultSplitAmount;
+              }
+
+              totalOthersAmount += finalAmount;
+
+              // 0원 초과일 때만 Promise 반환
+              if (finalAmount > 0) {
+                return transApi.myTransSave({
+                  ...formData,
+                  title: `[👨‍👩‍👧‍👦그룹분할] ${formData.title}`,
+                  originalAmount: finalAmount,
+                  userId: mem.userId,
+                  type: transType,
+                  isShared: 'Y',
+                  groupTransId: Number(groupId),
+                  memo: `[${user?.nickName}]님이 [${groupName}]에 등록한 지출 분할`
+                });
+              }
+              return null; // 0원이면 null 반환
+            })
+            .filter(promise => promise !== null); // null 제거 - Promise만 남음
 
           const myFinalAmount = Number(formData.originalAmount) - totalOthersAmount;
 
-          // 본인 부담금도 0원 초과일 때만 Promise 추가 (0원이면 DB 저장 안 됨)
+          // 본인 부담금도 0원 초과일 때만 Promise 추가
           if (myFinalAmount > 0) {
             splitPromises.push(transApi.myTransSave({
               ...formData,
@@ -428,7 +436,7 @@ const handleAmountInput = (userId, value) => {
             }));
           }
 
-          // Promise가 있을 때만 실행 (빈 배열이면 실행 안 됨)
+          // Promise가 있을 때만 실행
           if (splitPromises.length > 0) {
             await Promise.all(splitPromises);
           }
@@ -441,7 +449,7 @@ const handleAmountInput = (userId, value) => {
     } catch (error) { alert("저장 중 오류 발생"); }
   };
 
-   return (
+  return (
     <div className="expense-page-wrapper">
       <div className="expense-card">
         {isLoading && (
@@ -529,15 +537,15 @@ const handleAmountInput = (userId, value) => {
                             <input type="checkbox" checked={isSelected} onChange={() => handleMemberToggle(mem)} />
                             <span className="member-nickname">{mem.nickName}</span>
                           </label>
-                          
+
                           {isSelected && (
                             <div className="split-input-group">
                               <span className="suggested-amount">(기본: {splitResult.amount.toLocaleString()}원)</span>
-                              <input 
-                                type="number" 
+                              <input
+                                type="number"
                                 placeholder="직접 입력"
                                 className="input-field small"
-                                value={individualAmounts[mem.userId] || ''} 
+                                value={individualAmounts[mem.userId] || ''}
                                 onChange={(e) => handleAmountInput(mem.userId, e.target.value)}
                                 min="0"
                                 max={getMaxAmountForMember(mem.userId)}
@@ -561,21 +569,40 @@ const handleAmountInput = (userId, value) => {
                         <span>총 인원</span>
                         <span>{selectedMemList.length + 1}명 (본인 포함)</span>
                       </div>
+
                       <div className="split-summary-row">
                         <span>멤버 합계</span>
                         <span>
-                          {selectedMemList.reduce((acc, mem) => 
-                            acc + (individualAmounts[mem.userId] ? Number(individualAmounts[mem.userId]) : 0), 0
-                          ).toLocaleString()} 원
+                          {(() => {
+                            const hasManualInput = selectedMemList.some(mem =>
+                              individualAmounts[mem.userId] !== undefined && individualAmounts[mem.userId] !== ''
+                            );
+                            return selectedMemList.reduce((acc, mem) => {
+                              if (individualAmounts[mem.userId] !== undefined && individualAmounts[mem.userId] !== '') {
+                                return acc + Number(individualAmounts[mem.userId]);
+                              }
+                              return acc + (hasManualInput ? 0 : splitResult.amount);
+                            }, 0).toLocaleString();
+                          })()} 원
                         </span>
                       </div>
-                      
+
                       <div className="my-final-amount-row">
                         <span className="my-final-label">본인 부담금 (잔액)</span>
                         <span className="my-final-price">
-                          {(Number(formData.originalAmount) - selectedMemList.reduce((acc, mem) => 
-                            acc + (individualAmounts[mem.userId] ? Number(individualAmounts[mem.userId]) : 0), 0
-                          )).toLocaleString()}원
+                          {(() => {
+                            const totalAmount = Number(formData.originalAmount) || 0;
+                            const hasManualInput = selectedMemList.some(mem =>
+                              individualAmounts[mem.userId] !== undefined && individualAmounts[mem.userId] !== ''
+                            );
+                            const calcOthersTotal = selectedMemList.reduce((acc, mem) => {
+                              if (individualAmounts[mem.userId] !== undefined && individualAmounts[mem.userId] !== '') {
+                                return acc + Number(individualAmounts[mem.userId]);
+                              }
+                              return acc + (hasManualInput ? 0 : splitResult.amount);
+                            }, 0);
+                            return Math.max(0, totalAmount - calcOthersTotal).toLocaleString();
+                          })()}원
                         </span>
                       </div>
                       <p className="split-guide-text">* 박스가 비어있으면 기본 가이드 금액이 적용됩니다.</p>
@@ -585,7 +612,6 @@ const handleAmountInput = (userId, value) => {
               )}
             </div>
           )}
-
 
           <button type="submit" className={`submit-btn ${formData.type === '지출' ? 'expense-mode' : ''}`}>
             {formData.type === '수입' ? '수입 등록하기' : '지출 등록하기'}

@@ -11,7 +11,7 @@ const useAlarmSocket = (userId,refreshGroupList) => {
         if (!userId) return; //유저 정보 없으면 리턴
 
         const client = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8080/osori/ws"),
+            webSocketFactory: () => new SockJS("http://13.239.33.140:8080/osori/ws"),
             onConnect: () => {
                 // 서버의 convertAndSendToUser에 대응하는 구독 경로
                 client.subscribe(`/single/notifications/${userId}`, (message) => {

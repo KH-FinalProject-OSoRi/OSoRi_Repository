@@ -3,7 +3,7 @@ import axios from "axios";
 import "./MyBadges.css";
 import { useAuth } from "../../../context/AuthContext";
 
-const API_BASE = "http://localhost:8080/osori";
+const API_BASE = "http://13.239.33.140:8080/osori";
 //dd
 export default function MyBadges() {
   const { user } = useAuth(); 
@@ -105,7 +105,7 @@ export default function MyBadges() {
   const renderBadgeCard = (b) => {
     const iconUrl = b.badgeIconUrl || b.badge_icon_url || "";
     const imgSrc = iconUrl
-      ? `http://localhost:8080${iconUrl}`
+      ? `http://13.239.33.140:8080${iconUrl}`
       : "";
 
     const isGroupBadge = (b.challengeMode || "").toUpperCase() === 'GROUP' || !!(b.groupBudgetTitle || b.group_budget_title);
