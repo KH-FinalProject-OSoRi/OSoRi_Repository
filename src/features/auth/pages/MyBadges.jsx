@@ -3,7 +3,7 @@ import axios from "axios";
 import "./MyBadges.css";
 import { useAuth } from "../../../context/AuthContext";
 
-const API_BASE = "http://13.239.33.140:8080/osori";
+const API_BASE = "http://13.239.33.140/osori";
 //dd
 export default function MyBadges() {
   const { user } = useAuth(); 
