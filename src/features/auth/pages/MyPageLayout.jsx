@@ -6,6 +6,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useState,useRef } from "react";
 import { faqApi } from "../../../api/faqApi";
 import { useSpendingAnalytics } from "../../../hooks/useSpendingAnalysis";
+import transApi from "../../../api/transApi";
 
 const MyPageLayout = ({refreshGroupList}) => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const MyPageLayout = ({refreshGroupList}) => {
   const [faqList, setFaqList] = useState([]);
   const [newQuestion,setNewQuestion] = useState('');
   const [isInputVisible, setIsInputVisible] = useState(false);
+  const [transactions, setTransactions] = useState([]);
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
@@ -22,6 +24,43 @@ const MyPageLayout = ({refreshGroupList}) => {
       message: '반가워요! 😊 똑똑한 돈 관리, 무엇부터 도와드릴까요?'
     }
   ]);
+
+  const fetchTransactions = () => {
+    const userId = user?.userId || user?.USER_ID || user?.id || 1;
+
+    transApi.getUserTrans(userId)
+      .then(data => {
+        if (!data || !Array.isArray(data)) {
+            setTransactions([]);
+            return;
+        }
+        const mappedData = data.map(item => {
+          const rawDate = item.transDate || item.TRANS_DATE || "";
+          let formattedDate = rawDate;
+          if (rawDate && typeof rawDate === 'string' && rawDate.includes('/')) {
+              const [yy, mm, dd] = rawDate.split('/');
+              formattedDate = `20${yy}-${mm}-${dd}`;
+          }
+
+          return {
+              id: item.transId || item.TRAN_ID || item.trans_id || item.id || 0,
+              text: item.title || item.TITLE,
+              amount: Number(item.originalAmount || item.ORIGINAL_AMOUNT || 0),
+              date: formattedDate,
+              type: item.type || item.TYPE,
+              category: item.category || item.CATEGORY || '기타',
+              memo: item.memo || item.MEMO || '',
+              isShared: item.isShared || item.IS_SHARED || 'N'
+          };
+        });
+        setTransactions(mappedData);
+      })
+      .catch(error => console.error("데이터 로드 실패:", error));
+  };
+  
+  useEffect(() => {
+      fetchTransactions();
+  }, [user]);
 
   const handleLogout = () => {
     logout();
