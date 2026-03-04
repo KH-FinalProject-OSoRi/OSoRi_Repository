@@ -10,7 +10,7 @@ import transApi from "../../../api/transApi";
 
 const MyPageLayout = ({refreshGroupList}) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const scrollRef = useRef();
   const [isFaqModalOpen,setIsFaqModalOpen] =useState(false);
   const [faqList, setFaqList] = useState([]);
