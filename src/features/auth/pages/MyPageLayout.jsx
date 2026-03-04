@@ -5,6 +5,7 @@ import "./MyPage.css";
 import { useAuth } from "../../../context/AuthContext";
 import { useState,useRef } from "react";
 import { faqApi } from "../../../api/faqApi";
+import { useSpendingAnalytics } from "../../../hooks/useSpendingAnalysis";
 
 const MyPageLayout = ({refreshGroupList}) => {
   const navigate = useNavigate();
@@ -79,6 +80,8 @@ const MyPageLayout = ({refreshGroupList}) => {
   //   setNewQuestion('');
   // };
 
+  const analytics = useSpendingAnalytics(transactions, new Date());
+
   const handleChatSubmit = async() =>{
     if(!newQuestion.trim()) return;
 
@@ -95,7 +98,17 @@ const MyPageLayout = ({refreshGroupList}) => {
     setMessages(prev => [...prev, {id:botId, type:'bot',message:'OSORI가 답변을 생성중입니다...'}]);
 
     try{
-      const response = await faqApi.askAi(currentQuestion);
+      const payload = {
+          question: currentQuestion, // 서버 컨트롤러의 @RequestBody 키값과 맞춰야 함
+          analysisContext: analytics ? {
+              currentPredict: analytics.projectedCurrent,
+              nextPredict: analytics.predictedAmount,
+              avg: analytics.averageValue,
+              status: analytics.availableDataPoints < 2 ? "데이터 부족" : "분석 완료"
+          } : null
+      };
+
+      const response = await faqApi.askAi(payload);
 
       setMessages(prev => prev.map(msg =>
         msg.id === botId ? {...msg, message: response.answer} : msg
@@ -103,7 +116,7 @@ const MyPageLayout = ({refreshGroupList}) => {
     } catch(error){
       console.error("AI 응답 에러:", error);
       setMessages(prev => prev.map(msg =>
-        msg.id === botId ? {...msg,message:"다음에 시도 해주세요"} : msg
+        msg.id === botId ? {...msg,message:"죄송합니다. 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."} : msg
       ));
     }
   };

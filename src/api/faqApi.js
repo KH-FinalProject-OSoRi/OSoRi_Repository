@@ -13,8 +13,8 @@ export const faqApi = {
         });
         return response.data;
     },
-    askAi:async(question) =>{
-        const response = await api.post('/faq/ask-ai', {question});
+    askAi:async(payload) =>{
+        const response = await api.post('/faq/ask-ai', payload);
         return response.data;
     }    
 };
