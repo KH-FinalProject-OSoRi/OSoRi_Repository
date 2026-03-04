@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { predictNextMonthExpense, calculateProjectedExpense } from '../../Util/analytics';
+import {predictNextMonthExpense, calculateProjectedExpense} from '../features/Util/analytics';
 
 export function useSpendingAnalytics(transactions = [], currentDate) {
   const result = useMemo(() => {
