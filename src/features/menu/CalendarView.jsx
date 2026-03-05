@@ -33,7 +33,7 @@ function CalendarView({ currentDate, setCurrentDate }) {
 
 
   useEffect(() => {
-    axios.get('http://localhost:8080/osori/group/gbList', { params: { userId } })
+    axios.get('http://13.239.33.140:8080/osori/group/gbList', { params: { userId } })
       .then(res => {
         const personal = { id: 'personal', name: '내 가계부', color: '#0066ff' };
         const groups = res.data.map((gb, idx) => ({
