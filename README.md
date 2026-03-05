@@ -2,10 +2,7 @@
 오(O)늘의 소(So)비 리(Ri)포트
 
 # 0. Getting Started (시작하기)
-```bash
-$ npm start
-```
-[서비스 링크]
+[서비스 링크] : http://13.239.33.140
 
 <br/>
 <br/>
