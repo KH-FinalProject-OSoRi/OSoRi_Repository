@@ -60,6 +60,9 @@
 - **멤버십 구축**:
   - 오소리를 이용하는 회원으로 소속감과 재미를 느낄 수 있는 여러 챌린지와 뱃지 발급 시스템
 
+- **개인화 금융 비서/챗봇**:
+  - 개인 수입/지출 데이터를 이용한 개인화된 금융 비서
+
 <br/>
 <br/>
 
@@ -101,6 +104,7 @@ https://github.com/envoy1084/awesome-badges
 |-----------------|-----------------|
 | Naver OCR API    |  <img src="https://velog.velcdn.com/images/cptbluebear/post/58558a5c-292a-41f9-8b1d-43eec5a8822b/image.png" alt="Naver OCR API" width="100">    |
 | Kakao API    |  <img src="https://blog.kakaocdn.net/dna/bcfkIw/btrQBLdRoMf/AAAAAAAAAAAAAAAAAAAAAMGfOHWzL0N8tChshpIQzKfPhrkMiOPf6jMQAmIzwLS0/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1772290799&allow_ip=&allow_referer=&signature=O5BpkPBaogA2aOrf2DliW8A6yHk%3D" alt="Kakao API" width="100">    |
+| Gemini API    |  <img src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,h_1080,q_100,w_1080/v1/gcs/platform-data-goog/events/6584a9558d6e7530491b6ce1_jn_g9l0wjUIo8WuTO03lpTEkc0kq9qQplZghgziZaUrBxStW8sTXZQ96Lo-dQrya7PW4US6ZMiisw8WZeSUt2XrEkESjtiQCEHsCs5F8UFDwjUrDKy954tcbD9FyugnK8RU4wPo-YAwfpZaGZv1O3ME_IOLI0Ad.jpeg" alt="Gemini API" width="100">    |
 | Spring WebSocket    |  <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="Spring WebSocket" width="100">    |
 | STOMP    |  <img src="" alt="" width="100">    |
 | SocketJS    |  <img src="" alt="" width="100">    |
@@ -220,31 +224,6 @@ chore : 빌드 업무 수정, 패키지 매니저 수정
 
 <br/>
 
-## 커밋 이모지
-```
-== 코드 관련
-📝	코드 작성
-🔥	코드 제거
-🔨	코드 리팩토링
-💄	UI / style 변경
-
-== 문서&파일
-📰	새 파일 생성
-🔥	파일 제거
-📚	문서 작성
-
-== 버그
-🐛	버그 리포트
-🚑	버그를 고칠 때
-
-== 기타
-🐎	성능 향상
-✨	새로운 기능 구현
-🚀	배포
-```
-
-<br/>
-
 ## 커밋 예시
 ```
 == ex1
@@ -296,3 +275,4 @@ UI개발을 위한 라이브러리 styled-components 설치
 
 ## 질문봇
 <img width="286" height="443" alt="image" src="https://github.com/user-attachments/assets/d6e7aa55-794a-4012-a7b1-36067e0afaab" />
+<img width="280" height="446" alt="image" src="https://github.com/user-attachments/assets/d3833f0b-f339-429c-b3fb-c205056a7fac" />
