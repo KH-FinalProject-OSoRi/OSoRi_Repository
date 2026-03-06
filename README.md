@@ -165,7 +165,12 @@ project/
 <br/>
 <br/>
 
-# 7. Development Workflow (개발 워크플로우)
+# 7. ERD Cloud (DB 구조)
+<img width="1126" height="611" alt="스크린샷 2026-03-06 200154" src="https://github.com/user-attachments/assets/029ec164-566d-4df2-8923-a2f762658f95" />
+<br/>
+<br/>
+
+# 8. Development Workflow (개발 워크플로우)
 ## 브랜치 전략 (Branch Strategy)
 우리의 브랜치 전략은 Git Flow를 기반으로 하며, 다음과 같은 브랜치를 사용합니다.
 
@@ -180,7 +185,7 @@ project/
 <br/>
 <br/>
 
-# 8. Coding Convention
+# 9. Coding Convention
 ## 명명 규칙
 * 상수 : 영문 대문자 + 스네이크 케이스
 ```
@@ -211,7 +216,7 @@ const getEnginList = () => {...}
 <br/>
 <br/>
 
-# 9. 커밋 컨벤션
+# 10. 커밋 컨벤션
 ## type 종류
 ```
 feat : 새로운 기능 추가
@@ -240,7 +245,7 @@ UI개발을 위한 라이브러리 styled-components 설치
 <br/>
 <br/>
 
-# 10. WebPage Overview (웹사이트 시현)
+# 11. WebPage Overview (웹사이트 시현)
 ## 마이페이지 / 자산관리 탭
 <img width="1662" height="763" alt="image" src="https://github.com/user-attachments/assets/a6e1601b-856f-4976-acc6-d4ed77033b34" />
 <img width="382" height="437" alt="image" src="https://github.com/user-attachments/assets/1a3fb820-04ea-43fc-a7a7-832bad5925c0" />
