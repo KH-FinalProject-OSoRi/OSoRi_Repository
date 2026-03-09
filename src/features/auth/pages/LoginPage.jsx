@@ -10,7 +10,7 @@ export default function LoginPage() {
   const { login } = useAuth();
 
   const REST_API_KEY = "fbeeefb1ab0d16e849dfdfdd01f9222b";
-  const REDIRECT_URI = "http://localhost:5173/auth/kakao/callback";
+  const REDIRECT_URI = "http://http://13.239.33.140/auth/kakao/callback";
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&prompt=login`;
 
   const [form, setForm] = useState({
